@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+ <pluginsListing>
+  <plugin>
+    <name>AutoInviter</name>
+    <author>Tallimos</author>
+    <description>Auto inviter for epic leaders to make grouping easier.</description>
+    <id>2dae6923b0384dba4ddff81f</id>
+    <download>https://raw.githubusercontent.com/Tallimos/AardPlugins/main/AutoInviter/Tallimos_AutoInviter.zip</download>
+    <installpath>0</installpath>
+  </plugin>
+
+  <plugin>
+    <name>EpicBroadcaster</name>
+    <author>Tallimos</author>
+    <description>Broadcaster for epic leaders to make announcing of grouping easier</description>
+    <id>ee9c79343749c58f7d1e99bc</id>
+    <download>https://raw.githubusercontent.com/Tallimos/AardPlugins/main/EpicBroadcaster/Tallimos_Epic_Broadcaster.zip</download>
+    <installpath>0</installpath>
+  </plugin>
+
+  <plugin>
+    <name>EpicCalendar</name>
+    <author>Tallimos</author>
+    <id>1d1e01d90f0e2983c358b32e</id>
+    <description>Allows the user to easily keep track of epic runs</description>
+    <download>https://raw.githubusercontent.com/Tallimos/AardPlugins/main/EpicCalendar/Tallimos_EpicCalendar.zip</download>
+    <installpath>0</installpath>
+  </plugin>
+ </pluginsListing>
