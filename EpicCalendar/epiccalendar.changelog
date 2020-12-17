@@ -1,5 +1,12 @@
 dbot.changelog = {}
 
+dbot.changelog[1.45] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Fixed bug with epic notes containing before"
+  },
+}
+
 dbot.changelog[1.44] =
 {
   { change = drlDbotChangeLogTypeFix,

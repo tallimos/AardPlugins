@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="1.44"
+   version="1.45"
    >
    
 </plugin>
@@ -1194,18 +1194,18 @@ function AddEpic(notenum, notedate, cname, subjectline)
 				beforeepic = wordtable[j]
 				beforeepicorig = wordtable[j]
 				
-				if beforecheck == "if2" then
+				if beforeepic == "if2" then
 					beforeepic = "icefall2"
-				elseif beforecheck == "if1" then
+				elseif beforeepic == "if1" then
 					beforeepic = "icefall1"
-				elseif beforecheck == "if" then
+				elseif beforeepic == "if" then
 					beforeepic = "icefall1"
 				end		
 			elseif wordtable[i] == "today" then
 				todaycheck = "YES"
 			end
 		end
-	
+		
 		for i,v in ipairs(EpicNames) do
 			if (CheckEpic(EpicNames[i], wordtable[wordindex])) ~= nil and wordtable[wordindex] ~= afterepicorig and wordtable[wordindex] ~= beforeepicorig then 
 				epiccheck = "YES"
@@ -1285,21 +1285,56 @@ function AddEpic(notenum, notedate, cname, subjectline)
 				for i,v in ipairs(EpicTable) do
 					if EpicTable[TableIndex]["Day of Week"] == EpicTable[i]["Day of Week"] then
 						if EpicTable[i]["Epic Name"] == afterepic then
-							EpicTable[TableIndex]["Hour"] = EpicTable[i]["Hour"]
-							EpicTable[TableIndex]["Time Table"] = EpicTable[i]["Time Table"]
-							EpicTable[TableIndex]["Minute"] = EpicTable[i]["Minute"]
-							EpicTable[TableIndex]["AMPM"] = EpicTable[i]["AMPM"]				
+							timecheck = "NO"
+							
+							for time in subjectline:gmatch("(%d+[:%d]*[ap]m)") do
+								if time ~= nil then timecheck = "YES" end
+							end
+							
+							if timecheck == "YES" then							
+								for time in subjectline:gmatch("(%d+[:%d]*[ap]m)") do timeonly = time end
+								
+								for tday in timeonly:gmatch("[ap]m") do
+									EpicTable[TableIndex]["AMPM"] = tday
+								end
+								
+								SeperateTime(timeonly)
+								PopulateTimeTable(TableIndex)
+							else
+								EpicTable[TableIndex]["Hour"] = EpicTable[i]["Hour"]
+								EpicTable[TableIndex]["Time Table"] = EpicTable[i]["Time Table"]
+								EpicTable[TableIndex]["Minute"] = EpicTable[i]["Minute"]
+								EpicTable[TableIndex]["AMPM"] = EpicTable[i]["AMPM"]				
+							end
 						end
 					end
-				end
+				end			
 			elseif beforecheck == "YES" then
 				for i,v in ipairs(EpicTable) do
 					if EpicTable[TableIndex]["Day of Week"] == EpicTable[i]["Day of Week"] then
+
 						if EpicTable[i]["Epic Name"] == beforeepic then
-							EpicTable[TableIndex]["Hour"] = EpicTable[i]["Hour"]
-							EpicTable[TableIndex]["Time Table"] = EpicTable[i]["Time Table"]
-							EpicTable[TableIndex]["Minute"] = EpicTable[i]["Minute"]
-							EpicTable[TableIndex]["AMPM"] = EpicTable[i]["AMPM"]
+							timecheck = "NO"
+							
+							for time in subjectline:gmatch("(%d+[:%d]*[ap]m)") do
+								if time ~= nil then timecheck = "YES" end
+							end
+							
+							if timecheck == "YES" then							
+								for time in subjectline:gmatch("(%d+[:%d]*[ap]m)") do timeonly = time end
+								
+								for tday in timeonly:gmatch("[ap]m") do
+									EpicTable[TableIndex]["AMPM"] = tday
+								end
+								
+								SeperateTime(timeonly)
+								PopulateTimeTable(TableIndex)
+							else
+								EpicTable[TableIndex]["Hour"] = EpicTable[i]["Hour"]
+								EpicTable[TableIndex]["Time Table"] = EpicTable[i]["Time Table"]
+								EpicTable[TableIndex]["Minute"] = EpicTable[i]["Minute"]
+								EpicTable[TableIndex]["AMPM"] = EpicTable[i]["AMPM"]
+							end
 						end
 					end
 				end
