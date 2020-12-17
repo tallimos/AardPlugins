@@ -674,7 +674,7 @@ function OnPluginSaveState ()
 end -- OnPluginSaveState
 
 -- Changelog code courtesy of Durel
-pluginId        = "1d1e01d90f0e2983c358b32e"
+pluginId        = "ee9c79343749c58f7d1e99bc"
 
 dbot = {}
 ----------------------------------------------------------------------------------------------------
