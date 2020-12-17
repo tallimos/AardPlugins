@@ -1,0 +1,93 @@
+dbot.changelog = {}
+
+dbot.changelog[1.44] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Fixed bug when time table isn't populated, improved way"
+  },
+}
+dbot.changelog[1.43] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Fixed bug when time table isn't populated, temporary fix. Maybe find a better way"
+  },
+}
+
+dbot.changelog[1.42] =
+{
+  { change = drlDbotChangeLogTypeNew,
+    desc   = "Added checkversion and changelog commands to help file"
+  },
+}
+
+dbot.changelog[1.41] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Removed some unnecessary code"
+  },
+}
+
+dbot.changelog[1.4] =
+{
+  { change = drlDbotChangeLogTypeNew,
+    desc   = "Switched to different update system, courtesy of Durel"
+  },
+}
+
+dbot.changelog[1.32] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Fixed missing error messages and fixed errors with bot add/remove"
+  },
+}
+
+dbot.changelog[1.31] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "More bug fixes and cosmetic upgrades in preparation for beta testing"
+  },
+}
+
+dbot.changelog[1.3] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "More bug fixes and cosmetic upgrades in preparation for beta testing"
+  },
+  { change = drlDbotChangeLogTypeNew,
+    desc   = "Added update system, code courtesy of Crowley"
+  }
+}
+
+dbot.changelog[1.2] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Various bug fixes"
+  },
+  { change = drlDbotChangeLogTypeNew,
+    desc   = "Added more channel commands including listepic"
+  }
+}
+
+dbot.changelog[1.11] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Improved the way epic runs are gathered and stored"
+  },
+  { change = drlDbotChangeLogTypeNew,
+    desc   = "Added all bot commands; warning system, next epic channel notification system and channel commands"
+  }
+}
+
+dbot.changelog[1.1] =
+{
+  { change = drlDbotChangeLogTypeNew,
+    desc   = "Initial layout of bot implemented"
+  }
+}
+
+dbot.changelog[1.0] =
+{
+  { change = drlDbotChangeLogTypeNew,
+    desc   = "Initial script created with working list function"
+  }
+}
