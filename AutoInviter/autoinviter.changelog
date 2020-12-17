@@ -1,0 +1,39 @@
+dbot.changelog = {}
+
+dbot.changelog[1.31] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Various bug fixes"
+  },
+}
+
+dbot.changelog[1.3] =
+{
+  { change = drlDbotChangeLogTypeNew,
+    desc   = "Switched to updater by Durel and added Player group check"
+  }
+}
+
+dbot.changelog[1.2] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Various bug fixes"
+  },
+  { change = drlDbotChangeLogTypeNew,
+    desc   = "Added Power user system and update system (courtesy of Crowley)"
+  }
+}
+
+dbot.changelog[1.1] =
+{
+  { change = drlDbotChangeLogTypeNew,
+    desc   = "Blacklist system added"
+  }
+}
+
+dbot.changelog[1.0] =
+{
+  { change = drlDbotChangeLogTypeNew,
+    desc   = "Initial script created with working inviter"
+  }
+}
