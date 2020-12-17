@@ -1,0 +1,66 @@
+dbot.changelog = {}
+
+dbot.changelog[1.41] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Various bug fixes"
+  },
+}
+
+dbot.changelog[1.4] =
+{
+  { change = drlDbotChangeLogTypeNew,
+    desc   = "Switched to updater by Durel"
+  },
+}
+
+dbot.changelog[1.3] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "More bug fixes and cosmetic upgrades, added tiertalk work around for Shaelynne"
+  },
+}
+
+dbot.changelog[1.25] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "More bug fixes and cosmetic upgrades in preparation for beta testing"
+  },
+  { change = drlDbotChangeLogTypeNew,
+    desc   = "Added update system, code courtesy of Crowley"
+  }
+}
+
+dbot.changelog[1.2] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Various bug fixes"
+  },
+  { change = drlDbotChangeLogTypeNew,
+    desc   = "Various colour change options added"
+  }
+}
+
+dbot.changelog[1.11] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Various bug fixes"
+  },
+  { change = drlDbotChangeLogTypeNew,
+    desc   = "Code for multi-channel broadcasting added"
+  }
+}
+
+dbot.changelog[1.1] =
+{
+  { change = drlDbotChangeLogTypeNew,
+    desc   = "Initial broadcaster implemented"
+  }
+}
+
+dbot.changelog[1.0] =
+{
+  { change = drlDbotChangeLogTypeNew,
+    desc   = "Initial script created."
+  }
+}
