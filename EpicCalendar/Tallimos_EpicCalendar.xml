@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="1.5"
+   version="1.55"
    >
    
 </plugin>
@@ -753,8 +753,8 @@ function CommandMenu(name, line, wc)
 	if cmd == "clear" then
 		ClearEpicTable()
 	elseif cmd == "update" then
-		-- update_plugin()
-		dbot.version.update.release(drlDbotUpdateInstall, endTag)
+		update_plugin()
+		-- dbot.version.update.release(drlDbotUpdateInstall, endTag)
 		EpicMisc["Updating"] = "YES"
 	elseif cmd == "changelog" then
 		dbot.print("@DFull changelog:")
@@ -3539,6 +3539,37 @@ function OnPluginBroadcast(msg, id, name, text)
 		end
 	end
 end -- OnPluginBroadcast
+
+-- Update code courtesy of Crowley
+function update_plugin()
+  raw = "https://raw.githubusercontent.com/tallimos/AardPlugins/main/EpicCalendar/Tallimos_EpicCalendar.xml"
+  async_ok, async = pcall (require, "async")
+  if async_ok then
+    plugin_page = async.doAsyncRemoteRequest(raw, raw_get, "HTTPS")
+  else
+    ColourNote("white", "blue", "Error on plugin update!")
+  end
+end
+
+function raw_get(retval, page, status, headers, full_status, request_url)
+  if status == 200 then
+    raw_version = tonumber(string.match(page, '%s%s+version="([0-9%.]+)"'))
+  end
+  if raw_version == PLUGIN_VERSION then
+    ColourNote("white", "blue", PLUGIN_NAME .. " is up-to-date.")
+  elseif raw_version > PLUGIN_VERSION then
+    ColourNote("white", "blue", "Updating Tallimos' Epic Calendar from version " .. PLUGIN_VERSION .. " to " .. raw_version .. ". Do not touch anything!")
+    local file = io.open(GetPluginInfo(GetPluginID(), 6), "w")
+    file:write(page)
+    file:close()
+  end
+  raw_version = nil
+  if "" == GetAlphaOption("script_prefix") then
+    SetAlphaOption("script_prefix", "\\\\\\")
+  end
+  Execute(GetAlphaOption("script_prefix") .. "DoAfterSpecial(1, \"ReloadPlugin('" .. GetPluginID() .. "')\", sendto.script)")
+  ColourNote("white", "blue", "Update complete!")
+end -- end Update code	
 
 -- Changelog code courtesy of Durel
 pluginId        = "1d1e01d90f0e2983c358b32e"
