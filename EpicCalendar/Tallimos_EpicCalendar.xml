@@ -2756,7 +2756,7 @@ function TellChannel(name, line, wc)
 	cmd = string.lower(wc[2])
 	search = string.lower(wc[3])
 	channel = "tell " .. user
-	Note (channel)
+
 	GetCharName()
 
 	if user ~= charname then 
