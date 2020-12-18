@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="1.45"
+   version="1.5"
    >
    
 </plugin>
@@ -1153,7 +1153,7 @@ function AddEpic(notenum, notedate, cname, subjectline)
 	afterepicorig = ""
 	todaycheck = "NO"
 	
-	invalid_characters = "~!@#$%^&*()_+=-{}[];'|?.,<>"
+	invalid_characters = ":~!@#$%^&*()_+=-{}[];'|?.,<>"
 	invalid_characters_pattern = "["..string.gsub(invalid_characters, ".", "%%%1").."]"
 
 	subjectline2 = subjectline
@@ -1280,27 +1280,27 @@ function AddEpic(notenum, notedate, cname, subjectline)
 					NoDateFound()
 				end
 			end
+
+			timecheck = "NO"
 			
+			for time in subjectline:gmatch("(%d+[%s+]*[ap]m)") do
+				time = time:gsub(" ", "")
+				
+				timecheck = "YES"
+				
+				for tday in time:gmatch("[ap]m") do
+					EpicTable[TableIndex]["AMPM"] = tday
+				end
+				
+				SeperateTime(time)
+				PopulateTimeTable(TableIndex)
+			end
+
 			if aftercheck == "YES" then
 				for i,v in ipairs(EpicTable) do
 					if EpicTable[TableIndex]["Day of Week"] == EpicTable[i]["Day of Week"] then
 						if EpicTable[i]["Epic Name"] == afterepic then
-							timecheck = "NO"
-							
-							for time in subjectline:gmatch("(%d+[:%d]*[ap]m)") do
-								if time ~= nil then timecheck = "YES" end
-							end
-							
-							if timecheck == "YES" then							
-								for time in subjectline:gmatch("(%d+[:%d]*[ap]m)") do timeonly = time end
-								
-								for tday in timeonly:gmatch("[ap]m") do
-									EpicTable[TableIndex]["AMPM"] = tday
-								end
-								
-								SeperateTime(timeonly)
-								PopulateTimeTable(TableIndex)
-							else
+							if timecheck ~= "YES" then
 								EpicTable[TableIndex]["Hour"] = EpicTable[i]["Hour"]
 								EpicTable[TableIndex]["Time Table"] = EpicTable[i]["Time Table"]
 								EpicTable[TableIndex]["Minute"] = EpicTable[i]["Minute"]
@@ -1314,22 +1314,7 @@ function AddEpic(notenum, notedate, cname, subjectline)
 					if EpicTable[TableIndex]["Day of Week"] == EpicTable[i]["Day of Week"] then
 
 						if EpicTable[i]["Epic Name"] == beforeepic then
-							timecheck = "NO"
-							
-							for time in subjectline:gmatch("(%d+[:%d]*[ap]m)") do
-								if time ~= nil then timecheck = "YES" end
-							end
-							
-							if timecheck == "YES" then							
-								for time in subjectline:gmatch("(%d+[:%d]*[ap]m)") do timeonly = time end
-								
-								for tday in timeonly:gmatch("[ap]m") do
-									EpicTable[TableIndex]["AMPM"] = tday
-								end
-								
-								SeperateTime(timeonly)
-								PopulateTimeTable(TableIndex)
-							else
+							if timecheck ~= "YES" then
 								EpicTable[TableIndex]["Hour"] = EpicTable[i]["Hour"]
 								EpicTable[TableIndex]["Time Table"] = EpicTable[i]["Time Table"]
 								EpicTable[TableIndex]["Minute"] = EpicTable[i]["Minute"]
@@ -1338,17 +1323,6 @@ function AddEpic(notenum, notedate, cname, subjectline)
 						end
 					end
 				end
-			else
-				timeonly = ""
-				
-				for tday in subjectline:gmatch("(%d+[:%d]*[ap]m)") do timeonly = tday end
-
-				for tday in timeonly:gmatch("[ap]m") do
-					EpicTable[TableIndex]["AMPM"] = tday
-				end
-				
-				SeperateTime(timeonly)
-				PopulateTimeTable(TableIndex)
 			end
 		end
 		
@@ -3201,23 +3175,25 @@ function SeperateDate(dateonly)
 end -- SeperateDate
 
 function SeperateTime(timeonly)
-	hoursonly = ""
+	len = string.len(timeonly)
 	
-	for tday in timeonly:gmatch("%d+[:%d]*") do hoursonly = tday end
+	if len == 3 or len == 4 then
 	
-	for tday in hoursonly:gmatch("%d+:") do
-		st1 = tday
-		st2 = st1:gsub(":%d+", "--")
-		for st3 in st2:gmatch("%d+") do EpicTable[TableIndex]["Hour"] = tonumber(st3) end
-		st4 = hoursonly:gsub("%d+:", "--")
-		for st5 in st4:gmatch("%d+") do EpicTable[TableIndex]["Minute"] = tonumber(st5) end
-		return
+		for hour in timeonly:gmatch("%d+") do
+			EpicTable[TableIndex]["Hour"] = tonumber(hour)
+		end
+		
+		EpicTable[TableIndex]["Minute"] = 0
+	elseif len == 5 or len == 6 then
+		st1 = timeonly:gsub("%d%d[ap]m", "----")
+
+		for hour in st1:gmatch("%d+") do EpicTable[TableIndex]["Hour"] = tonumber(hour) end
+
+		for min in timeonly:gmatch("%d%d[ap]m") do
+			st2 = min:gsub("[ap]m", "--")
+			for st3 in st2:gmatch("%d+") do EpicTable[TableIndex]["Minute"] = tonumber(st3) end
+		end	
 	end
-	
-	for tday in hoursonly:gmatch("%d+") do
-		EpicTable[TableIndex]["Hour"] = tonumber(tday)
-		EpicTable[TableIndex]["Minute"]	= 0
-	end	
 end -- SeperateTime
 
 function NoteRoom(cmd)
