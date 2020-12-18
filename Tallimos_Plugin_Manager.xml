@@ -9,7 +9,7 @@
    purpose="Manages updates for Tallims' plugins, based on Pwar's work"
    date_written="2017-12-21 01:08:25"
    requires="4.76"
-   version="1.38"
+   version="1.39"
    save_state="y"
    >
 <description trim="y">
