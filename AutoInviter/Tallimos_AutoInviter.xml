@@ -1222,7 +1222,7 @@ function OnPluginInstall()
 		InviterTable["Updating"] = "NO"
 		ColourNote(msg_colour, "", "Update complete.")
 	elseif InviterTable["Updating"] == "NO" then
-		ColourNote(help_colour, "", "Thank you for installing ", qty_colour, "", "Tallimos' Auto Inviter v" ..  PLUGIN_VERSION, help_colour, "", ". Please see ", qty_colour, "", "tai help", help_colour, "", " for more information.")
+		ColourNote(help_colour, "", "Thank you for installing ", qty_colour, "", "Tallimos' Auto Inviter v" ..  PLUGIN_VERSION, help_colour, "", ". Please see ", help_command_colour, "", "tai help", help_colour, "", " for more information.")
 	end
 
 	Note("")
