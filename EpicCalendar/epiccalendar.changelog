@@ -1,12 +1,5 @@
 dbot.changelog = {}
 
-dbot.changelog[1.55] =
-{
-  { change = drlDbotChangeLogTypeFix,
-    desc   = "Switched updater to a hybrid of Crowley and Durel"
-  },
-}
-
 dbot.changelog[1.5] =
 {
   { change = drlDbotChangeLogTypeFix,
