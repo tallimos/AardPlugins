@@ -2,11 +2,11 @@
 <!DOCTYPE muclient>
 <muclient>
 <plugin
-   name="Tallims_Plugin_Manager"
-   author="Tallims"
+   name="Tallimos_Plugin_Manager"
+   author="Tallimos"
    id="bad8cd98f00b2c4b21251733"
    language="Lua"
-   purpose="Manages updates for Tallims' plugins, based on Pwar's work"
+   purpose="Manages updates for Tallimos' plugins, based on Pwar's work"
    date_written="2017-12-21 01:08:25"
    requires="4.76"
    version="1.39"
@@ -123,7 +123,7 @@ local help_command_colour  = "red"
 	
 function tpm_main(name, line, wc)
    
-   	local title = "Welcome to Tallims' Plugin Manager"
+   	local title = "Welcome to Tallimos' Plugin Manager"
 	local title2 = "=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-="
 	
 	local leng = tonumber(string.len(title))
@@ -140,7 +140,7 @@ function tpm_main(name, line, wc)
 
 	spacing = string.rep(" ", lendif)
 	
-	ColourNote(help_colour, "", spacing, help_command_colour, "", "Welcome to Tallims' Plugin Manager")
+	ColourNote(help_colour, "", spacing, help_command_colour, "", "Welcome to Tallimos' Plugin Manager")
 	Note("")
 	
    printmsg("*** Requesting plugin/update list from server.. Please wait.\r\n\r\n")
@@ -178,8 +178,8 @@ end
 
 function tpm_update(name, line, wc)
    if wc.index == "" then
-      printmsg("*** Checking if update is available for Tallims' Plugin Manager.. Please wait.\r\n\r\n")
-      local url = "https://raw.githubusercontent.com/Tallimos/AardPlugins/main/Tallims_Plugin_Manager.xml"
+      printmsg("*** Checking if update is available for Tallimos' Plugin Manager.. Please wait.\r\n\r\n")
+      local url = "https://raw.githubusercontent.com/Tallimos/AardPlugins/main/Tallimos_Plugin_Manager.xml"
       async.doAsyncRemoteRequest(url, async_tpm_download_complete, "HTTPS", 120)
    else
       Execute("tpm install " .. wc.index)
@@ -189,7 +189,7 @@ end
 function tpm_help(name, line, wc)
    print("")
 	NoteStyle(2)			        
-	ColourNote("MediumSeaGreen", "", "Tallims' Plugin Manager")
+	ColourNote("MediumSeaGreen", "", "Tallimos' Plugin Manager")
 	NoteStyle(0)
 	print("")
 	ColourNote("SteelBlue", "", GetPluginInfo (GetPluginID (), 3))
@@ -292,7 +292,7 @@ function async_tpm_download_complete(retval, page, status, headers, full_status,
       if GetAlphaOption("script_prefix") == "" then SetAlphaOption("script_prefix", "\\\\\\") end
       Execute(GetAlphaOption("script_prefix").."DoAfterSpecial(1, \"ReloadPlugin('"..GetPluginID().."')\", sendto.script)")
     else
-      printmsg("You already have the latest version of Tallims' Plugin Manager installed.")
+      printmsg("You already have the latest version of Tallimos' Plugin Manager installed.")
     end
   else
       printmsg("Plugin update check failed...Error " .. tostring(status))
@@ -456,7 +456,7 @@ function OnPluginInstall()
 		lastPluginList = load( "return "..lastListStr)( ) 
 	end
    lastListHash = GetVariable("lastListHash")
-   ColourTell("CornFlowerBlue", "", "Tallims' Plugin Manager has been loaded. Type \"", "MediumSeaGreen", "", "tpm", "CornFlowerBlue", "", "\" or \"", "MediumSeaGreen", "", "tpm help", "CornFlowerBlue", "", "\"")
+   ColourTell("CornFlowerBlue", "", "Tallimos' Plugin Manager has been loaded. Type \"", "MediumSeaGreen", "", "tpm", "CornFlowerBlue", "", "\" or \"", "MediumSeaGreen", "", "tpm help", "CornFlowerBlue", "", "\"")
    print("")
 end
 
