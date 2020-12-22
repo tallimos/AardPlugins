@@ -4032,7 +4032,6 @@ function dbot.reload()
   end -- if
 end -- dbot.reload
 
-
 ]]>
 </script> 
 </muclient>
