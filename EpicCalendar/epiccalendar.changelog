@@ -3,7 +3,7 @@ dbot.changelog = {}
 dbot.changelog[1.61] =
 {
   { change = drlDbotChangeLogTypeFix,
-    desc   = "Added code to ignore "Re" notes"
+    desc   = "Added code to ignore 'Re:' notes"
   },
 }
 
