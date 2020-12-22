@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="1.6"
+   version="1.61"
    >
    
 </plugin>
@@ -1153,6 +1153,11 @@ function AddEpic(notenum, notedate, cname, subjectline)
 	beforeepicorig = ""
 	afterepicorig = ""
 	todaycheck = "NO"
+	
+	rsub = subjectline
+	rcheck = utils.split (rsub, " ")
+	
+	if rcheck[1] == "re:" then return end
 	
 	invalid_characters = ":~!@#$%^&*()_+=-{}[];'|?.,<>"
 	invalid_characters_pattern = "["..string.gsub(invalid_characters, ".", "%%%1").."]"
@@ -3541,8 +3546,7 @@ function OnPluginBroadcast(msg, id, name, text)
 	end
 end -- OnPluginBroadcast
 
-
-
+-- Update code taken from Pwar's installer menu
 function ecal_install(name, line, wc)
    for p = 1, #pluginList do
       if pluginList[p] ~= nil and tonumber(wc.index) == p then
@@ -3719,8 +3723,6 @@ end
 function printmsg(msg)
    ColourNote("cornflowerblue", "", msg)
 end
-
-
 
 -- Changelog code courtesy of Durel
 pluginId        = "1d1e01d90f0e2983c358b32e"
