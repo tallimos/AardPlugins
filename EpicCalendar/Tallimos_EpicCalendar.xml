@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="1.61"
+   version="1.62"
    >
    
 </plugin>
@@ -1155,9 +1155,9 @@ function AddEpic(notenum, notedate, cname, subjectline)
 	todaycheck = "NO"
 	
 	rsub = subjectline
-	rcheck = utils.split (rsub, " ")
+	rwords = utils.split (rsub, " ")
 	
-	if rcheck[1] == "re:" then return end
+	if rwords[1] == "re:" then return end
 	
 	invalid_characters = ":~!@#$%^&*()_+=-{}[];'|?.,<>"
 	invalid_characters_pattern = "["..string.gsub(invalid_characters, ".", "%%%1").."]"
@@ -4031,6 +4031,7 @@ function dbot.reload()
     dbot.print("@Ddbot.reload: Failed to reload the plugin: mush error " .. retval)
   end -- if
 end -- dbot.reload
+
 
 ]]>
 </script> 

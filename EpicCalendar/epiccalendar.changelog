@@ -1,5 +1,12 @@
 dbot.changelog = {}
 
+dbot.changelog[1.62] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Fixed problem with ecal reset not displaying a complete message"
+  },
+}
+
 dbot.changelog[1.61] =
 {
   { change = drlDbotChangeLogTypeFix,
