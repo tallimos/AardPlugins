@@ -1,5 +1,12 @@
 dbot.changelog = {}
 
+dbot.changelog[1.63] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Fixed a bug when a time is not provided in note subject line."
+  },
+}
+
 dbot.changelog[1.62] =
 {
   { change = drlDbotChangeLogTypeFix,

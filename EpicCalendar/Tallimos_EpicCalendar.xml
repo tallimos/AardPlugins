@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="1.62"
+   version="1.63"
    >
    
 </plugin>
@@ -29,9 +29,27 @@
 
 <triggers>
 	<trigger
+		group="GetCurrentBoardTrig"
+		match="You can only read posts in this forum."
+		sequence="110"
+		ignore_case="y"
+		omit_from_output="y"
+		>
+	</trigger>
+	<trigger
 		group="GetBoardEndTrig"
 		script="GetBoardEnd"
 		match="^Current forum changed to (\w+)\. You can read and write in this forum\."
+		sequence="110"
+		ignore_case="y"
+		omit_from_output="y"
+		regexp="y"
+		>
+	</trigger>
+	<trigger
+		group="GetBoardEndTrig"
+		script="GetBoardEnd"
+		match="^Current forum changed to (\w+)\. You can only read in this forum\."
 		sequence="110"
 		ignore_case="y"
 		omit_from_output="y"
@@ -248,7 +266,7 @@
 		omit_from_output="y"
 		>
 	</trigger>
-	</triggers>
+</triggers>
 
 <!--  Timers  -->
 
@@ -1169,6 +1187,17 @@ function AddEpic(notenum, notedate, cname, subjectline)
 
 	wordtable = utils.split (subjectline, " ")
 	checkdate = nil
+
+	timecheck = "NO"
+	
+	for time in subjectline:gmatch("(%d+[%s+]*[ap]m)") do
+		time = time:gsub(" ", "")
+		
+		timecheck = "YES"
+		
+	end
+
+	if timecheck == "NO" then return end
 	
 	for i,v in ipairs(EpicTable) do
 		if (tonumber(EpicTable[i]["Note Number"])) == notenum then
