@@ -1,5 +1,12 @@
 dbot.changelog = {}
 
+dbot.changelog[1.5] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Fixed update bug and added auto disable when group is disbanded"
+  },
+}
+
 dbot.changelog[1.4] =
 {
   { change = drlDbotChangeLogTypeNew,
