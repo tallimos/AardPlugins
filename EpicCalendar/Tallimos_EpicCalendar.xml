@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="1.7"
+   version="1.71"
    >
    
 </plugin>
@@ -3800,7 +3800,7 @@ function async_ecal_download_complete(retval, page, status, headers, full_status
       if GetAlphaOption("script_prefix") == "" then SetAlphaOption("script_prefix", "\\\\\\") end
       Execute(GetAlphaOption("script_prefix").."DoAfterSpecial(1, \"ReloadPlugin('"..GetPluginID().."')\", sendto.script)")
     else
-      printmsg("You already have the latest version of Tallimos' Plugin Manager installed.")
+      printmsg("You already have the latest version of Tallimos' Epic Calendar installed.")
     end
   else
       printmsg("Plugin update check failed...Error " .. tostring(status))
