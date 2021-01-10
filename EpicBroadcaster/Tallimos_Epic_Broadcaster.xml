@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-12-11 21:36:19"
    requires="4.36"
-   version="1.51"
+   version="1.52"
    >
 
 </plugin>
@@ -265,7 +265,7 @@ function CommandMenu(name, line, wc)
 	elseif cmd == "update" then
 		-- dbot.version.update.release(drlDbotUpdateInstall, endTag)
 		teb_update()
-		BroadcastTable["Updating"] = "NO"
+		BroadcastTable["Updating"] = "YES"
 	elseif cmd == "changelog" then
 		dbot.print("@DFull changelog:")
 		dbot.version.changelog.get(0, endTag) -- show changelog from version 0 to the latest
