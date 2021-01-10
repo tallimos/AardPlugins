@@ -193,21 +193,21 @@ function CommandMenu(name, line, wc)
 		if tonumber(wordtable[2]) ~= nil then
 			displaynum = tonumber(wordtable[2])
 			
-			if displaynum >= 1 and displaynum <= 20 then
+			if displaynum >= 1 and displaynum <= 40 then
 				BroadcastTable["DisplayType"] = displaynum
 				ColourNote(msg_colour, "", "Display type changed to ", qty_colour, "", displaynum)
 				Execute ("teb sample")
 			else
-				ColourNote(msg_colour, "", "Please input a number between 1 and 20")
+				ColourNote(msg_colour, "", "Please input a number between 1 and 40")
 			end
 		else
-			ColourNote(msg_colour, "", "Please input a number between 1 and 20")
+			ColourNote(msg_colour, "", "Please input a number between 1 and 40")
 		end
 	elseif cmd == "sample" then
 		if tonumber(wordtable[2]) ~= nil then
 			displaynum = tonumber(wordtable[2])
 			
-			if displaynum >= 1 and displaynum <= 20 then
+			if displaynum >= 1 and displaynum <= 40 then
 				currentdisplay = BroadcastTable["DisplayType"]	
 				BroadcastTable["DisplayType"] = displaynum
 			
@@ -226,7 +226,7 @@ function CommandMenu(name, line, wc)
 				
 				BroadcastTable["DisplayType"] = currentdisplay
 			else
-				ColourNote(msg_colour, "", "Please input a number between 1 and 20")
+				ColourNote(msg_colour, "", "Please input a number between 1 and 40")
 			end
 		elseif wordtable[2] ~= nil then
 			ename = wordtable[2]
@@ -582,7 +582,8 @@ function EpicBroadcasterHelp()
 	
 	
 	ColourNote(help_command_colour, "", "teb setdisplay <num>          ", help_colour, "", " - sets the display type")
-	ColourNote(help_colour, "", "                               - Displays 1-20 are the normal displays, Displays 21-40 are similar but displays epic with ", "cyan", "", "(Mentor)", help_colour, "", " flag")
+	ColourNote(help_colour, "", "                               - Displays 1-20 are the normal displays, Displays 21-40 are")
+	ColourNote(help_colour, "", "                                 similar but displays epic with ", "cyan", "", "(Mentor)", help_colour, "", " flag")
 	Note("")
 	
 	ColourNote(help_command_colour, "", "teb sample ", optional_colour, "", "(display number|epic name)")
