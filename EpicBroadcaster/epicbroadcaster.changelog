@@ -1,5 +1,12 @@
 dbot.changelog = {}
 
+dbot.changelog[1.6] =
+{
+  { change = drlDbotChangeLogTypeNew,
+    desc   = "Added @C(Mentor)@w display options"
+  },
+}
+
 dbot.changelog[1.52] =
 {
   { change = drlDbotChangeLogTypeFix,

@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-12-11 21:36:19"
    requires="4.36"
-   version="1.52"
+   version="1.6"
    >
 
 </plugin>
@@ -421,6 +421,46 @@ function MakeMessage(bcolour, broadcastname, charname)
 		emsg = "@R[EBroad] <<<" .. bcolour .. broadcastname .. " @Dgroup forming." .. "@D, send '@Cinvite@D' tell to @R" .. charname .. "@R>>>@w"
 	elseif BroadcastTable["DisplayType"] == 20 then
 		emsg = "@R[EBroad] <<<" .. bcolour .. broadcastname .. " @Dgroup forming." .. "@D, send tells to @R" .. charname .. "@R>>>@w"
+	elseif BroadcastTable["DisplayType"] == 21 then
+		emsg = "@DGrouping for @C(Mentor) " .. bcolour .. broadcastname .. "@D. Please send '@Cinvite@D' tell to @R" .. charname .. " @Dto join.@w"
+	elseif BroadcastTable["DisplayType"] == 22 then
+		emsg = "@DGrouping for @C(Mentor) " .. bcolour .. broadcastname .. "@D. Please send tells to @R" .. charname .. " @Dto join.@w"
+	elseif BroadcastTable["DisplayType"] == 23 then
+		emsg = "@DGrouping for @C(Mentor) " .. bcolour .. broadcastname .. "@D. Send '@Cinvite@D' tell to @R" .. charname .. " @Dto join.@w"
+	elseif BroadcastTable["DisplayType"] == 24 then
+		emsg = "@DGrouping for @C(Mentor) " .. bcolour .. broadcastname .. "@D. Send tells to @R" .. charname .. " @Dto join.@w"
+	elseif BroadcastTable["DisplayType"] == 25 then
+		emsg = "@C(Mentor) " .. bcolour .. broadcastname .. " @Dgroup forming." .. "@D. Send '@Cinvite@D' tell to @R" .. charname .. " @Dto join.@w"
+	elseif BroadcastTable["DisplayType"] == 26 then
+		emsg = "@C(Mentor) " .. bcolour .. broadcastname .. " @Dgroup forming." .. "@D. Send tells to @R" .. charname .. " @Dto join.@w"
+	elseif BroadcastTable["DisplayType"] == 27 then
+		emsg = "@R<<<@DGrouping for @C(Mentor) " .. bcolour .. broadcastname .. "@D, send '@Cinvite@D' tell to @R" .. charname .. "@R>>>@w"
+	elseif BroadcastTable["DisplayType"] == 28 then
+		emsg = "@R<<<@DGrouping for @C(Mentor) " .. bcolour .. broadcastname .. "@D. send tells to @R" .. charname .. "@R>>>@w"
+	elseif BroadcastTable["DisplayType"] == 29 then
+		emsg = "@R<<<@C(Mentor) " .. bcolour .. broadcastname .. " @Dgroup forming." .. "@D, send '@Cinvite@D' tell to @R" .. charname .. "@R>>>@w"
+	elseif BroadcastTable["DisplayType"] == 30 then
+		emsg = "@R<<<@C(Mentor) " .. bcolour .. broadcastname .. " @Dgroup forming." .. "@D, send tells to @R" .. charname .. "@R>>>@w"
+	elseif BroadcastTable["DisplayType"] == 31 then
+		emsg = "@R[EBroad] @DGrouping for @C(Mentor) " .. bcolour .. broadcastname .. "@D. Please send '@Cinvite@D' tell to @R" .. charname .. " @Dto join.@w"
+	elseif BroadcastTable["DisplayType"] == 32 then
+		emsg = "@R[EBroad] @DGrouping for @C(Mentor) " .. bcolour .. broadcastname .. "@D. Please send tells to @R" .. charname .. " @Dto join.@w"
+	elseif BroadcastTable["DisplayType"] == 33 then
+		emsg = "@R[EBroad] @DGrouping for @C(Mentor) " .. bcolour .. broadcastname .. "@D. Send '@Cinvite@D' tell to @R" .. charname .. " @Dto join.@w"
+	elseif BroadcastTable["DisplayType"] == 34 then
+		emsg = "@R[EBroad] @DGrouping for @C(Mentor) " .. bcolour .. broadcastname .. "@D. Send tells to @R" .. charname .. " @Dto join.@w"
+	elseif BroadcastTable["DisplayType"] == 35 then
+		emsg = "@R[EBroad] @C(Mentor) " .. bcolour .. broadcastname .. " @Dgroup forming." .. "@D. Send '@Cinvite@D' tell to @R" .. charname .. " @Dto join.@w"
+	elseif BroadcastTable["DisplayType"] == 36 then
+		emsg = "@R[EBroad] @C(Mentor) " .. bcolour .. broadcastname .. " @Dgroup forming." .. "@D. Send tells to @R" .. charname .. " @Dto join.@w"
+	elseif BroadcastTable["DisplayType"] == 37 then
+		emsg = "@R[EBroad] <<<@DGrouping for @C(Mentor) " .. bcolour .. broadcastname .. "@D, send '@Cinvite@D' tell to @R" .. charname .. "@R>>>@w"
+	elseif BroadcastTable["DisplayType"] == 38 then
+		emsg = "@R[EBroad] <<<@DGrouping for @C(Mentor) " .. bcolour .. broadcastname .. "@D. send tells to @R" .. charname .. "@R>>>@w"
+	elseif BroadcastTable["DisplayType"] == 39 then
+		emsg = "@R[EBroad] <<<@C(Mentor) " .. bcolour .. broadcastname .. " @Dgroup forming." .. "@D, send '@Cinvite@D' tell to @R" .. charname .. "@R>>>@w"
+	elseif BroadcastTable["DisplayType"] == 40 then
+		emsg = "@R[EBroad] <<<@C(Mentor) " .. bcolour .. broadcastname .. " @Dgroup forming." .. "@D, send tells to @R" .. charname .. "@R>>>@w"
 	end
 	
 	return emsg
@@ -542,6 +582,7 @@ function EpicBroadcasterHelp()
 	
 	
 	ColourNote(help_command_colour, "", "teb setdisplay <num>          ", help_colour, "", " - sets the display type")
+	ColourNote(help_colour, "", "                               - Displays 1-20 are the normal displays, Displays 21-40 are similar but displays epic with ", "cyan", "", "(Mentor)", help_colour, "", " flag")
 	Note("")
 	
 	ColourNote(help_command_colour, "", "teb sample ", optional_colour, "", "(display number|epic name)")
