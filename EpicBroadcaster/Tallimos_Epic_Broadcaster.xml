@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-12-11 21:36:19"
    requires="4.36"
-   version="1.5"
+   version="1.51"
    >
 
 </plugin>
@@ -706,7 +706,7 @@ function async_teb_download_complete(retval, page, status, headers, full_status,
       if GetAlphaOption("script_prefix") == "" then SetAlphaOption("script_prefix", "\\\\\\") end
       Execute(GetAlphaOption("script_prefix").."DoAfterSpecial(1, \"ReloadPlugin('"..GetPluginID().."')\", sendto.script)")
     else
-      printmsg("You already have the latest version of Tallimos' Plugin Manager installed.")
+      printmsg("You already have the latest version of Tallimos' Epic Broadcaster installed.")
     end
   else
       printmsg("Plugin update check failed...Error " .. tostring(status))
