@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="1.63"
+   version="1.7"
    >
    
 </plugin>
@@ -27,7 +27,91 @@
 
 <!--  Triggers  -->
 
+
 <triggers>
+	<trigger
+		group="NoteUpdate"
+		match="^Current forum changed to Epics\. You can read and write in this forum\."
+		sequence="100"
+		ignore_case="y"
+		regexp="y"
+		omit_from_output="y"
+		>
+	</trigger>
+	<trigger
+		group="NoteUpdate"
+		match="^To\s+\:\s(\w+)"
+		sequence="100"
+		ignore_case="y"
+		regexp="y"
+		omit_from_output="y"
+		>
+	</trigger>
+	<trigger
+		group="NoteUpdateLine1"
+		match="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+		sequence="100"
+		ignore_case="y"
+		omit_from_output="y"
+		>
+	</trigger>
+	<trigger
+		group="NoteUpdateLine2"
+		script="NoteUpdateEnableEnd"
+		match="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+		sequence="100"
+		ignore_case="y"
+		omit_from_output="y"
+		>
+	</trigger>
+	<trigger
+		group="NoteUpdateNoteContent"
+		match="(.*?)"
+		sequence="200"
+		ignore_case="y"
+		omit_from_output="y"
+		regexp="y"
+		>
+	</trigger>
+	<trigger
+		group="NoteUpdateEnd"
+		match="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+		script="NoteUpdateEnd"
+		sequence="100"
+		ignore_case="y"
+		omit_from_output="y"
+		>
+	</trigger>
+	<trigger
+		group="NoteUpdate"
+		script="NoteUpdateSubject"
+		match="^From\s+\:\s(\w+)\:\s(.*)"
+		sequence="110"
+		ignore_case="y"
+		regexp="y"
+		omit_from_output="y"
+		>
+	</trigger>
+	<trigger
+		group="NoteUpdate"
+		script="NoteUpdateNoteNum"
+		match="^Forum\s+\:\s(\w+)\s\-\s\#(\d+)"
+		sequence="100"
+		ignore_case="y"
+		regexp="y"
+		omit_from_output="y"
+		>
+	</trigger>
+	<trigger
+		group="NoteUpdate"
+		script="NoteUpdateNoteDate"
+		match="^Date\s+\:\s(\w+)\s(\w+)\s+(\d+)\s+(\d+)\:(\d+)\:(\d+)\s(\d+)"
+		sequence="100"
+		ignore_case="y"
+		regexp="y"
+		omit_from_output="y"
+		>
+	</trigger>
 	<trigger
 		group="GetCurrentBoardTrig"
 		match="You can only read posts in this forum."
@@ -51,6 +135,15 @@
 		script="GetBoardEnd"
 		match="^Current forum changed to (\w+)\. You can only read in this forum\."
 		sequence="110"
+		ignore_case="y"
+		omit_from_output="y"
+		regexp="y"
+		>
+	</trigger>
+	<trigger
+		group="GetCurrentBoardTrig"
+		match="(.*?)"
+		sequence="300"
 		ignore_case="y"
 		omit_from_output="y"
 		regexp="y"
@@ -202,6 +295,15 @@
 		regexp="y"
 		ignore_case="y"
 		omit_from_output="y"
+		>
+	</trigger>
+	<trigger
+		group="EpicCalendar"
+		match="(.*?)"
+		sequence="300"
+		ignore_case="y"
+		omit_from_output="y"
+		regexp="y"
 		>
 	</trigger>
 	<trigger
@@ -783,6 +885,14 @@ function CommandMenu(name, line, wc)
 	elseif cmd == "reset" then
 		ResetEpicTable()
 		rcheck = "YES"
+	elseif cmd == "nupdate" then
+		nnum = wordtable[2]
+		
+		if tonumber(nnum) ~= nil then
+			NoteUpdate(nnum)
+		else
+			ColourNote(msg_colour, "", "Please enter a note number to check")
+		end
 	elseif cmd == "list" then
 		EpicList()
 	elseif cmd == "search" then
@@ -1199,11 +1309,11 @@ function AddEpic(notenum, notedate, cname, subjectline)
 
 	if timecheck == "NO" then return end
 	
-	for i,v in ipairs(EpicTable) do
-		if (tonumber(EpicTable[i]["Note Number"])) == notenum then
-			return
-		end
-	end
+	-- for i,v in ipairs(EpicTable) do
+		-- if (tonumber(EpicTable[i]["Note Number"])) == notenum then
+			-- return
+		-- end
+	-- end
 	
 	for wordindex,b in ipairs(wordtable) do
 	
@@ -1241,6 +1351,8 @@ function AddEpic(notenum, notedate, cname, subjectline)
 			end
 		end
 		
+		epname = ""
+		
 		for i,v in ipairs(EpicNames) do
 			if (CheckEpic(EpicNames[i], wordtable[wordindex])) ~= nil and wordtable[wordindex] ~= afterepicorig and wordtable[wordindex] ~= beforeepicorig then 
 				epiccheck = "YES"
@@ -1255,10 +1367,13 @@ function AddEpic(notenum, notedate, cname, subjectline)
 				if EpicTable[TableIndex]["Epic Name"] == nil then
 					if EpicNames[i] == "if1" then
 						EpicTable[TableIndex]["Epic Name"] = "icefall1"
+						epname = "icefall1"
 					elseif EpicNames[i] == "if2" then
 						EpicTable[TableIndex]["Epic Name"] = "icefall2"
+						epname = "icefall2"
 					else
 						EpicTable[TableIndex]["Epic Name"] = EpicNames[i]
+						epname = EpicNames[i]
 					end
 				end
 				
@@ -1266,10 +1381,21 @@ function AddEpic(notenum, notedate, cname, subjectline)
 					if wordtable[wordindex] == "icefall1" or wordtable[wordindex] == "icefall2" then
 						TableIndex = TableIndex - 1
 						EpicTable[TableIndex]["Epic Name"] = wordtable[wordindex]
+						epname = wordtable[wordindex]
 					end
 				end
 			end
 		end
+
+		for j,k in ipairs(EpicTable) do
+			if EpicTable[j]["Note Number"] == notenum then
+				if EpicTable[j]["Epic Name"] == epname then
+					epiccheck = "NO"
+					table.remove (EpicTable, TableIndex)
+					TableIndex = TableIndex - 1
+				end
+			end
+		end				
 
 		if epiccheck == "YES" then
 			EpicTable[TableIndex]["Epic Leader"] = cname
@@ -1363,6 +1489,7 @@ function AddEpic(notenum, notedate, cname, subjectline)
 		
 		if (GetTriggerOption ("EpicUpdateEnd", "enabled")) == 0 then		
 			world.EnableGroup ("EpicUpdateEnd", 1)
+			
 		end
 	end
 end -- AddEpic
@@ -1514,7 +1641,7 @@ function SearchEpic(epicname)
 	GetSystemTime()
 end -- SearchEpic
 
-function ListEpic()
+function ListEpic()		
 	local hour = ""
 
 	if listtype == "nextleader" then
@@ -1774,6 +1901,69 @@ function PostRow(ename, eleader, eday, hour, timedef)
 	
 	SendNoEcho ("@D|@R" .. ename .. namespace .. "@D|@Y" .. eleader .. leaderspace .. "@D|@w" .. eday .. dayspace .. "@D|@w" .. timespace .. hour .. "@D|@G" .. remainspace .. trim(timedef) .. "@D|@w")
 end -- PostRow
+
+-----------------------------------------------
+------------ NOTE UPDATE FUNCTIONS ------------
+-----------------------------------------------
+function NoteUpdate(nnum)
+	world.EnableGroup ("NoteUpdate", 1)
+	world.EnableGroup ("NoteUpdateLine1", 1)
+	
+	ColourNote(msg_colour, "", "Checking subject line for note #", qty_colour, "", nnum)
+	
+
+	SendNoEcho ("board epics")	
+	SendNoEcho ("note read " .. nnum)
+end -- NoteUpdate
+
+function NoteUpdateEnd()
+	tablecount = table.maxn (EpicTable)
+
+	TableIndex = tablecount
+	
+	world.EnableGroup ("NoteUpdate", 0)
+	world.EnableGroup ("NoteUpdateEnd", 0)
+	world.EnableGroup ("NoteUpdateNoteContent", 0)
+	
+	if (CheckMob(nuleader) == "no") then
+		AddEpic(nunotenum, nunotedate, nuleader, nusubjectline)
+	end
+end -- NoteUpdateEnd
+
+function NoteUpdateSubject(name, line, wc)
+	world.EnableGroup ("NoteUpdateLine1", 0)
+	world.EnableGroup ("NoteUpdateLine2", 1)
+
+	nuleader = string.lower(wc[1])
+	nusubjectline = string.lower(wc[2])
+end -- NoteUpdateSubject
+
+function NoteUpdateEnableEnd()
+	world.EnableGroup ("NoteUpdateLine2", 0)
+	world.EnableGroup ("NoteUpdateEnd", 1)
+	world.EnableGroup ("NoteUpdateNoteContent", 1)
+end
+
+function NoteUpdateNoteNum(name, line, wc)
+	nuboard = string.lower(wc[1])
+	
+	if nuboard == "epics" then
+		nunotenum = tonumber(wc[2])
+	else
+		nunotenum = "error"
+	end
+end -- NoteUpdateNoteNum
+
+function NoteUpdateNoteDate(name, line, wc)
+	month = wc[2]
+	day = wc[3]
+	hour = wc[4]
+	min = wc[5]
+	
+	if string.len(day) == 1 then day = "0" .. day end
+	
+	nunotedate = day .. " " .. month .. " " .. hour .. ":" .. min
+end -- NoteUpdateNoteDate
 
 ----------------------------------------------
 --------------- NEXT FUNCTIONS ---------------
@@ -3343,17 +3533,20 @@ function EpicCalendarHelp()
 	
 	ColourNote(help_command_colour, "", "ecal update  ", help_colour, "", " - checks and see if the latest version of the plugin is installed")
 
+	
 	ColourNote(help_command_colour, "", "ecal reset   ", help_colour, "", " - clears the epic run list and adds all upcoming runs")
 
 	ColourNote(help_command_colour, "", "ecal clear   ", help_colour, "", " - clears the epic run list without adding upcoming runs")
 
 	ColourNote(help_command_colour, "", "ecal list    ", help_colour, "", " - lists all upcoming epic runs")
 
-	ColourNote(help_command_colour, "", "ecal checkversion ", help_colour, "", " - checks to see if there is a newer version of the plugin available")
+	ColourNote(help_command_colour, "", "ecal nupdate <note #>", help_colour, "", " - used when epic leader posts a subject line to long")
 	
-	ColourNote(help_command_colour, "", "ecal changelog    ", help_colour, "", " - displays the changelog for the plugin")
+	ColourNote(help_command_colour, "", "ecal checkversion    ", help_colour, "", " - checks to see if there is a newer version of the plugin available")
+	
+	ColourNote(help_command_colour, "", "ecal changelog       ", help_colour, "", " - displays the changelog for the plugin")
 
-	ColourNote(help_command_colour, "", "ecal search <epic>", help_colour, "", " - searches the epic runs list")
+	ColourNote(help_command_colour, "", "ecal search <epic>   ", help_colour, "", " - searches the epic runs list")
 	Note("")
 	
 	ColourNote(help_colour, "", "Other Features")

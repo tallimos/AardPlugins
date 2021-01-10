@@ -1,5 +1,12 @@
 dbot.changelog = {}
 
+dbot.changelog[1.7] =
+{
+  { change = drlDbotChangeLogTypeNew,
+    desc   = "Added ecal nupdate which is used for when subject lines are to long for note list"
+  },
+}
+
 dbot.changelog[1.63] =
 {
   { change = drlDbotChangeLogTypeFix,
