@@ -1,5 +1,12 @@
 dbot.changelog = {}
 
+dbot.changelog[1.51] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Minor wording change as well as an update to test update script"
+  },
+}
+
 dbot.changelog[1.5] =
 {
   { change = drlDbotChangeLogTypeFix,
