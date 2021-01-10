@@ -3,7 +3,7 @@ dbot.changelog = {}
 dbot.changelog[1.6] =
 {
   { change = drlDbotChangeLogTypeNew,
-    desc   = "Added @C(Mentor)@w display options"
+    desc   = "Added @C(Mentor) @Wdisplay options"
   },
 }
 
