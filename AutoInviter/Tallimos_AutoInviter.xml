@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-12-04 09:12:45"
    requires="4.37"
-   version="1.51"
+   version="1.52"
    >
 
 </plugin>
@@ -303,7 +303,7 @@ function CommandMenu(name, line, wc)
 	elseif cmd == "update" then
 		-- dbot.version.update.release(drlDbotUpdateInstall, endTag)
 		tai_update()
-		InviterTable["Updating"] = "NO"
+		InviterTable["Updating"] = "YES"
 	elseif cmd == "changelog" then
 		dbot.print("@DFull changelog:")
 		dbot.version.changelog.get(0, endTag) -- show changelog from version 0 to the latest

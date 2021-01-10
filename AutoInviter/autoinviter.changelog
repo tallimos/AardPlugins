@@ -1,5 +1,12 @@
 dbot.changelog = {}
 
+dbot.changelog[1.52] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Minor bug fix"
+  },
+}
+
 dbot.changelog[1.51] =
 {
   { change = drlDbotChangeLogTypeFix,
