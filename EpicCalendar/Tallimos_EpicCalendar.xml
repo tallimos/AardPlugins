@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="1.71"
+   version="1.8"
    >
    
 </plugin>
@@ -1075,6 +1075,18 @@ function CommandMenu(name, line, wc)
 		else
 			ColourNote(msg_colour, "", "Invalid command. Please see ", qty_colour, "", "ecal help bot", msg_colour, "", " for more information.")
 		end
+	elseif cmd == "vi" then
+		attrib = wordtable[2]
+		
+		if attrib == "enable" then
+			EpicMisc["VI"] = "YES"
+			ColourNote(msg_colour, "", "VI friendy option enabled.")			
+		elseif attrib == "disable" then
+			EpicMisc["VI"] = "NO"
+			ColourNote(msg_colour, "", "VI friendy option disabled.")
+		else
+			ColourNote(msg_colour, "", "Invalid option. Please see ", qty_colour, "", "ecal help", msg_colour, "", " for more information.")
+		end
 	elseif cmd == "help" then
 		if wordtable[2] == nil then
 			EpicCalendarHelp()
@@ -1095,7 +1107,7 @@ function CommandMenu(name, line, wc)
 	
 	SaveState()
 end -- CommandMenu
-	
+
 ---------------------------------------------
 -------------- CHECK FUNCTIONS --------------
 ---------------------------------------------
@@ -1674,9 +1686,11 @@ function ListEpic()
 	ColourNote(help_colour, "", spacing, help_command_colour, "", title)
 	Note("")
 
-	ColourNote(msg_colour, "", title2)
-	ColourNote(msg_colour, "", "| Epic      | Leader     | Day       | Time     | Time Until Epic                 |")
-	ColourNote(msg_colour, "", title2)
+	if EpicMisc["VI"] == "NO" then
+		ColourNote(msg_colour, "", title2)
+		ColourNote(msg_colour, "", "| Epic      | Leader     | Day       | Time     | Time Until Epic                 |")
+		ColourNote(msg_colour, "", title2)
+	end
 	
 	errorcheck = "no"
 	
@@ -1777,8 +1791,10 @@ function ListEpic()
 			end
 		end
 	end
-
-	ColourNote(msg_colour, "", title2)
+	
+	if EpicMisc["VI"] == "NO" then
+		ColourNote(msg_colour, "", title2)
+	end
 end -- ListEpic
 
 function DisplayRow(ename, eleader, eday, hour, timedef)
@@ -1797,7 +1813,12 @@ function DisplayRow(ename, eleader, eday, hour, timedef)
 	
 	if timedef == nil then remainspace = 31 else remainspace = MakeSpace(timedef,31) end
 	
-	ColourNote(msg_colour, "", "| ", epic_colour, "", ename .. namespace, msg_colour, "", " | ", leader_colour, "", eleader .. leaderspace, msg_colour, "", " | ", day_colour, "", eday .. dayspace, msg_colour, "", " | ", time_colour, "", timespace .. hour, msg_colour, "", " | ", remain_colour, "",remainspace .. timedef, msg_colour, "", " |")
+	if EpicMisc["VI"] == "NO" then
+		ColourNote(msg_colour, "", "| ", epic_colour, "", ename .. namespace, msg_colour, "", " | ", leader_colour, "", eleader .. leaderspace, msg_colour, "", " | ", day_colour, "", eday .. dayspace, msg_colour, "", " | ", time_colour, "", timespace .. hour, msg_colour, "", " | ", remain_colour, "",remainspace .. timedef, msg_colour, "", " |")
+	elseif EpicMisc["VI"] == "YES" then
+		ColourNote(msg_colour, "", "Epic: ", epic_colour, "", ename, msg_colour, "", " Leader: ", leader_colour, "", eleader, qty_colour, "", " Start Time: ", day_colour, "", eday, msg_colour, "", " ", time_colour, "", hour, msg_colour, "", " ", remain_colour, "",timedef)
+	end
+	
 end -- DisplayRow
 
 function StartPost()
@@ -1911,7 +1932,6 @@ function NoteUpdate(nnum)
 	
 	ColourNote(msg_colour, "", "Checking subject line for note #", qty_colour, "", nnum)
 	
-
 	SendNoEcho ("board epics")	
 	SendNoEcho ("note read " .. nnum)
 end -- NoteUpdate
@@ -2375,9 +2395,11 @@ function ListPermissions()
 	ColourNote(help_colour, "", spacing, help_command_colour, "", title)
 	Note("")
 
-	ColourNote(msg_colour, "", title2)
-	ColourNote(msg_colour, "", "| Name         | On List Since                  | Time on List                               |")
-	ColourNote(msg_colour, "", title2)
+	if EpicMisc["VI"] == "NO" then
+		ColourNote(msg_colour, "", title2)
+		ColourNote(msg_colour, "", "| Name         | On List Since                  | Time on List                               |")
+		ColourNote(msg_colour, "", title2)
+	end
 	
 	IndexedEpicPermissionTable = {}
 
@@ -2407,10 +2429,16 @@ function ListPermissions()
 		
 		if timeonlist == nil then onlistspace = 42 else onlistspace = MakeSpace(timeonlist, 42) end
 
-		ColourNote(msg_colour, "", "| ", epic_colour, "", user .. namespace, msg_colour, "", " | ", leader_colour, "", since .. sincespace, msg_colour, "", " | ", remain_colour, "", timeonlist .. onlistspace, msg_colour, "", " |")
+		if EpicMisc["VI"] == "NO" then
+			ColourNote(msg_colour, "", "| ", epic_colour, "", user .. namespace, msg_colour, "", " | ", leader_colour, "", since .. sincespace, msg_colour, "", " | ", remain_colour, "", timeonlist .. onlistspace, msg_colour, "", " |")
+		elseif EpicMisc["VI"] == "YES" then
+			ColourNote(epic_colour, "", user, msg_colour, "", " Added: ", leader_colour, "", since .. sincespace, msg_colour, "", " Time on list: ", remain_colour, "", timeonlist .. onlistspace)		
+		end
 	end
-
-	ColourNote(msg_colour, "", title2)
+	
+	if EpicMisc["VI"] == "NO" then
+		ColourNote(msg_colour, "", title2)
+	end
 end -- ListPermissions
 
 function ListChannels(cmd)
@@ -2429,9 +2457,11 @@ function ListChannels(cmd)
 	ColourNote(help_colour, "", spacing, help_command_colour, "", title)
 	Note("")
 
-	ColourNote(msg_colour, "", title2)
-	ColourNote(msg_colour, "", "| Channel |  Status  |")
-	ColourNote(msg_colour, "", title2)
+	if EpicMisc["VI"] == "NO" then
+		ColourNote(msg_colour, "", title2)
+		ColourNote(msg_colour, "", "| Channel |  Status  |")
+		ColourNote(msg_colour, "", title2)
+	end
 	
 	for i, v in pairs(EpicMisc["NotificationBot"][display]) do
 		if v == false then
@@ -2446,10 +2476,16 @@ function ListChannels(cmd)
 		
 		if display == nil then displayspace = 3 else displayspace = MakeSpace(displayname, 3) end
 		
-		ColourNote(msg_colour, "", "| ", epic_colour, "", i .. channelspace, msg_colour, "", " |   ", display_colour, "", displayname .. displayspace, msg_colour, "", "    | ")
+		if EpicMisc["VI"] == "NO" then
+			ColourNote(msg_colour, "", "| ", epic_colour, "", i .. channelspace, msg_colour, "", " |   ", display_colour, "", displayname .. displayspace, msg_colour, "", "    | ")
+		elseif EpicMisc["VI"] == "YES" then
+			ColourNote(msg_colour, "", "Channel: ", epic_colour, "", i .. channelspace, msg_colour, "", " Status: ", display_colour, "", displayname .. displayspace)
+		end
 	end
-
-	ColourNote(msg_colour, "", title2)
+	
+	if EpicMisc["VI"] == "NO" then
+		ColourNote(msg_colour, "", title2)
+	end
 end -- ListChannels
 
 function UserPermission(cmd, user)		
@@ -3437,10 +3473,19 @@ function AddRoom()
 		EpicMisc["NoteRooms"][gmcproomid]["Name"] = gmcpname
 		EpicMisc["NoteRooms"][gmcproomid]["Area"] = gmcparea
 		
-		ColourNote("red", "", "[" .. gmcparea, msg_colour, "", "/", "red", "", gmcpname, msg_colour, "", "/", "red", "", gmcproomid .. "]", msg_colour, "", " has been added to database")
+		if EpicMisc["VI"] == "NO" then
+			ColourNote(help_command_colour, "", "[" .. gmcparea, msg_colour, "", "/", help_command_colour, "", gmcpname, msg_colour, "", "/", help_command_colour, "", gmcproomid .. "]", msg_colour, "", " has been added to the database")
+		elseif EpicMisc["VI"] == "YES" then
+			ColourNote(help_command_colour, "", gmcparea, msg_colour, "", " ", help_command_colour, "", gmcpname, msg_colour, "", " ", help_command_colour, "", gmcproomid, msg_colour, "", " has been added to the database")
+		end
+		
 		SaveState()
 	else
-		ColourNote("red", "", "[" .. gmcparea, msg_colour, "", "/", "red", "", gmcpname, msg_colour, "", "/", "red", "", gmcproomid .. "]", msg_colour, "", " has already been added to database")
+		if EpicMisc["VI"] == "NO" then
+			ColourNote(help_command_colour, "", "[" .. gmcparea, msg_colour, "", "/", help_command_colour, "", gmcpname, msg_colour, "", "/", help_command_colour, "", gmcproomid .. "]", msg_colour, "", " has already been added to the database")
+		elseif EpicMisc["VI"] == "YES" then
+			ColourNote(help_command_colour, "", gmcparea, msg_colour, "", " ", help_command_colour, "", gmcpname, msg_colour, "", " ", help_command_colour, "", gmcproomid, msg_colour, "", " has already been added to the database")
+		end
 	end
 end -- AddRemove
 
@@ -3450,10 +3495,19 @@ function RemoveRoom()
 	if EpicMisc["NoteRooms"][gmcproomid] ~= nil then
 		EpicMisc["NoteRooms"][gmcproomid] = nil
 		
-		ColourNote("red", "", "[" .. gmcparea, msg_colour, "", "/", "red", "", gmcpname, msg_colour, "", "/", "red", "", gmcproomid .. "]", msg_colour, "", " has been removed from database")
+		if EpicMisc["VI"] == "NO" then
+			ColourNote(help_command_colour, "", "[" .. gmcparea, msg_colour, "", "/", help_command_colour, "", gmcpname, msg_colour, "", "/", help_command_colour, "", gmcproomid .. "]", msg_colour, "", " has been removed from the database")
+		elseif EpicMisc["VI"] == "YES" then
+			ColourNote(help_command_colour, "", gmcparea, msg_colour, "", " ", help_command_colour, "", gmcpname, msg_colour, "", " ", help_command_colour, "", gmcproomid, msg_colour, "", " has been removed from the database")
+		end
+		
 		SaveState()
 	else
-		ColourNote("red", "", "[" .. gmcparea, msg_colour, "", "/", "red", "", gmcpname, msg_colour, "", "/", "red", "", gmcproomid .. "]", msg_colour, "", " is not in the database")
+		if EpicMisc["VI"] == "NO" then
+			ColourNote(help_command_colour, "", "[" .. gmcparea, msg_colour, "", "/", help_command_colour, "", gmcpname, msg_colour, "", "/", help_command_colour, "", gmcproomid .. "]", msg_colour, "", " is not in the database")
+		elseif EpicMisc["VI"] == "YES" then
+			ColourNote(help_command_colour, "", gmcparea, msg_colour, "", " ", help_command_colour, "", gmcpname, msg_colour, "", " ", help_command_colour, "", gmcproomid, msg_colour, "", " is not in the database")
+		end
 	end
 end -- RemoveRoom
 
@@ -3476,12 +3530,16 @@ function ListRooms()
 	spacing = HelpSpacing(title, title2)
 	
 	ColourNote(help_colour, "", spacing, help_command_colour, "", title)
-	Note("")
 
-	ColourNote(msg_colour, "", title2)
-	ColourNote(msg_colour, "", "| Room# | Room Name                                | Area name                           |")
-	ColourNote(msg_colour, "", title2)
-
+	if EpicMisc["VI"] == "NO" then
+		Note("")
+		ColourNote(msg_colour, "", title2)	
+		ColourNote(msg_colour, "", "| Room# | Room Name                                | Area name                           |")
+		ColourNote(msg_colour, "", title2)
+	elseif EpicMisc["VI"] == "YES" then
+		Note("")
+	end
+	
 	for i,v in pairs(EpicMisc["NoteRooms"]) do
 
 		roomnum = i
@@ -3500,10 +3558,16 @@ function ListRooms()
 	
 		if areaname == nil then areaspace = 35 else areaspace = MakeSpace(areaname, 35) end
 
-		ColourNote(msg_colour, "", "| ", epic_colour, "", roomnum, msg_colour, "", " | ", leader_colour, "", roomname .. rnamespace, msg_colour, "", " | ", remain_colour, "", areaname .. areaspace, msg_colour, "", " |")
+		if EpicMisc["VI"] == "NO" then
+			ColourNote(msg_colour, "", "| ", epic_colour, "", roomnum, msg_colour, "", " | ", leader_colour, "", roomname .. rnamespace, msg_colour, "", " | ", remain_colour, "", areaname .. areaspace, msg_colour, "", " |")
+		elseif EpicMisc["VI"] == "YES" then
+			ColourNote(msg_colour, "", "Room Number: ", epic_colour, "", roomnum, msg_colour, "", " Room Name: ", leader_colour, "", roomname .. rnamespace, msg_colour, "", " Area Name: ", remain_colour, "", areaname)
+		end	
 	end
-
-	ColourNote(msg_colour, "", title2)
+	
+	if EpicMisc["VI"] == "NO" then
+		ColourNote(msg_colour, "", title2)
+	end
 end -- ListRooms
 
 function GetCharName()
@@ -3521,15 +3585,30 @@ function EpicCalendarHelp()
 	spacing = HelpSpacing(title, title2)
 	
 	ColourNote(help_colour, "", spacing, help_command_colour, "", title)
-	ColourNote(help_colour, "", noteline)
+
+	if EpicMisc["VI"] == "NO" then
+		ColourNote(help_colour, "", noteline)
+	elseif EpicMisc["VI"] == "YES" then
+		Note("")
+	end
+	
 	ColourNote(help_colour, "", "This plugin gives the user an easy way of keeping track of upcoming epic runs as well as some")
 	ColourNote(help_colour, "", "nice few extras. Once installed the user can use the commands below to update the list. Also")
 	ColourNote(help_colour, "", "if a note is posted while the user is online the list will automatically get updated.")
-	ColourNote(help_colour, "", noteline)
+
+	if EpicMisc["VI"] == "NO" then
+		ColourNote(help_colour, "", noteline)
+	end
+
 	Note("")
 	
 	ColourNote(help_colour, "", "Main Commands")
-	ColourNote(help_colour, "", "-------------")
+	
+	if EpicMisc["VI"] == "NO" then
+		ColourNote(help_colour, "", "-------------")
+	elseif EpicMisc["VI"] == "YES" then
+		Note("")
+	end
 	
 	ColourNote(help_command_colour, "", "ecal update  ", help_colour, "", " - checks and see if the latest version of the plugin is installed")
 
@@ -3540,18 +3619,25 @@ function EpicCalendarHelp()
 
 	ColourNote(help_command_colour, "", "ecal list    ", help_colour, "", " - lists all upcoming epic runs")
 
-	ColourNote(help_command_colour, "", "ecal nupdate <note #>", help_colour, "", " - used when epic leader posts a subject line to long")
+	ColourNote(help_command_colour, "", "ecal nupdate <note #>   ", help_colour, "", " - used when epic leader posts a subject line to long")
 	
-	ColourNote(help_command_colour, "", "ecal checkversion    ", help_colour, "", " - checks to see if there is a newer version of the plugin available")
+	ColourNote(help_command_colour, "", "ecal checkversion       ", help_colour, "", " - checks to see if there is a newer version of the plugin available")
 	
-	ColourNote(help_command_colour, "", "ecal changelog       ", help_colour, "", " - displays the changelog for the plugin")
+	ColourNote(help_command_colour, "", "ecal changelog          ", help_colour, "", " - displays the changelog for the plugin")
 
-	ColourNote(help_command_colour, "", "ecal search <epic>   ", help_colour, "", " - searches the epic runs list")
+	ColourNote(help_command_colour, "", "ecal search <epic>      ", help_colour, "", " - searches the epic runs list")
+	
+	ColourNote(help_command_colour, "", "ecal vi <enable|disable>", help_colour, "", " - enables/disables the vi friendly option")
 	Note("")
-	
-	ColourNote(help_colour, "", "Other Features")
-	ColourNote(help_colour, "", "--------------")
 
+	ColourNote(help_colour, "", "Other Features")
+	
+	if EpicMisc["VI"] == "NO" then
+		ColourNote(help_colour, "", "--------------")
+	elseif EpicMisc["VI"] == "YES" then
+		Note("")
+	end
+	
 	ColourNote(help_command_colour, "", "ecal help bot ", help_colour, "", " - for more information on a notification and channel command bot")
 
 	ColourNote(help_command_colour, "", "ecal help next", help_colour, "", " - for more information on some useful commands to display the next upcoming epic")
@@ -3559,7 +3645,10 @@ function EpicCalendarHelp()
 	
 	ColourNote(help_command_colour, "", "PLEASE NOTE", help_colour, "", ": the user can also use ", help_command_colour, "", "epiccalendar", help_colour, "", " instead of ", help_command_colour, "", "ecal")
 	
-	ColourNote(help_colour, "", noteline)
+	if EpicMisc["VI"] == "NO" then
+		ColourNote(help_colour, "", noteline)
+	end
+	
 	Note("")
 end	-- EpicCalendarHelp
 
@@ -3570,7 +3659,13 @@ function EpicCalendarHelpBot()
 	spacing = HelpSpacing(title, title2)	
 	
 	ColourNote(help_colour, "", spacing, help_command_colour, "", "Tallimos' Epic Calendar Help - Notification Bot")
-	ColourNote(help_colour, "", noteline)
+
+	if EpicMisc["VI"] == "NO" then
+		ColourNote(help_colour, "", noteline)
+	elseif EpicMisc["VI"] == "YES" then
+		Note("")
+	end
+
 	ColourNote(help_colour, "", "The notification bot allows the user to warn themselves of upcoming epic runs. If an is going")
 	ColourNote(help_colour, "", "to start within 3 hours or less the system will remind the user every hour of the upcoming epic")
 	ColourNote(help_colour, "", "run as well as a 5 minute notice of it starting.")
@@ -3581,7 +3676,12 @@ function EpicCalendarHelpBot()
 	Note("")
 	ColourNote(help_colour, "", "Finally this system will also allow users to post hourly reminders to channels of their")
 	ColourNote(help_colour, "", "choosing of the next up coming epic run.")
-	ColourNote(help_colour, "", noteline)
+
+	if EpicMisc["VI"] == "NO" then
+		ColourNote(help_colour, "", noteline)
+	elseif EpicMisc["VI"] == "YES" then
+		Note("")
+	end
 
 	ColourNote(help_command_colour, "", "ecal bot <enable|disable>    ", help_colour, "", " - enables/disables the main bot system")
 
@@ -3609,7 +3709,10 @@ function EpicCalendarHelpBot()
 	
 	ColourNote(help_command_colour, "", "PLEASE NOTE", help_colour, "", ": only ", qty_colour, "", "ft", help_colour, "", ", ", qty_colour, "", "gt", help_colour, "", ", ", qty_colour, "", "clan", help_colour, "", " and ", qty_colour, "", "tells", help_colour, "", " have been added to the channel command system")
 
-	ColourNote(help_colour, "", noteline)
+	if EpicMisc["VI"] == "NO" then
+		ColourNote(help_colour, "", noteline)
+	end
+
 	Note("")
 end	-- EpicCalendarHelpBot
 
@@ -3620,10 +3723,21 @@ function EpicCalendarHelpNext()
 	spacing = HelpSpacing(title, title2)
 	
 	ColourNote(help_colour, "", spacing, help_command_colour, "", "Tallimos' Epic Calendar Help - Next Commands")
-	ColourNote(help_colour, "", noteline)
+
+	if EpicMisc["VI"] == "NO" then
+		ColourNote(help_colour, "", noteline)
+	elseif EpicMisc["VI"] == "YES" then
+		Note("")
+	end
+	
 	ColourNote(help_colour, "", "The next commands are basically just that, it will show the next epic coming up in various")
 	ColourNote(help_colour, "", "categories.")
-	ColourNote(help_colour, "", noteline)
+
+	if EpicMisc["VI"] == "NO" then
+		ColourNote(help_colour, "", noteline)
+	elseif EpicMisc["VI"] == "YES" then
+		Note("")
+	end
 
 	ColourNote(help_command_colour, "", "ecal nextepic            ", help_colour, "", " - displays to the user which epic run is coming up next")
 
@@ -3641,7 +3755,13 @@ function EpicCalendarHelpNext()
 	Note("")
 	
 	ColourNote(help_colour, "", "Channel Command System")
-	ColourNote(help_colour, "", "----------------------")
+
+	if EpicMisc["VI"] == "NO" then
+		ColourNote(help_colour, "", "----------------------")
+	elseif EpicMisc["VI"] == "YES" then
+		Note("")
+	end
+	
 	ColourNote(help_colour, "", "If the channel command system has been activated the users who have access can using the")
 	ColourNote(help_colour, "", "commands below to see upcoming epic runs")
 	Note("")
@@ -3666,7 +3786,10 @@ function EpicCalendarHelpNext()
 
 	ColourNote(help_command_colour, "", "!noteremove <notenum>", help_colour, "", " - will request the bot to remove the schedule note")
 
-	ColourNote(help_colour, "", noteline)
+	if EpicMisc["VI"] == "NO" then
+		ColourNote(help_colour, "", noteline)
+	end
+
 	Note("")
 end	-- EpicCalendarHelpNext
 
@@ -3680,6 +3803,7 @@ function GetSavedData()
 		TableIndex = 0
 		EpicTable = {}
 		EpicMisc = {}
+		EpicMisc["VI"] = "NO"
 		EpicMisc["Updating"] = "NO"
 		EpicMisc["NoteRooms"] = {}
 		EpicMisc["NoteRooms"][32418] = {}

@@ -1,5 +1,12 @@
 dbot.changelog = {}
 
+dbot.changelog[1.8] =
+{
+  { change = drlDbotChangeLogTypeNew,
+    desc   = "VI friendly option added"
+  },
+}
+
 dbot.changelog[1.71] =
 {
   { change = drlDbotChangeLogTypeFix,
