@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="1.8"
+   version="1.81"
    >
    
 </plugin>
@@ -459,6 +459,7 @@ require "aardmapper"
 require "aard_lua_extras"
 require "wait"
 require "async"
+require "aardwolf_colors"
 
 local remain_colour   = "lime"
 local time_colour     = "lightslategrey"
@@ -3470,21 +3471,21 @@ function AddRoom()
 	
 	if EpicMisc["NoteRooms"][gmcproomid] == nil then
 		EpicMisc["NoteRooms"][gmcproomid] = {}
-		EpicMisc["NoteRooms"][gmcproomid]["Name"] = gmcpname
-		EpicMisc["NoteRooms"][gmcproomid]["Area"] = gmcparea
+		EpicMisc["NoteRooms"][gmcproomid]["Name"] = strip_colours(gmcpname)
+		EpicMisc["NoteRooms"][gmcproomid]["Area"] = strip_colours(gmcparea)
 		
 		if EpicMisc["VI"] == "NO" then
-			ColourNote(help_command_colour, "", "[" .. gmcparea, msg_colour, "", "/", help_command_colour, "", gmcpname, msg_colour, "", "/", help_command_colour, "", gmcproomid .. "]", msg_colour, "", " has been added to the database")
+			ColourNote(help_command_colour, "", "[" .. strip_colours(gmcparea), msg_colour, "", "/", help_command_colour, "", strip_colours(gmcpname), msg_colour, "", "/", help_command_colour, "", gmcproomid .. "]", msg_colour, "", " has been added to the database")
 		elseif EpicMisc["VI"] == "YES" then
-			ColourNote(help_command_colour, "", gmcparea, msg_colour, "", " ", help_command_colour, "", gmcpname, msg_colour, "", " ", help_command_colour, "", gmcproomid, msg_colour, "", " has been added to the database")
+			ColourNote(help_command_colour, "", strip_colours(gmcparea), msg_colour, "", " ", help_command_colour, "", strip_colours(gmcpname), msg_colour, "", " ", help_command_colour, "", gmcproomid, msg_colour, "", " has been added to the database")
 		end
 		
 		SaveState()
 	else
 		if EpicMisc["VI"] == "NO" then
-			ColourNote(help_command_colour, "", "[" .. gmcparea, msg_colour, "", "/", help_command_colour, "", gmcpname, msg_colour, "", "/", help_command_colour, "", gmcproomid .. "]", msg_colour, "", " has already been added to the database")
+			ColourNote(help_command_colour, "", "[" .. strip_colours(gmcparea), msg_colour, "", "/", help_command_colour, "", strip_colours(gmcpname), msg_colour, "", "/", help_command_colour, "", gmcproomid .. "]", msg_colour, "", " has already been added to the database")
 		elseif EpicMisc["VI"] == "YES" then
-			ColourNote(help_command_colour, "", gmcparea, msg_colour, "", " ", help_command_colour, "", gmcpname, msg_colour, "", " ", help_command_colour, "", gmcproomid, msg_colour, "", " has already been added to the database")
+			ColourNote(help_command_colour, "", strip_colours(gmcparea), msg_colour, "", " ", help_command_colour, "", strip_colours(gmcpname), msg_colour, "", " ", help_command_colour, "", gmcproomid, msg_colour, "", " has already been added to the database")
 		end
 	end
 end -- AddRemove
@@ -3496,17 +3497,17 @@ function RemoveRoom()
 		EpicMisc["NoteRooms"][gmcproomid] = nil
 		
 		if EpicMisc["VI"] == "NO" then
-			ColourNote(help_command_colour, "", "[" .. gmcparea, msg_colour, "", "/", help_command_colour, "", gmcpname, msg_colour, "", "/", help_command_colour, "", gmcproomid .. "]", msg_colour, "", " has been removed from the database")
+			ColourNote(help_command_colour, "", "[" .. strip_colours(gmcparea), msg_colour, "", "/", help_command_colour, "", strip_colours(gmcpname), msg_colour, "", "/", help_command_colour, "", gmcproomid .. "]", msg_colour, "", " has been removed from the database")
 		elseif EpicMisc["VI"] == "YES" then
-			ColourNote(help_command_colour, "", gmcparea, msg_colour, "", " ", help_command_colour, "", gmcpname, msg_colour, "", " ", help_command_colour, "", gmcproomid, msg_colour, "", " has been removed from the database")
+			ColourNote(help_command_colour, "", strip_colours(gmcparea), msg_colour, "", " ", help_command_colour, "", strip_colours(gmcpname), msg_colour, "", " ", help_command_colour, "", gmcproomid, msg_colour, "", " has been removed from the database")
 		end
 		
 		SaveState()
 	else
 		if EpicMisc["VI"] == "NO" then
-			ColourNote(help_command_colour, "", "[" .. gmcparea, msg_colour, "", "/", help_command_colour, "", gmcpname, msg_colour, "", "/", help_command_colour, "", gmcproomid .. "]", msg_colour, "", " is not in the database")
+			ColourNote(help_command_colour, "", "[" .. strip_colours(gmcparea), msg_colour, "", "/", help_command_colour, "", strip_colours(gmcpname), msg_colour, "", "/", help_command_colour, "", gmcproomid .. "]", msg_colour, "", " is not in the database")
 		elseif EpicMisc["VI"] == "YES" then
-			ColourNote(help_command_colour, "", gmcparea, msg_colour, "", " ", help_command_colour, "", gmcpname, msg_colour, "", " ", help_command_colour, "", gmcproomid, msg_colour, "", " is not in the database")
+			ColourNote(help_command_colour, "", strip_colours(gmcparea), msg_colour, "", " ", help_command_colour, "", strip_colours(gmcpname), msg_colour, "", " ", help_command_colour, "", gmcproomid, msg_colour, "", " is not in the database")
 		end
 	end
 end -- RemoveRoom
