@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="1.81"
+   version="1.82"
    >
    
 </plugin>
@@ -459,7 +459,6 @@ require "aardmapper"
 require "aard_lua_extras"
 require "wait"
 require "async"
-require "aardwolf_colors"
 
 local remain_colour   = "lime"
 local time_colour     = "lightslategrey"
