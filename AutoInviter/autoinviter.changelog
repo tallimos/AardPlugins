@@ -1,5 +1,12 @@
 dbot.changelog = {}
 
+dbot.changelog[1.53] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Removed some forgotten debug messages"
+  },
+}
+
 dbot.changelog[1.52] =
 {
   { change = drlDbotChangeLogTypeFix,

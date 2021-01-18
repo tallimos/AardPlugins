@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-12-04 09:12:45"
    requires="4.37"
-   version="1.52"
+   version="1.53"
    >
 
 </plugin>
@@ -461,9 +461,7 @@ function AnotherGroup(name, line, wc)
 	
 	SendNoEcho("bonk " .. user)
 	SendNoEcho("tell " .. user .. " Leave your current group and try again!")
-	
-	Note(CheckPending(user))
-	
+		
 	if CheckPending(user) == "yes" then
 		RemovePending(user)
 	end
@@ -482,7 +480,6 @@ end -- AnotherGroup
 function Joined(name, line, wc)
 	user = string.lower(wc[1])
 	
-	Note(CheckPending(user))
 	if CheckPending(user) == "yes" then
 		RemovePending(user)
 	end
@@ -537,7 +534,7 @@ function CheckPending(user)
 end -- CheckPending
 
 function RemovePending(user)	
-	Note(user)
+	
 	for i,v in pairs(InviterTable["Pending"]) do
 		if i == user then
 			InviterTable["Pending"][i] = nil
@@ -772,7 +769,6 @@ function RemovePowerUser(user)
 	username = string.gsub (user, "^.", string.upper)
 	SendNoEcho("gt @C" .. username .. " @Dhas been removed from the power users list.@w")
 	
-	-- ColourNote(qty_colour, "", username, msg_colour, "", " has been removed from the power users list.")
 
 	InviterTable["Power Users"][user] = nil
 	SaveState()
