@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-12-04 09:12:45"
    requires="4.37"
-   version="1.53"
+   version="1.54"
    >
 
 </plugin>
@@ -445,6 +445,15 @@ function Invite(name, line, wc)
 		if CheckPending(user) == "yes" then
 			SendNoEcho ("tell " .. user .. " @R" .. user .. " @Dyou have already been invited! Type '@Rgroup accept " .. charname .. "@D'@w")
 		else
+
+			GetCharName()
+			
+			if GroupLeader() ~= charname then
+				local leader = GroupLeader()
+				SendNoEcho ("tell " .. user .. " @C" .. leader .. " @D is the current leader of the group.@w")
+				return
+			end
+		
 			SendNoEcho ("group invite " .. user)
 			pindex = pindex + 1
 			InviterTable["Pending"][user] = {}
@@ -751,9 +760,9 @@ function AddPowerUser(user)
 	end
 	
 	username = string.gsub (user, "^.", string.upper)
-	SendNoEcho("gt @C" .. username .. " @Dhas been added to the power users list.@w")
+	-- SendNoEcho("gt @C" .. username .. " @Dhas been added to the power users list.@w")
 	
-	-- ColourNote(qty_colour, "", username, msg_colour, "", " has been added to the power users list.")
+	ColourNote(qty_colour, "", username, msg_colour, "", " has been added to the power users list.")
 
 	InviterTable["Power Users"][user] = {}
 	InviterTable["Power Users"][user]["Since"] = os.time()
@@ -767,9 +776,10 @@ function RemovePowerUser(user)
 	end
 	
 	username = string.gsub (user, "^.", string.upper)
-	SendNoEcho("gt @C" .. username .. " @Dhas been removed from the power users list.@w")
+	-- SendNoEcho("gt @C" .. username .. " @Dhas been removed from the power users list.@w")
 	
-
+	ColourNote(qty_colour, "", username, msg_colour, "", " has been removed from the power users list.")
+	
 	InviterTable["Power Users"][user] = nil
 	SaveState()
 end -- RemovePowerUser
@@ -909,7 +919,7 @@ function PowerUsers(name, line, wc)
 					SendNoEcho ("gt @DI am already group leader.")
 				end
 			else
-				SendNoEcho ("gt @DI am not group leader.")
+				-- SendNoEcho ("gt @DI am not group leader.")
 			end
 		else
 			player = string.gsub (player, "^.", string.upper)

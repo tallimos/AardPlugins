@@ -1,5 +1,12 @@
 dbot.changelog = {}
 
+dbot.changelog[1.54] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Added a leader check for invites to make inform the user if you are not current group leader"
+  },
+}
+
 dbot.changelog[1.53] =
 {
   { change = drlDbotChangeLogTypeFix,
