@@ -10,7 +10,7 @@ dbot.changelog[1.55] =
 dbot.changelog[1.54] =
 {
   { change = drlDbotChangeLogTypeFix,
-    desc   = "Added a leader check for invites to make inform the user if you are not current group leader"
+    desc   = "Added a leader check for invites to inform the user if you are not current group leader"
   },
 }
 
