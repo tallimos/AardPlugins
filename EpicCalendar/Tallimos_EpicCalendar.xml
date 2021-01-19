@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="1.82"
+   version="1.83"
    >
    
 </plugin>
@@ -1318,8 +1318,6 @@ function AddEpic(notenum, notedate, cname, subjectline)
 		timecheck = "YES"
 		
 	end
-
-	if timecheck == "NO" then return end
 	
 	-- for i,v in ipairs(EpicTable) do
 		-- if (tonumber(EpicTable[i]["Note Number"])) == notenum then
@@ -1365,6 +1363,12 @@ function AddEpic(notenum, notedate, cname, subjectline)
 		
 		epname = ""
 		
+		if aftercheck == "NO" and beforecheck == "NO" then
+		
+			if timecheck == "NO" then return end
+
+		end
+				
 		for i,v in ipairs(EpicNames) do
 			if (CheckEpic(EpicNames[i], wordtable[wordindex])) ~= nil and wordtable[wordindex] ~= afterepicorig and wordtable[wordindex] ~= beforeepicorig then 
 				epiccheck = "YES"

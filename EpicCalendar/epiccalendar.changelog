@@ -1,5 +1,12 @@
 dbot.changelog = {}
 
+dbot.changelog[1.83] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Fixed bug with after and before epics not being added."
+  },
+}
+
 dbot.changelog[1.82] =
 {
   { change = drlDbotChangeLogTypeFix,
