@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-12-04 09:12:45"
    requires="4.37"
-   version="1.54"
+   version="1.55"
    >
 
 </plugin>
@@ -196,6 +196,11 @@ function CommandMenu(name, line, wc)
 	elseif cmd == "check" then
 		user = wordtable[2]
 		if user ~= nil then 
+			if InGroup() == "no" then
+				ColourNote(msg_colour, "", "You are not a member of a group.")
+				return
+			end
+
 			if IsUserInGroup(user) == "yes" then
 				user = string.gsub (user, "^.", string.upper)
 				SendNoEcho ("gt @C" .. user .. " @Dis in the group.")
@@ -217,6 +222,8 @@ function CommandMenu(name, line, wc)
 			elseif attrib == "disable" then
 				DisableBlacklist()
 			elseif attrib == "add" then
+				reason = nil
+				
 				user = wordtable[3]
 				wordcount = 0
 
@@ -332,6 +339,7 @@ function InGroup()
 end -- InGroup
 
 function IsUserInGroup(user)
+
 	gmcpgroup = gmcp("group")
 	
 	ismember = "no"
@@ -370,16 +378,11 @@ end -- GroupLeader
 ----------------------------------------------
 function EnableInviter()
 	if InGroup() == "no" then
-		ColourNote(msg_colour, "", "You are not a member of a group.")
-		return
+	 	ColourNote(msg_colour, "", "You are not a member of a group.")
+	 	return
 	end
 	
 	GetCharName()
-	
-	if GroupLeader() ~= charname then
-		ColourNote(msg_colour, "", "You are not a leader of a group.")
-		return
-	end
 
 	InviterTable["Pending"] = {}
 	pindex = 0
@@ -414,7 +417,8 @@ end -- DisableInviter
 function Invite(name, line, wc)
 	user = string.lower(wc[1])
 	keyword = string.lower(wc[2])
-
+	user2 = string.gsub (user, "^.", string.upper)
+	
 	EnableTrigger("AnotherGroup", true)
 	
 	if InviterTable["BlacklistEnabled"] == true then
@@ -438,24 +442,33 @@ function Invite(name, line, wc)
 	if keywordcheck == "no" then
 		return
 	end
+
+	if InGroup() == "no" then
+	
+	 	SendNoEcho ("tell " .. user .. " @DSorry @C" .. user2 .. " @Dbut I am not in a group at this time.@w")
+	 	return
+	end
 	
 	if IsUserInGroup(user) == "yes" then
-		SendNoEcho ("tell " .. user .. " @R" .. user .. " @Dyou are already in the group.@w")
+		SendNoEcho ("tell " .. user .. " @C" .. user2 .. " @Dyou are already in the group.@w")
 	else
 		if CheckPending(user) == "yes" then
-			SendNoEcho ("tell " .. user .. " @R" .. user .. " @Dyou have already been invited! Type '@Rgroup accept " .. charname .. "@D'@w")
+			SendNoEcho ("tell " .. user .. " @C" .. user2 .. " @Dyou have already been invited! Type '@Cgroup accept " .. charname .. "@D'@w")
 		else
-
 			GetCharName()
 			
 			if GroupLeader() ~= charname then
 				local leader = GroupLeader()
-				SendNoEcho ("tell " .. user .. " @C" .. leader .. " @D is the current leader of the group.@w")
+				leader = string.gsub (leader, "^.", string.upper)
+				
+				SendNoEcho ("tell " .. user .. " @DSorry @C" .. user2 .. " @Dbut I am not the leader at this time. @C" .. leader .. " @Dis the current leader of the group.@w")
 				return
 			end
 		
 			SendNoEcho ("group invite " .. user)
+			
 			pindex = pindex + 1
+			
 			InviterTable["Pending"][user] = {}
 			InviterTable["Pending"][user]["Invite Number"] = pindex
 			InviterTable["Pending"][user]["Invite Time"] = os.time()
@@ -469,7 +482,7 @@ function AnotherGroup(name, line, wc)
 	user = string.lower(wc[1])
 	
 	SendNoEcho("bonk " .. user)
-	SendNoEcho("tell " .. user .. " Leave your current group and try again!")
+	SendNoEcho("tell " .. user .. " @DLeave your current group and try again!@w")
 		
 	if CheckPending(user) == "yes" then
 		RemovePending(user)
@@ -495,7 +508,12 @@ function Joined(name, line, wc)
 end -- AnotherGroup
 
 function Disbanded(name, line, wc)	
-	DisableInviter()
+	GetCharName()
+	local name = string.lower(wc[1])
+	
+	if name == charname then
+		DisableInviter()
+	end
 end -- Disbanded
 
 function LockGroup()
@@ -964,7 +982,6 @@ function PowerUsersRename(name, line, wc)
 	title = wc[2]
 
 	if CheckPowerUser(user) == "no" then
-		-- ColourNote(qty_colour, "", user, msg_c	olour, "", " is not a power user.")
 		return
 	end
 
@@ -1012,7 +1029,7 @@ function PowerUserHelp(user, cmd)
 		SendNoEcho ("gt @R[PUSer Help] @C.disband confirm @D- disbands the group@w")
 	else
 		user = string.gsub (user, "^.", string.upper)
-		SendNoEcho ("gt @DSorry @R" .. user .. "@D, that is not a valid option.@w")
+		SendNoEcho ("gt @DSorry @C" .. user .. "@D, that is not a valid option.@w")
 	end
 end -- PowerUserHelp
 
