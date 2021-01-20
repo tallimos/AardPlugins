@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-12-11 21:36:19"
    requires="4.36"
-   version="1.6"
+   version="1.7"
    >
 
 </plugin>
@@ -262,6 +262,14 @@ function CommandMenu(name, line, wc)
 		end
 	elseif cmd == "list" then
 		ListChannels()
+	elseif cmd == "vi" then		
+		if BroadcastTable["VI"] == "YES" then
+			BroadcastTable["VI"] = "NO"
+			ColourNote(msg_colour, "", "VI friendy option disabled.")
+		elseif BroadcastTable["VI"] == "NO" then
+			BroadcastTable["VI"] = "YES"
+			ColourNote(msg_colour, "", "VI friendy option enabled.")			
+		end
 	elseif cmd == "update" then
 		-- dbot.version.update.release(drlDbotUpdateInstall, endTag)
 		teb_update()
@@ -485,9 +493,11 @@ function ListChannels()
 	ColourNote(help_colour, "", spacing, help_command_colour, "", title)
 	Note("")
 
-	ColourNote(msg_colour, "", title2)
-	ColourNote(msg_colour, "", "| Channel  |  Status  |")
-	ColourNote(msg_colour, "", title2)
+	if BroadcastTable["VI"] == "NO" then
+		ColourNote(msg_colour, "", title2)
+		ColourNote(msg_colour, "", "| Channel  |  Status  |")
+		ColourNote(msg_colour, "", title2)
+	end
 
 	for i, v in pairs(BroadcastTable["Channels"]) do
 		if v == false then
@@ -501,11 +511,17 @@ function ListChannels()
 		if i == nil then channelspace = "        " else channelspace = MakeSpace(i, 8) end
 		
 		if displayname == nil then displayspace = "   " else displayspace = MakeSpace(displayname, 3) end
-		
-		ColourNote(msg_colour, "", "| ", channel_colour, "", i .. channelspace, msg_colour, "", " |   ", display_colour, "", displayname .. displayspace, msg_colour, "", "    | ")
-	end
 
-	ColourNote(msg_colour, "", title2)
+		if BroadcastTable["VI"] == "NO" then		
+			ColourNote(msg_colour, "", "| ", channel_colour, "", i .. channelspace, msg_colour, "", " |   ", display_colour, "", displayname .. displayspace, msg_colour, "", "    | ")
+		elseif BroadcastTable["VI"] == "YES" then		
+			ColourNote(msg_colour, "", "Channel: ", channel_colour, "", i .. channelspace, msg_colour, "", " Status:   ", display_colour, "", displayname .. displayspace)
+		end
+	end
+	
+	if BroadcastTable["VI"] == "NO" then
+		ColourNote(msg_colour, "", title2)
+	end
 end -- ListChannels
 
 -----------------------------------------------
@@ -560,9 +576,14 @@ function EpicBroadcasterHelp()
 	spacing = TitleSpacing(title, title2)
 	
 	ColourNote(help_colour, "", spacing, help_command_colour, "", title)
-	ColourNote(help_colour, "", noteline)
-	ColourNote(help_colour, "", "This plugin gives the user an easy to use broadcaster for announcing epic run groupings.")
-	ColourNote(help_colour, "", noteline)
+	
+	if BroadcastTable["VI"] == "NO" then		
+		ColourNote(help_colour, "", noteline)
+		ColourNote(help_colour, "", "This plugin gives the user an easy to use broadcaster for announcing epic run groupings.")
+		ColourNote(help_colour, "", noteline)
+	end
+	
+	Note("")
 	
 	ColourNote(help_command_colour, "", "teb update                    ", help_colour, "", " - checks for the latest version of plugin and installs it")
 
@@ -580,6 +601,7 @@ function EpicBroadcasterHelp()
 	
 	ColourNote(help_command_colour, "", "teb namedisplay               ", help_colour, "", " - toggles between Full and Short for epic name")
 	
+	ColourNote(help_command_colour, "", "teb vi                        ", help_colour, "", " - enables/disables the vi friendly option")
 	
 	ColourNote(help_command_colour, "", "teb setdisplay <num>          ", help_colour, "", " - sets the display type")
 	ColourNote(help_colour, "", "                               - Displays 1-20 are the normal displays, Displays 21-40 are")
@@ -613,7 +635,10 @@ function EpicBroadcasterHelp()
 	ColourNote(help_colour, "", "Valid epic names are: ", qty_colour, "", "genie", msg_colour, "", ", ", qty_colour, "", "if1", msg_colour, "", ", ", qty_colour, "", "if2", msg_colour, "", ", ", qty_colour, "", "inferno", msg_colour, "", ", ", qty_colour, "", "oc", msg_colour, "", ", ", qty_colour, "", "winds", msg_colour, "", ", ", qty_colour, "", "titan", msg_colour, "", ", ", qty_colour, "", "terra", msg_colour, "", ", ", qty_colour, "", "oldvanir", msg_colour, "", ", ")
 	ColourNote(qty_colour, "", "                      testmaze10", msg_colour, "", " and ", qty_colour, "", "trans")
 
-	ColourNote(help_colour, "", noteline)
+	if BroadcastTable["VI"] == "NO" then		
+		ColourNote(help_colour, "", noteline)
+	end
+
 	Note("")
 end	-- EpicBroadcasterHelp
 
@@ -623,8 +648,13 @@ end	-- EpicBroadcasterHelp
 function GetSavedData()
 	if GetVariable ("ebpastfirstinstall") == "true" then
 		assert (loadstring (GetVariable ("BroadcastTable") or "")) ()
+		
+		if BroadcastTable["VI"] == nil then 
+			BroadcastTable["VI"] = "NO"
+		end
 	else
 		BroadcastTable = {}
+		BroadcastTable["VI"] = "NO"
 		BroadcastTable["Updating"] = "NO"
 		BroadcastTable["DisplayType"] = 1
 		BroadcastTable["TimerMinutes"] = 3
