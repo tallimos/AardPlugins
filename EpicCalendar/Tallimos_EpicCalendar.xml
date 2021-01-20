@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="1.83"
+   version="1.84"
    >
    
 </plugin>
@@ -1075,17 +1075,13 @@ function CommandMenu(name, line, wc)
 		else
 			ColourNote(msg_colour, "", "Invalid command. Please see ", qty_colour, "", "ecal help bot", msg_colour, "", " for more information.")
 		end
-	elseif cmd == "vi" then
-		attrib = wordtable[2]
-		
-		if attrib == "enable" then
-			EpicMisc["VI"] = "YES"
-			ColourNote(msg_colour, "", "VI friendy option enabled.")			
-		elseif attrib == "disable" then
+	elseif cmd == "vi" then		
+		if EpicMisc["VI"] == "YES" then
 			EpicMisc["VI"] = "NO"
 			ColourNote(msg_colour, "", "VI friendy option disabled.")
-		else
-			ColourNote(msg_colour, "", "Invalid option. Please see ", qty_colour, "", "ecal help", msg_colour, "", " for more information.")
+		elseif EpicMisc["VI"] == "NO" then
+			EpicMisc["VI"] = "YES"
+			ColourNote(msg_colour, "", "VI friendy option enabled.")			
 		end
 	elseif cmd == "help" then
 		if wordtable[2] == nil then
@@ -3616,13 +3612,14 @@ function EpicCalendarHelp()
 	
 	ColourNote(help_command_colour, "", "ecal update  ", help_colour, "", " - checks and see if the latest version of the plugin is installed")
 
-	
 	ColourNote(help_command_colour, "", "ecal reset   ", help_colour, "", " - clears the epic run list and adds all upcoming runs")
 
 	ColourNote(help_command_colour, "", "ecal clear   ", help_colour, "", " - clears the epic run list without adding upcoming runs")
 
 	ColourNote(help_command_colour, "", "ecal list    ", help_colour, "", " - lists all upcoming epic runs")
 
+	ColourNote(help_command_colour, "", "ecal vi      ", help_colour, "", " - enables/disables the vi friendly option")
+	
 	ColourNote(help_command_colour, "", "ecal nupdate <note #>   ", help_colour, "", " - used when epic leader posts a subject line to long")
 	
 	ColourNote(help_command_colour, "", "ecal checkversion       ", help_colour, "", " - checks to see if there is a newer version of the plugin available")
@@ -3631,7 +3628,6 @@ function EpicCalendarHelp()
 
 	ColourNote(help_command_colour, "", "ecal search <epic>      ", help_colour, "", " - searches the epic runs list")
 	
-	ColourNote(help_command_colour, "", "ecal vi <enable|disable>", help_colour, "", " - enables/disables the vi friendly option")
 	Note("")
 
 	ColourNote(help_colour, "", "Other Features")

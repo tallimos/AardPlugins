@@ -1,5 +1,12 @@
 dbot.changelog = {}
 
+dbot.changelog[1.84] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Changed VI command to a toggle"
+  },
+}
+
 dbot.changelog[1.83] =
 {
   { change = drlDbotChangeLogTypeFix,
