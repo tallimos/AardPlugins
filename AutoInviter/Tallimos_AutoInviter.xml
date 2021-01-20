@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-12-04 09:12:45"
    requires="4.37"
-   version="1.55"
+   version="1.6"
    >
 
 </plugin>
@@ -307,6 +307,14 @@ function CommandMenu(name, line, wc)
 		else
 			ColourNote(msg_colour, "", "Invalid command. Please see ", help_command_colour, "", "tai help", msg_colour, "", " for more information.")
 		end
+	elseif cmd == "vi" then		
+		if InviterTable["VI"] == "YES" then
+			InviterTable["VI"] = "NO"
+			ColourNote(msg_colour, "", "VI friendy option disabled.")
+		elseif InviterTable["VI"] == "NO" then
+			InviterTable["VI"] = "YES"
+			ColourNote(msg_colour, "", "VI friendy option enabled.")			
+		end
 	elseif cmd == "update" then
 		-- dbot.version.update.release(drlDbotUpdateInstall, endTag)
 		tai_update()
@@ -321,6 +329,8 @@ function CommandMenu(name, line, wc)
 	else
 		ColourNote(msg_colour, "", "Invalid command. Please see ", qty_colour, "", "tai help", msg_colour, "", " for more information.")
 	end
+	
+	SaveState()
 end -- CommandMenu
 
 ---------------------------------------------
@@ -586,9 +596,11 @@ function ListPending()
 	ColourNote(help_colour, "", spacing, help_command_colour, "", title)
 	Note("")
 
-	ColourNote(msg_colour, "", title2)
-	ColourNote(msg_colour, "", "| Name         | Invite # | Time Pending                               |")
-	ColourNote(msg_colour, "", title2)
+	if InviterTable["VI"] == "NO" then
+		ColourNote(msg_colour, "", title2)
+		ColourNote(msg_colour, "", "| Name         | Invite # | Time Pending                               |")
+		ColourNote(msg_colour, "", title2)
+	end
 	
 	for i,v in pairs(InviterTable["Pending"]) do
 		username = string.gsub (i, "^.", string.upper)
@@ -602,17 +614,23 @@ function ListPending()
 		timeDiff(timenow,timenow2,timediff2)
 
 		local timeonlist = remainingtime_note(timediff2)
-		
+	
 		if username == nil then namespace = 12 else namespace = MakeSpace(username, 12) end
 		
 		if invitenum == nil then invitespace = 8 else invitespace = MakeSpace(invitenum, 8) end
 		
 		if timeonlist == nil then onlistspace = 42 else onlistspace = MakeSpace(timeonlist, 42) end
 
-		ColourNote(msg_colour, "", "| ", user_colour, "", username .. namespace, msg_colour, "", " | ", reason_colour, "", invitenum .. invitespace, msg_colour, "", " | ", remain_colour, "", timeonlist .. onlistspace, msg_colour, "", " |")
+		if InviterTable["VI"] == "NO" then
+			ColourNote(msg_colour, "", "| ", user_colour, "", username .. namespace, msg_colour, "", " | ", reason_colour, "", invitenum .. invitespace, msg_colour, "", " | ", remain_colour, "", timeonlist .. onlistspace, msg_colour, "", " |")
+		elseif InviterTable["VI"] == "YES" then			
+			ColourNote(msg_colour, "", "User: ", user_colour, "", username .. namespace, msg_colour, "", " Invite Number: ", reason_colour, "", invitenum .. invitespace, msg_colour, "", " Time on Pending List: ", remain_colour, "", timeonlist .. onlistspace)
+		end
 	end
 
-	ColourNote(msg_colour, "", title2)
+	if InviterTable["VI"] == "NO" then
+		ColourNote(msg_colour, "", title2)
+	end
 end -- ListPending
 
 ---------------------------------------------
@@ -670,9 +688,11 @@ function ListBlacklist()
 	ColourNote(help_colour, "", spacing, help_command_colour, "", title)
 	Note("")
 
-	ColourNote(msg_colour, "", title2)
-	ColourNote(msg_colour, "", "| Name         | Reason                         | Time on List                               |")
-	ColourNote(msg_colour, "", title2)
+	if InviterTable["VI"] == "NO" then
+		ColourNote(msg_colour, "", title2)
+		ColourNote(msg_colour, "", "| Name         | Reason                         | Time on List                               |")
+		ColourNote(msg_colour, "", title2)
+	end
 	
 	for i,v in pairs(InviterTable["Blacklist"]) do
 		username = string.gsub (i, "^.", string.upper)
@@ -693,10 +713,16 @@ function ListBlacklist()
 		
 		if timeonlist == nil then onlistspace = 42 else onlistspace = MakeSpace(timeonlist, 42) end
 
-		ColourNote(msg_colour, "", "| ", user_colour, "", username .. namespace, msg_colour, "", " | ", reason_colour, "", reason .. reasonspace, msg_colour, "", " | ", remain_colour, "", onlistspace .. timeonlist,  msg_colour, "", " |")
+		if InviterTable["VI"] == "NO" then
+			ColourNote(msg_colour, "", "| ", user_colour, "", username .. namespace, msg_colour, "", " | ", reason_colour, "", reason .. reasonspace, msg_colour, "", " | ", remain_colour, "", onlistspace .. timeonlist,  msg_colour, "", " |")
+		elseif InviterTable["VI"] == "YES" then
+			ColourNote(msg_colour, "", "User: ", user_colour, "", username .. namespace, msg_colour, "", " Reason: ", reason_colour, "", reason, msg_colour, "", " Time on Blacklist: ", remain_colour, "", timeonlist)
+		end
 	end
 
-	ColourNote(msg_colour, "", title2)
+	if InviterTable["VI"] == "NO" then
+		ColourNote(msg_colour, "", title2)
+	end
 end -- ListBlacklist
 
 function EnableBlacklist()
@@ -758,9 +784,13 @@ end -- RemoveKeyword
 function ListKeywords()
 	title  = "Keyword List"
 	title2 = "------------"
-	
+		
 	ColourNote(msg_colour, "", title)
-	ColourNote(msg_colour, "", title2)
+	if InviterTable["VI"] == "NO" then
+		ColourNote(msg_colour, "", title2)
+	elseif InviterTable["VI"] == "YES" then
+		Note("")
+	end
 	
 	for i,v in pairs(InviterTable["Keywords"]) do
 		ColourNote(qty_colour, "", i)
@@ -827,9 +857,11 @@ function ListPowerUsers()
 	ColourNote(help_colour, "", spacing, help_command_colour, "", title)
 	Note("")
 
-	ColourNote(msg_colour, "", title2)
-	ColourNote(msg_colour, "", "| Name         | Time on List                               |")
-	ColourNote(msg_colour, "", title2)
+	if InviterTable["VI"] == "NO" then
+		ColourNote(msg_colour, "", title2)
+		ColourNote(msg_colour, "", "| Name         | Time on List                               |")
+		ColourNote(msg_colour, "", title2)
+	end
 	
 	for i,v in pairs(InviterTable["Power Users"]) do
 		username = string.gsub (i, "^.", string.upper)
@@ -846,11 +878,17 @@ function ListPowerUsers()
 		if username == nil then namespace = 12 else namespace = MakeSpace(username, 12) end
 		
 		if timeonlist == nil then onlistspace = 42 else onlistspace = MakeSpace(timeonlist, 42) end
-
-		ColourNote(msg_colour, "", "| ", user_colour, "", username .. namespace, msg_colour, "", " | ", remain_colour, "", onlistspace .. timeonlist,  msg_colour, "", " |")
+		
+		if InviterTable["VI"] == "NO" then
+			ColourNote(msg_colour, "", "| ", user_colour, "", username .. namespace, msg_colour, "", " | ", remain_colour, "", onlistspace .. timeonlist,  msg_colour, "", " |")
+		elseif InviterTable["VI"] == "YES" then
+			ColourNote(msg_colour, "", "User: ", user_colour, "", username .. namespace, msg_colour, "", " Time on Power List: ", remain_colour, "", timeonlist)
+		end
 	end
 
-	ColourNote(msg_colour, "", title2)
+	if InviterTable["VI"] == "NO" then
+		ColourNote(msg_colour, "", title2)
+	end
 end -- ListPowerUsers
 
 function EnablePowerUsers()
@@ -1143,23 +1181,40 @@ function AutoInviterHelp()
 	spacing = TitleSpacing(title, title2)
 	
 	ColourNote(help_colour, "", spacing, help_command_colour, "", title)
-	ColourNote(help_colour, "", noteline)
+	
+	if InviterTable["VI"] == "NO" then
+		ColourNote(help_colour, "", noteline)
+	elseif InviterTable["VI"] == "YES" then
+		Note("")
+	end
+	
 	ColourNote(help_colour, "", "This plugin gives the user an easy to use auto inviter with blacklist and power user options.")
-	ColourNote(help_colour, "", noteline)
+	
+	if InviterTable["VI"] == "NO" then
+		ColourNote(help_colour, "", noteline)
+	end
+	
 	Note("")
 	
 	ColourNote(help_colour, "", "Main Commands")
-	ColourNote(help_colour, "", "-------------")
 	
-	ColourNote(help_command_colour, "", "tai update                    ", help_colour, "", " - checks for the latest version of plugin and installs it")
+	if InviterTable["VI"] == "NO" then
+		ColourNote(help_colour, "", "-------------")
+	elseif InviterTable["VI"] == "YES" then
+		Note("")
+	end
+	
+	ColourNote(help_command_colour, "", "tai update                  ", help_colour, "", " - checks for the latest version of plugin and installs it")
 
-	ColourNote(help_command_colour, "", "tai checkversion              ", help_colour, "", " - checks to see if there is a newer version of the plugin available")
+	ColourNote(help_command_colour, "", "tai checkversion            ", help_colour, "", " - checks to see if there is a newer version of the plugin available")
 	
-	ColourNote(help_command_colour, "", "tai changelog                 ", help_colour, "", " - displays the changelog for the plugin")
+	ColourNote(help_command_colour, "", "tai changelog               ", help_colour, "", " - displays the changelog for the plugin")
 
 	ColourNote(help_command_colour, "", "tai enable                  ", help_colour, "", " - enables the autoinviter system")
 	
 	ColourNote(help_command_colour, "", "tai disable                 ", help_colour, "", " - disables the autoinviter system")
+	
+	ColourNote(help_command_colour, "", "tai vi                      ", help_colour, "", " - enables/disables the vi friendly option")
 	
 	ColourNote(help_command_colour, "", "tai check <player>          ", help_colour, "", " - checks to see if player is in group or not (i.e. Talia check)")
 
@@ -1174,7 +1229,12 @@ function AutoInviterHelp()
 	Note("")
 	
 	ColourNote(help_colour, "", "Keyword Commands")
-	ColourNote(help_colour, "", "----------------")
+	
+	if InviterTable["VI"] == "NO" then
+		ColourNote(help_colour, "", "----------------")
+	elseif InviterTable["VI"] == "YES" then
+		Note("")
+	end
 	
 	ColourNote(help_command_colour, "", "tai keywords                ", help_colour, "", " - lists your autoinvite keywords")
 	
@@ -1185,7 +1245,12 @@ function AutoInviterHelp()
 	Note("")
 	
 	ColourNote(help_colour, "", "Blacklist Commands")
-	ColourNote(help_colour, "", "------------------")
+	
+	if InviterTable["VI"] == "NO" then
+		ColourNote(help_colour, "", "------------------")
+	elseif InviterTable["VI"] == "YES" then
+		Note("")
+	end
 
 	ColourNote(help_command_colour, "", "tai bl enable               ", help_colour, "", " - enables the blacklist")
 	
@@ -1200,7 +1265,12 @@ function AutoInviterHelp()
 	Note("")
 	
 	ColourNote(help_colour, "", "Power User Commands")
-	ColourNote(help_colour, "", "-------------------")
+	
+	if InviterTable["VI"] == "NO" then
+		ColourNote(help_colour, "", "-------------------")
+	elseif InviterTable["VI"] == "YES" then
+		Note("")
+	end
 	
 	ColourNote(help_command_colour, "", "tai pusers                  ", help_colour, "", " - lists your approved power users")
 	
@@ -1217,7 +1287,10 @@ function AutoInviterHelp()
 	ColourNote(help_command_colour, "", "PLEASE NOTE", help_colour, "", ": For a list of power user commands, type ", help_command_colour, "", ".help", help_colour, "", " on grouptell while the Power User")
 	ColourNote(help_colour, "", "system is ENABLED.")
 	
-	ColourNote(help_colour, "", noteline)
+	if InviterTable["VI"] == "NO" then
+		ColourNote(help_colour, "", noteline)
+	end
+	
 	Note("")
 end	-- AutoInviterHelp
 
@@ -1227,8 +1300,13 @@ end	-- AutoInviterHelp
 function GetSavedData()
 	if GetVariable ("aipastfirstinstall") == "true" then
 		assert (loadstring (GetVariable ("InviterTable") or "")) ()
+
+		if InviterTable["VI"] == nil then 
+			InviterTable["VI"] = "NO"
+		end
 	else
 		InviterTable = {}
+		InviterTable["VI"] = "NO"
 		InviterTable["Updating"] = "NO"
 		InviterTable["BlacklistEnabled"] = false
 		InviterTable["Autolock"] = false
