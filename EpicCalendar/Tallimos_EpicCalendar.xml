@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="1.85"
+   version="1.86"
    >
    
 </plugin>
@@ -501,6 +501,7 @@ ran = false
 		[1] = "Quadrapus",
 		[2] = "Hadar",
 		[3] = "Fiendish",
+		[4] = "Areia",
 	}
 		
 	EpicMobs = {
@@ -2793,7 +2794,9 @@ function ChannelListDay(channel, day)
 			SendNoEcho (channel .. " @R[EpicCAL] @C" .. day .. " @Dis not a valid day.@w")
 			return
 		end
-
+		
+		day = string.gsub (day, "^.", string.upper)
+		
 		message = "@R[Full Schedule for @C" .. day .. "@R] - "
 		message2 = "@R[Full Schedule for @C" .. day .. "@R] - "	
 	end
@@ -2816,7 +2819,7 @@ function ChannelListDay(channel, day)
 			
 			dindex = EpicTable[i]["Time Table"]["wday"]
 			
-			day = string.gsub (DaysofWeekShort[dindex], "^.", string.upper)
+			day2 = string.gsub (DaysofWeekShort[dindex], "^.", string.upper)
 			
 			if EpicTable[i]["Time Table"]["min"] ~= 0 then
 				hour = EpicTable[i]["Hour"] .. ":" .. EpicTable[i]["Time Table"]["min"] .. " " ..  string.upper(EpicTable[i]["AMPM"])
@@ -2832,12 +2835,12 @@ function ChannelListDay(channel, day)
 			if wday == dindex then
 				daycheck = "YES"
 				if message == message2 then
-					message = message .. "@R[" .. day .. ": @C" .. ename .. " @G" .. hour
+					message = message .. "@R[@C" .. ename .. " @G" .. hour
 				else
 					if EpicTable[i]["Time Table"]["yday"] == EpicTable[previndex]["Time Table"]["yday"] then
 						message = message .. "@R/@C" .. ename .. " @G" .. hour
 					else
-						message = message .. "@R] [" .. day .. ": @C" .. ename .. " @G" .. hour
+						message = message .. "@R] [@C" .. ename .. " @G" .. hour
 					end
 				end
 			end
@@ -2847,7 +2850,12 @@ function ChannelListDay(channel, day)
 	if daycheck == "YES" then
 		SendNoEcho (channel .. " " .. message .. "@R]@w")
 	elseif daycheck == "NO" then
-		SendNoEcho (channel .. " @DThere are no epics runs scheduled or left to run on that day.@w")
+		if day == nil then 
+			SendNoEcho (channel .. " @DThere are no epics runs scheduled or left to run today.@w")
+		else
+			day = string.gsub (day, "^.", string.upper)
+			SendNoEcho (channel .. " @DThere are no epics runs scheduled or left to run on @C" .. day .. "@D.@w")
+		end
 	end
 end -- ChannelListDay
 
