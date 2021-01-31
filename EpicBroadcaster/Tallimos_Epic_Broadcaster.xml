@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-12-11 21:36:19"
    requires="4.36"
-   version="1.7"
+   version="1.8"
    >
 
 </plugin>
@@ -103,8 +103,12 @@ function CommandMenu(name, line, wc)
 			if BroadcastTable["Channels"][channel] == nil then
 				ColourNote(qty_colour, "", channel, msg_colour, "", " has not been be added to the broadcast list")
 			else
-				ColourNote(msg_colour, "", "Broadcasting for ", qty_colour, "", channel, msg_colour, "", " has been enabled.")
-				BroadcastTable["Channels"][channel] = true
+				if BroadcastTable["Channels"][channel] == true then 
+					ColourNote(msg_colour, "", "Broadcasting for ", qty_colour, "", channel, msg_colour, "", " has already been enabled.")
+				else
+					ColourNote(msg_colour, "", "Broadcasting for ", qty_colour, "", channel, msg_colour, "", " has been enabled.")
+					BroadcastTable["Channels"][channel] = true
+				end
 			end
 		else
 			ColourNote(msg_colour, "", "Please input a channel to enable")
@@ -116,8 +120,12 @@ function CommandMenu(name, line, wc)
 			if BroadcastTable["Channels"][channel] == nil then
 				ColourNote(qty_colour, "", channel, msg_colour, "", " has not been be added to the broadcast list")
 			else
-				ColourNote(msg_colour, "", "Broadcasting for ", qty_colour, "", channel, msg_colour, "", " has been disabled.")
-				BroadcastTable["Channels"][channel] = false
+				if BroadcastTable["Channels"][channel] == false then 
+					ColourNote(msg_colour, "", "Broadcasting for ", qty_colour, "", channel, msg_colour, "", " has already been disabled.")
+				else
+					ColourNote(msg_colour, "", "Broadcasting for ", qty_colour, "", channel, msg_colour, "", " has been disabled.")
+					BroadcastTable["Channels"][channel] = false
+				end
 			end
 		else
 			ColourNote(msg_colour, "", "Please input a channel to disable")
@@ -649,6 +657,15 @@ function GetSavedData()
 	if GetVariable ("ebpastfirstinstall") == "true" then
 		assert (loadstring (GetVariable ("BroadcastTable") or "")) ()
 		
+		if BroadcastTable["Channels"]["epics"] == nil then
+			BroadcastTable["Channels"]["imm"] = nil
+			BroadcastTable["Channels"]["gclan"] = nil
+			BroadcastTable["Channels"]["tt"] = nil
+			BroadcastTable["Channels"]["gametalk"] = nil
+			BroadcastTable["Channels"]["gossip"] = nil
+			BroadcastTable["Channels"]["epics"] = true
+		end
+		
 		if BroadcastTable["VI"] == nil then 
 			BroadcastTable["VI"] = "NO"
 		end
@@ -708,11 +725,7 @@ function GetSavedData()
 		BroadcastTable["Channels"]["gt"] = false
 		BroadcastTable["Channels"]["clan"] = false
 		BroadcastTable["Channels"]["ft"] = false
-		BroadcastTable["Channels"]["imm"] = false
-		BroadcastTable["Channels"]["gclan"] = false
-		BroadcastTable["Channels"]["tt"] = false
-		BroadcastTable["Channels"]["gametalk"] = false
-		BroadcastTable["Channels"]["gossip"] = false
+		BroadcastTable["Channels"]["epics"] = true
 	end
 
 	minutes = BroadcastTable["TimerMinutes"]

@@ -1,5 +1,12 @@
 dbot.changelog = {}
 
+dbot.changelog[1.8] =
+{
+  { change = drlDbotChangeLogTypeNew,
+    desc   = "Update to remove channels from broadcaster since the addition of Epics channel"
+  },
+}
+
 dbot.changelog[1.7] =
 {
   { change = drlDbotChangeLogTypeNew,
