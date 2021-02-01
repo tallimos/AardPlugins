@@ -1,5 +1,12 @@
 dbot.changelog = {}
 
+dbot.changelog[1.9] =
+{
+  { change = drlDbotChangeLogTypeNew,
+    desc   = "Added an approximate start time system for multiple epic notes"
+  },
+}
+
 dbot.changelog[1.86] =
 {
   { change = drlDbotChangeLogTypeFix,

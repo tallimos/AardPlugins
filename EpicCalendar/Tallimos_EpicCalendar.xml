@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="1.86"
+   version="1.9"
    >
    
 </plugin>
@@ -374,29 +374,8 @@
 
 <timers>
 	<timer
-		name="clandelay" 
-		second="5"  
-		enabled="n"
-		script="ClanDelayDisable"
-		>
-	</timer>
-	<timer
-		name="gtdelay" 
-		second="5"
-		enabled="n"
-		script="GroupTellDelayDisable"
-		>
-	</timer>
-	<timer
-		name="ftdelay" 
-		second="5" 
-		enabled="n"
-		script="FriendTalkDelayDisable"
-		>
-	</timer>
-	<timer
 		name="telldelay" 
-		second="5" 
+		second="20" 
 		enabled="n"
 		script="TellDelayDisable"
 		>
@@ -477,12 +456,14 @@ local help_command_colour  = "red"
 local noteline = "=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-="
 NextEpicNotification = 0
 ran = false
+approxtime = 0
 
 	EpicLeaders = {
 		[1] = "kers",
 		[2] = "shaelynne",
 		[3] = "hazeknight",
 		[4] = "roume",
+		[5] = "areia"
 	}
 		
 	SystemTimeTable = {
@@ -574,6 +555,7 @@ ran = false
 		[11] = 304,
 		[12] = 334,
 	}
+
 
 	EpicNames = {
 		[1] = "genie",
@@ -947,6 +929,62 @@ function CommandMenu(name, line, wc)
 		if channel == "tell" then channel = channel .. " " .. wordtable[4] end
 		
 		GetNextEpicDay(day, channel)
+	elseif cmd == "rt" or cmd == "runtime" then
+		attrib = wordtable[2]
+		
+		if attrib == "add" then
+			rtname = string.lower(wordtable[3])
+	
+			if rtname == nil then
+				ColourNote(msg_colour, "", "Command Usage: ", qty_colour, "", "ecal rt add <epic name> <runtime in minutes>")
+			else
+				rttime = wordtable[4]
+			
+				if tonumber(rttime) == nil then
+					ColourNote(msg_colour, "", "Command Usage: ", qty_colour, "", "ecal rt add <epic name> <runtime in minutes>")
+				else
+					AddRemoveEditRunTime(attrib, rtname, rttime)		
+				end
+			end
+		elseif attrib == "remove" then
+			rtname = string.lower(wordtable[3])
+	
+			if rtname == nil then
+				ColourNote(msg_colour, "", "Command Usage: ", qty_colour, "", "ecal rt remove <epic name>")
+			else
+				rttime = nil
+
+				AddRemoveEditRunTime(attrib, rtname, rttime)
+			end
+		elseif attrib == "edit" then
+			rtname = string.lower(wordtable[3])
+	
+			if rtname == nil then
+				ColourNote(msg_colour, "", "Command Usage: ", qty_colour, "", "ecal rt edit <epic name> <runtime in minutes>")
+			else
+				rttime = wordtable[4]
+			
+				if tonumber(rttime) == nil then
+					ColourNote(msg_colour, "", "Command Usage: ", qty_colour, "", "ecal rt edit <epic name> <runtime in minutes>")
+				else
+					AddRemoveEditRunTime(attrib, rtname, rttime)		
+				end
+			end
+		elseif attrib == "list" then
+			ListRunTimes()
+		elseif attrib == "gt" then
+			gtime = tonumber(wordtable[3])
+			
+			if gtime == nil then 
+				ColourNote(qty_colour, "", EpicMisc["ApproxRunTimes"]["grouping time"], msg_colour, "", " minutes have been allocated for the grouping time for the approximate run time calculation.")
+			else
+				EpicMisc["ApproxRunTimes"]["grouping time"] = gtime
+				
+				ColourNote(msg_colour, "", "Grouping time allocation has been changed to ", qty_colour, "", EpicMisc["ApproxRunTimes"]["grouping time"], msg_colour, "", " minutes.")
+			end
+		else
+			ColourNote(msg_colour, "", "Invalid command. Please see ", qty_colour, "", "ecal help", msg_colour, "", " for more information.")
+		end
 	elseif cmd == "bot" then
 		attrib = wordtable[2]
 
@@ -983,6 +1021,8 @@ function CommandMenu(name, line, wc)
 		elseif attrib == "list" then
 			if wordtable[3] == "room" then
 				ListRooms()
+			else
+				ColourNote(msg_colour, "", "Invalid command. Please see ", qty_colour, "", "ecal help", msg_colour, "", " for more information.")
 			end
 		elseif attrib == "auto" then
 			sub = wordtable[3]
@@ -1095,6 +1135,8 @@ function CommandMenu(name, line, wc)
 				EpicCalendarHelpBot()
 			elseif attrib == "next" then
 				EpicCalendarHelpNext()
+			elseif attrib == "rt" or attrib == "runtime" then
+				EpicCalendarHelpRT()
 			else
 				ColourNote(msg_colour, "", "Invalid command. Please see ", qty_colour, "", "ecal help", msg_colour, "", " for more information.")
 			end
@@ -1182,6 +1224,22 @@ function CheckMob(CheckName)
 	return mcheck
 end -- CheckMob
 
+function CheckEpicName(CheckEpicName)
+	repic = nil
+	
+	if CheckEpicName == "if2" then
+		repic = "icefall2"
+	elseif CheckEpicName == "if1" then
+		repic = "icefall1"
+	elseif CheckEpicName == "if" then
+		repic = "icefall1"
+	else
+		repic = CheckEpicName
+	end	
+	
+	return repic
+end
+
 ---------------------------------------------
 -------- GET CURRENT BOARD FUNCTIONS --------
 ---------------------------------------------
@@ -1213,18 +1271,22 @@ function ClearEpicTable()
 	SaveState()	
 end -- ClearEpicTable
 
-function UpdateEpicTable()
-	listtype = "none"
-	GetSystemTime()
-
+function UpdateEpicTable()	
+	if SystemTimeTable["year"] == 0 then
+		listtype = "none"
+		GetSystemTime()
+	end	
+	
 	world.EnableGroup ("EpicCalendar", 1)
 	SendNoEcho ("board epics")
 	SendNoEcho ("note list")
 end -- UpdateEpicTable
 
-function ResetEpicTable()
-	listtype = "none"
-	GetSystemTime()
+function ResetEpicTable()	
+	if SystemTimeTable["year"] == 0 then
+		listtype = "none"
+		GetSystemTime()
+	end	
 	
 	EpicTable = {}
 	TableIndex = 0
@@ -1291,6 +1353,11 @@ function AddEpic(notenum, notedate, cname, subjectline)
 	beforeepicorig = ""
 	afterepicorig = ""
 	todaycheck = "NO"
+	approxcheck = "NO"
+	approxtime = 0
+	addtime1 = 0
+	addtime2 = 0
+	time1add = "NO"
 	
 	rsub = subjectline
 	rwords = utils.split (rsub, " ")
@@ -1313,8 +1380,7 @@ function AddEpic(notenum, notedate, cname, subjectline)
 	for time in subjectline:gmatch("(%d+[%s+]*[ap]m)") do
 		time = time:gsub(" ", "")
 		
-		timecheck = "YES"
-		
+		timecheck = "YES"	
 	end
 	
 	-- for i,v in ipairs(EpicTable) do
@@ -1323,51 +1389,64 @@ function AddEpic(notenum, notedate, cname, subjectline)
 		-- end
 	-- end
 	
-	for wordindex,b in ipairs(wordtable) do
+	epname = ""
 	
+	for wordindex,b in ipairs(wordtable) do
+		epiccheck = "NO"
+		
 		for i,v in ipairs(wordtable) do
 			if wordtable[i] == "after" then
 				j = i + 1
-
+				k = i - 1
+			
 				aftercheck = "YES"
-				afterepic = wordtable[j]
+				
+				afterepic = CheckEpicName(wordtable[j])
+				
 				afterepicorig = wordtable[j]
 				
-				if afterepic == "if2" then
-					afterepic = "icefall2"
-				elseif afterepic == "if1" then
-					afterepic = "icefall1"
-				elseif afterepic == "if" then
-					afterepic = "icefall1"
-				end		
+				ename2 = CheckEpicName(wordtable[k])
+				
+				approxcheck = "YES"
+				
+				epname = afterepic
+				
+				if time1add == "NO" then
+					addtime1 = EpicMisc["ApproxRunTimes"][afterepic]
+					addtime2 = EpicMisc["ApproxRunTimes"][ename2]
+
+					if addtime2 == nil then 
+						k = k - 1
+
+						ename2 = CheckEpicName(wordtable[k])
+
+						addtime2 = EpicMisc["ApproxRunTimes"][ename2]
+
+						if addtime2 == nil then
+							addtime2 = 0
+						end
+					end
+				end
 			elseif wordtable[i] == "before" then
 				j = i + 1
 				
 				beforecheck = "YES"
-				beforeepic = wordtable[j]
-				beforeepicorig = wordtable[j]
 				
-				if beforeepic == "if2" then
-					beforeepic = "icefall2"
-				elseif beforeepic == "if1" then
-					beforeepic = "icefall1"
-				elseif beforeepic == "if" then
-					beforeepic = "icefall1"
-				end		
+				beforeepic = CheckEpicName(wordtable[j])
+				beforeepicorig = wordtable[j]
 			elseif wordtable[i] == "today" then
 				todaycheck = "YES"
 			end
 		end
-		
-		epname = ""
 		
 		if aftercheck == "NO" and beforecheck == "NO" then
 		
 			if timecheck == "NO" then return end
 
 		end
-				
+
 		for i,v in ipairs(EpicNames) do
+			
 			if (CheckEpic(EpicNames[i], wordtable[wordindex])) ~= nil and wordtable[wordindex] ~= afterepicorig and wordtable[wordindex] ~= beforeepicorig then 
 				epiccheck = "YES"
 				
@@ -1377,26 +1456,36 @@ function AddEpic(notenum, notedate, cname, subjectline)
 					EpicTable[TableIndex] = {}
 					EpicTable[TableIndex]["Index"] = TableIndex
 				end
-				
+
 				if EpicTable[TableIndex]["Epic Name"] == nil then
-					if EpicNames[i] == "if1" then
-						EpicTable[TableIndex]["Epic Name"] = "icefall1"
-						epname = "icefall1"
-					elseif EpicNames[i] == "if2" then
-						EpicTable[TableIndex]["Epic Name"] = "icefall2"
-						epname = "icefall2"
-					else
-						EpicTable[TableIndex]["Epic Name"] = EpicNames[i]
-						epname = EpicNames[i]
-					end
+					EpicTable[TableIndex]["Epic Name"] = CheckEpicName(EpicNames[i])
 				end
 				
  				if i == 9 then 
 					if wordtable[wordindex] == "icefall1" or wordtable[wordindex] == "icefall2" then
 						TableIndex = TableIndex - 1
 						EpicTable[TableIndex]["Epic Name"] = wordtable[wordindex]
-						epname = wordtable[wordindex]
 					end
+				end
+				
+				if approxcheck == "NO" then
+					EpicTable[TableIndex]["Approx"] = "NO"
+
+					approxcheck = "YES"
+					
+					if addtime1 ~= nil then
+						approxtime = approxtime + addtime1
+						addtime1 = nil
+						time1add = "YES"
+					end
+				else
+					EpicTable[TableIndex]["Approx"] = "YES"
+
+					if addtime1 ~= nil then
+						approxtime = approxtime + addtime1
+						addtime1 = nil
+						time1add = "YES"
+					end					
 				end
 			end
 		end
@@ -1410,7 +1499,7 @@ function AddEpic(notenum, notedate, cname, subjectline)
 				end
 			end
 		end				
-
+		
 		if epiccheck == "YES" then
 			EpicTable[TableIndex]["Epic Leader"] = cname
 			EpicTable[TableIndex]["Note Number"] = notenum
@@ -1469,21 +1558,45 @@ function AddEpic(notenum, notedate, cname, subjectline)
 				
 				SeperateTime(time)
 				PopulateTimeTable(TableIndex)
-			end
+			end			
 
 			if aftercheck == "YES" then
+				acfail = "YES"
+				
 				for i,v in ipairs(EpicTable) do
 					if EpicTable[TableIndex]["Day of Week"] == EpicTable[i]["Day of Week"] then
 						if EpicTable[i]["Epic Name"] == afterepic then
 							if timecheck ~= "YES" then
+								
+								EpicTable[TableIndex]["Time Table"] = {}
+	
+								for i,v in pairs(EpicTable[i]["Time Table"]) do
+									EpicTable[TableIndex]["Time Table"][i] = v
+								end
+
 								EpicTable[TableIndex]["Hour"] = EpicTable[i]["Hour"]
-								EpicTable[TableIndex]["Time Table"] = EpicTable[i]["Time Table"]
 								EpicTable[TableIndex]["Minute"] = EpicTable[i]["Minute"]
-								EpicTable[TableIndex]["AMPM"] = EpicTable[i]["AMPM"]				
+								EpicTable[TableIndex]["AMPM"] = EpicTable[i]["AMPM"]
+								
+								acfail = "NO"
+
+								if EpicTable[TableIndex]["Approx"] == "YES" then
+									
+									FixApproxTime(TableIndex, aftercheck)
+								end
+								
 							end
+							
+							-- EpicTable[TableIndex]["Time Table"] = EpicTable[i]["Time Table"]
 						end
 					end
-				end			
+				end
+				
+				
+				if acfail == "YES" then
+					table.remove (EpicTable, TableIndex)
+					TableIndex = TableIndex - 1
+				end
 			elseif beforecheck == "YES" then
 				for i,v in ipairs(EpicTable) do
 					if EpicTable[TableIndex]["Day of Week"] == EpicTable[i]["Day of Week"] then
@@ -1503,10 +1616,60 @@ function AddEpic(notenum, notedate, cname, subjectline)
 		
 		if (GetTriggerOption ("EpicUpdateEnd", "enabled")) == 0 then		
 			world.EnableGroup ("EpicUpdateEnd", 1)
-			
 		end
 	end
 end -- AddEpic
+
+function FixApproxTime(atindex, aftercheck)
+	
+
+	hours = 0
+	remainmin = 0
+	
+	if approxtime > 59 then 
+		hours = math.floor(approxtime / 60)
+		remainmin = approxtime - (hours * 60)
+	else
+		remainmin = approxtime
+	end
+	
+	EpicTable[atindex]["Minute"] = EpicTable[atindex]["Minute"] + remainmin
+	EpicTable[atindex]["Time Table"]["min"] = EpicTable[atindex]["Time Table"]["min"] + remainmin
+	
+	if EpicTable[atindex]["Minute"] > 59 then
+		EpicTable[atindex]["Minute"] = EpicTable[atindex]["Minute"] - 60 
+		EpicTable[atindex]["Time Table"]["min"] = EpicTable[atindex]["Time Table"]["min"] - 60
+		
+		hours = hours + 1
+	end
+	
+	EpicTable[atindex]["Hour"] = EpicTable[atindex]["Hour"] + hours
+	EpicTable[atindex]["Time Table"]["hour"] = EpicTable[atindex]["Time Table"]["hour"] + hours
+	
+	if EpicTable[atindex]["Hour"] > 12 then
+		EpicTable[atindex]["Time Table"]["hour"] = EpicTable[atindex]["Time Table"]["hour"] - 12
+		EpicTable[atindex]["Hour"] = EpicTable[atindex]["Hour"] - 12
+		
+		if EpicTable[atindex]["AMPM"] == "pm" then
+			EpicTable[atindex]["AMPM"] = "am"
+		elseif EpicTable[atindex]["AMPM"] == "am" then
+			EpicTable[atindex]["AMPM"] = "pm"
+		end
+	end		
+
+	if aftercheck ~= nil then 
+		apname = EpicTable[atindex]["Epic Name"]
+		addtime = EpicMisc["ApproxRunTimes"][apname]
+			
+		if addtime ~= nil then 
+			approxtime = approxtime + addtime
+		end
+	end
+	
+	SaveState()
+	
+	return approxtime
+end
 
 function NoDateFound()
 	EpicTable[TableIndex]["Time Table"] = {}
@@ -1547,47 +1710,61 @@ function NoDateFound()
 	end
 end -- NoDateFound
 
-function PopulateTimeTable(TableIndex)	
-	EpicTable[TableIndex]["Time Table"]["sec"] = 0
-	EpicTable[TableIndex]["Time Table"]["min"] = tonumber(EpicTable[TableIndex]["Minute"])
+function PopulateTimeTable(TableIndex)
+		EpicTable[TableIndex]["Time Table"]["sec"] = 0
+		EpicTable[TableIndex]["Time Table"]["min"] = tonumber(EpicTable[TableIndex]["Minute"])
 
-	EpicTable[TableIndex]["Time Table"]["hour"] = 0
+		EpicTable[TableIndex]["Time Table"]["hour"] = 0
 
-	if EpicTable[TableIndex]["AMPM"] == "pm" then 
-		EpicTable[TableIndex]["Time Table"]["hour"] = EpicTable[TableIndex]["Time Table"]["hour"] + 12
-	end
-	
-	EpicTable[TableIndex]["Time Table"]["hour"] = EpicTable[TableIndex]["Time Table"]["hour"] + tonumber(EpicTable[TableIndex]["Hour"])
-
-	EpicTable[TableIndex]["Time Table"]["year"] = SystemTimeTable["year"]
-
-	for i,v in ipairs(DaysofWeekShort) do
-		search = EpicTable[TableIndex]["Day of Week"]
-		SearchItem = DaysofWeekShort[i]
+		if EpicTable[TableIndex]["AMPM"] == "pm" then 
+			EpicTable[TableIndex]["Time Table"]["hour"] = EpicTable[TableIndex]["Time Table"]["hour"] + 12
+		end
 		
-		len = string.len(SearchItem)
+		EpicTable[TableIndex]["Time Table"]["hour"] = EpicTable[TableIndex]["Time Table"]["hour"] + tonumber(EpicTable[TableIndex]["Hour"])
 
-		for j,k in pairs(string.split(search," ")) do
-			if string.find(string.sub(k,1,len),SearchItem) == nil then
-			else
-				EpicTable[TableIndex]["Time Table"]["wday"] = i
+		EpicTable[TableIndex]["Time Table"]["year"] = SystemTimeTable["year"]
+
+		for i,v in ipairs(DaysofWeekShort) do
+			search = EpicTable[TableIndex]["Day of Week"]
+			SearchItem = DaysofWeekShort[i]
+			
+			len = string.len(SearchItem)
+
+			for j,k in pairs(string.split(search," ")) do
+				if string.find(string.sub(k,1,len),SearchItem) == nil then
+				else
+					EpicTable[TableIndex]["Time Table"]["wday"] = i
+				end
 			end
 		end
-	end
 
-	MonthIndex = EpicTable[TableIndex]["Time Table"]["month"]
-	yday = MonthsYDay[MonthIndex] + EpicTable[TableIndex]["Time Table"]["day"]
+		MonthIndex = EpicTable[TableIndex]["Time Table"]["month"]
+		yday = MonthsYDay[MonthIndex] + EpicTable[TableIndex]["Time Table"]["day"]
+		
+		if (SystemTimeTable["year"]%4) == 0 then yday = yday + 1 end
+		
+		EpicTable[TableIndex]["Time Table"]["yday"] = yday
+		
+		EpicTable[TableIndex]["Time Table"]["isdst"] = false
 	
-	if (SystemTimeTable["year"]%4) == 0 then yday = yday + 1 end
-	
-	EpicTable[TableIndex]["Time Table"]["yday"] = yday
-	
-	EpicTable[TableIndex]["Time Table"]["isdst"] = false
+	if EpicTable[TableIndex]["Approx"] == "YES" then
+		-- Note("PopulateTimeTable fired")
+		local tindex = TableIndex - 1
+		pttname = EpicTable[tindex]["Epic Name"]
+		pttaddtime = EpicMisc["ApproxRunTimes"][pttname]
+		approxtime = approxtime + pttaddtime
+		FixApproxTime(TableIndex)
+	end
 end -- PopulateTimeTable
 
 function EpicList()
 	listtype = "list"
-	GetSystemTime()
+
+	if SystemTimeTable["year"] == 0 then
+		GetSystemTime()
+	else
+		ListEpic()
+	end	
 end -- EpicList
 
 function CheckType(ltype)
@@ -1647,12 +1824,17 @@ function SearchEpic(epicname)
 		return
 	end
 	
-	local ltype = string.lower(epicname)
-	listtype = CheckType(ltype)
 	
-	if listtype == nil then listtype = ltype end
+	if SystemTimeTable["year"] == 0 then
+		local ltype = string.lower(epicname)
+		listtype = CheckType(ltype)
+		
+		if listtype == nil then listtype = ltype end
+
+		GetSystemTime()
+	else
 	
-	GetSystemTime()
+	end	
 end -- SearchEpic
 
 function ListEpic()		
@@ -1669,7 +1851,7 @@ function ListEpic()
 		title = "Epic Run List - Searching: " .. listtype
 	end
 	
-	local title2 = "+-----------+------------+-----------+----------+---------------------------------+"
+	local title2 = "+-----------+------------+-----------+-----------+---------------------------------+"
 	
 	local leng = tonumber(string.len(title))
 	local leng2 = tonumber(string.len(title2))
@@ -1690,7 +1872,7 @@ function ListEpic()
 
 	if EpicMisc["VI"] == "NO" then
 		ColourNote(msg_colour, "", title2)
-		ColourNote(msg_colour, "", "| Epic      | Leader     | Day       | Time     | Time Until Epic                 |")
+		ColourNote(msg_colour, "", "| Epic      | Leader     | Day       | Time      | Time Until Epic                 |")
 		ColourNote(msg_colour, "", title2)
 	end
 	
@@ -1736,8 +1918,10 @@ function ListEpic()
 				ReturnType = "normal"
 				timedef = EpicTimeDifference(i, ReturnType)
 
-				if EpicTable[i]["Time Table"]["min"] ~= 0 then
-					hour = EpicTable[i]["Hour"] .. ":" .. EpicTable[i]["Time Table"]["min"] .. " " .. string.upper(EpicTable[i]["AMPM"])
+				if EpicTable[i]["Time Table"]["min"] > 9 then
+					hour = EpicTable[i]["Hour"] .. ":" .. EpicTable[i]["Time Table"]["min"] .. " " ..  string.upper(EpicTable[i]["AMPM"])
+				elseif EpicTable[i]["Time Table"]["min"] ~= 0 then
+					hour = EpicTable[i]["Hour"] .. ":0" .. EpicTable[i]["Time Table"]["min"] .. " " ..  string.upper(EpicTable[i]["AMPM"])
 				else
 					hour = EpicTable[i]["Hour"] .. ":00 " .. string.upper(EpicTable[i]["AMPM"])
 				end
@@ -1747,7 +1931,7 @@ function ListEpic()
 				timedef = trim(timedef)
 			end
 			
-			DisplayRow(ename, eleader, eday, hour, timedef)		
+			DisplayRow(ename, eleader, eday, hour, timedef, i)		
 		end
 	else
 		len = string.len(listtype)
@@ -1778,8 +1962,10 @@ function ListEpic()
 					ReturnType = "normal"
 					timedef = EpicTimeDifference(i, ReturnType)
 
-					if EpicTable[i]["Time Table"]["min"] ~= 0 then
+					if EpicTable[i]["Time Table"]["min"] > 9 then
 						hour = EpicTable[i]["Hour"] .. ":" .. EpicTable[i]["Time Table"]["min"] .. " " ..  string.upper(EpicTable[i]["AMPM"])
+					elseif EpicTable[i]["Time Table"]["min"] ~= 0 then
+						hour = EpicTable[i]["Hour"] .. ":0" .. EpicTable[i]["Time Table"]["min"] .. " " ..  string.upper(EpicTable[i]["AMPM"])
 					else
 						hour = EpicTable[i]["Hour"] .. ":00 " .. string.upper(EpicTable[i]["AMPM"])
 					end
@@ -1789,20 +1975,31 @@ function ListEpic()
 					timedef = trim(timedef)
 				end
 				
-				DisplayRow(ename, eleader, eday, hour, timedef)
+				DisplayRow(ename, eleader, eday, hour, timedef, i)
 			end
 		end
 	end
 	
+	
 	if EpicMisc["VI"] == "NO" then
 		ColourNote(msg_colour, "", title2)
+	else
+		Note("")
 	end
+	
+	ColourNote(epic_colour, "", "*", msg_colour, "", " - approximate start times only, actual start times may vary")
 end -- ListEpic
 
-function DisplayRow(ename, eleader, eday, hour, timedef)
+function DisplayRow(ename, eleader, eday, hour, timedef, apindex)
 	if timedef == nil then
 		timedef = "This Epic is over"
 		return
+	end
+	
+	if EpicTable[apindex]["Approx"] == "YES" then 
+		apxhour = "*"
+	else
+		apxhour = " "
 	end
 
 	if ename == nil then namespace = 9 else namespace = MakeSpace(ename, 9) end
@@ -1814,18 +2011,22 @@ function DisplayRow(ename, eleader, eday, hour, timedef)
 	if hour == nil then timespace = 8 else timespace = MakeSpace(hour, 8) end
 	
 	if timedef == nil then remainspace = 31 else remainspace = MakeSpace(timedef,31) end
-	
+
 	if EpicMisc["VI"] == "NO" then
-		ColourNote(msg_colour, "", "| ", epic_colour, "", ename .. namespace, msg_colour, "", " | ", leader_colour, "", eleader .. leaderspace, msg_colour, "", " | ", day_colour, "", eday .. dayspace, msg_colour, "", " | ", time_colour, "", timespace .. hour, msg_colour, "", " | ", remain_colour, "",remainspace .. timedef, msg_colour, "", " |")
+		ColourNote(msg_colour, "", "| ", epic_colour, "", ename .. namespace, msg_colour, "", " | ", leader_colour, "", eleader .. leaderspace, msg_colour, "", " | ", day_colour, "", eday .. dayspace, msg_colour, "", " | ", time_colour, "", timespace .. hour, epic_colour, "", apxhour, msg_colour, "", " | ", remain_colour, "",remainspace .. timedef, msg_colour, "", " |")
 	elseif EpicMisc["VI"] == "YES" then
-		ColourNote(msg_colour, "", "Epic: ", epic_colour, "", ename, msg_colour, "", " Leader: ", leader_colour, "", eleader, qty_colour, "", " Start Time: ", day_colour, "", eday, msg_colour, "", " ", time_colour, "", hour, msg_colour, "", " ", remain_colour, "",timedef)
+		ColourNote(msg_colour, "", "Epic: ", epic_colour, "", ename, msg_colour, "", " Leader: ", leader_colour, "", eleader, qty_colour, "", " Start Time: ", day_colour, "", eday, msg_colour, "", " ", time_colour, "", hour, epic_colour, "", apxhour, msg_colour, "", " ", remain_colour, "",timedef)
 	end
 	
 end -- DisplayRow
 
 function StartPost()
-	listtype = "post"	
-	GetSystemTime()
+	if SystemTimeTable["year"] == 0 then
+		listtype = "post"	
+		GetSystemTime()
+	else
+		StartNotePost()
+	end
 end -- StartPot()
 
 function StartNotePost()
@@ -1840,7 +2041,7 @@ function PostEpic()
 	local hour = ""
 
 	local title = "Epic Run List"
-	local title2 = "+---------+----------+---------+--------+-------------------------------+"
+	local title2 = "+---------+----------+---------+---------+-------------------------------+"
 	
 	local leng = tonumber(string.len(title))
 	local leng2 = tonumber(string.len(title2))
@@ -1859,7 +2060,7 @@ function PostEpic()
 	SendNoEcho (spacing .. "@R" .. title .. "@w")
 	SendNoEcho ("@w")
 	SendNoEcho ("@D" .. title2)
-	SendNoEcho ("@D| Epic    | Leader   | Day     | Time   | Time Until Epic               |@w")
+	SendNoEcho ("@D| Epic    | Leader   | Day     | Time    | Time Until Epic               |@w")
 	SendNoEcho ("@D" .. title2)
 	
 	table.sort(EpicTable, function (a, b) local atime = os.time(a["Time Table"]); local btime = os.time(b["Time Table"]); if atime == btime then return a["Index"] < b["Index"] else return atime < btime end end)
@@ -1911,7 +2112,13 @@ function PostEpic()
 	SendNoEcho ("p")
 end -- PostEpic
 
-function PostRow(ename, eleader, eday, hour, timedef)
+function PostRow(ename, eleader, eday, hour, timedef, apindex)
+	if EpicTable[apindex]["Approx"] == "YES" then 
+		apxhour = "*"
+	else
+		apxhour = " "
+	end
+
 	if ename == nil then namespace = 9 else namespace = MakeSpace(ename, 9) end
 
 	if eleader == nil then leaderspace = 10 else leaderspace = MakeSpace(eleader, 10) end
@@ -1922,7 +2129,7 @@ function PostRow(ename, eleader, eday, hour, timedef)
 	
 	if timedef == nil then remainspace = 32 else remainspace = MakeSpace(timedef,32) end
 	
-	SendNoEcho ("@D|@R" .. ename .. namespace .. "@D|@Y" .. eleader .. leaderspace .. "@D|@w" .. eday .. dayspace .. "@D|@w" .. timespace .. hour .. "@D|@G" .. remainspace .. trim(timedef) .. "@D|@w")
+	SendNoEcho ("@D|@R" .. ename .. namespace .. "@D|@Y" .. eleader .. leaderspace .. "@D|@w" .. eday .. dayspace .. "@D|@w" .. timespace .. hour .. apxhour .. "@D|@G" .. remainspace .. trim(timedef) .. "@D|@w")
 end -- PostRow
 
 -----------------------------------------------
@@ -2004,8 +2211,12 @@ function GetNextEpicLeader(leader, channel)
 		reportchannel = channel
 	end
 	
-	listtype = "next"
-	GetSystemTime()
+	if SystemTimeTable["year"] == 0 then
+		listtype = "next"
+		GetSystemTime()
+	else
+		NextEpic()
+	end
 end -- GetNextEpicLeader
 
 function GetNextEpicDay(wday, channel)
@@ -2051,9 +2262,12 @@ function GetNextEpicDay(wday, channel)
 		if channel ~= nil then
 			reportchannel = channel
 		end
-		
-		listtype = "next"
-		GetSystemTime()
+		if SystemTimeTable["year"] == 0 then
+			listtype = "next"
+			GetSystemTime()
+		else
+			NextEpic()
+		end
 	else
 		if channel ~= nil then
 			SendNoEcho (channel .. " @R[EpicCAL] @C" .. wday .. " @Dis not a valid day.@w")
@@ -2073,9 +2287,13 @@ function GetNextEpic(ename, channel)
 	if channel ~= nil then
 		reportchannel = channel
 	end
-
-	listtype = "next"
-	GetSystemTime()
+	
+	if SystemTimeTable["year"] == 0 then 
+		listtype = "next"
+		GetSystemTime()
+	else
+		NextEpic()
+	end
 end -- GetNextEpic
 
 function GetLowestDay(lowestindex)
@@ -2095,9 +2313,12 @@ end -- GetLowestDay
 
 function GetNextEpicSilent()
 	silentcheck = "YES"
-	
-	listtype = "next"
-	GetSystemTime()
+	if SystemTimeTable["year"] == 0 then 
+		listtype = "next"
+		GetSystemTime()
+	else
+		NextEpic()
+	end
 end -- GetNextEpicSilent
 
 function NextEpic()
@@ -2243,14 +2464,22 @@ function DisplayNext(nexttype, day, lowestindex)
 		end
 	elseif nexttype == "epic" then
 		if reportchannel == nil then
-			note = {"red", "", "[Next epic: ", "cyan", "", ename, msg_colour, "", " - ", "red", "", day}
+			note = {"red", "", "[Next Epic: ", "cyan", "", ename, msg_colour, "", " - ", "red", "", day}
 		else
-			message = "@R[Next epic: @C" .. ename .. " @D- @R" .. day
+			message = "@R[Next Epic: @C" .. ename .. " @D- @R" .. day
 		end
 	end
 
-	if EpicTable[lowestindex]["Time Table"]["min"] ~= 0 then
+	if EpicTable[lowestindex]["Approx"] == "YES" then 
+		apxhour = "*"
+	else
+		apxhour = " "
+	end
+
+	if EpicTable[lowestindex]["Time Table"]["min"] > 9 then
 		hour = EpicTable[lowestindex]["Hour"] .. ":" .. EpicTable[lowestindex]["Time Table"]["min"] .. " " ..  string.upper(EpicTable[lowestindex]["AMPM"])
+	elseif EpicTable[lowestindex]["Time Table"]["min"] ~= 0 then
+		hour = EpicTable[lowestindex]["Hour"] .. ":0" .. EpicTable[lowestindex]["Time Table"]["min"] .. " " ..  string.upper(EpicTable[lowestindex]["AMPM"])
 	else
 		hour = EpicTable[lowestindex]["Hour"] .. ":00 " .. string.upper(EpicTable[lowestindex]["AMPM"])
 	end
@@ -2259,12 +2488,13 @@ function DisplayNext(nexttype, day, lowestindex)
 		table.insert(note, msg_colour)
 		table.insert(note, "")
 		table.insert(note, " / ")
-		table.insert(note, "red")
+		table.insert(note, "green")
 		table.insert(note, "")
 		table.insert(note, hour)
+		table.insert(note, apxhour)
 		table.insert(note, msg_colour)
 		table.insert(note, "")
-		table.insert(note, " / ")
+		table.insert(note, "/ ")
 		table.insert(note, "lime")
 		table.insert(note, "")
 		
@@ -2282,7 +2512,7 @@ function DisplayNext(nexttype, day, lowestindex)
 			timeremaining = trim(timeremaining)
 		end
 
-		message = message .. " @D/ @R" .. hour .. " @D/ @G" .. timeremaining  .. "@R]@w"
+		message = message .. " @D/ @Y" .. hour .. "@R" .. apxhour .. "@D/ @G" .. timeremaining  .. "@R]@w"
 		Send(reportchannel .. " " .. message)
 		reportchannel = nil	
 	end
@@ -2315,14 +2545,14 @@ function DisplayNextFail(nexttype, day, wnext)
 				end
 
 				if reportchannel == nil then
-					ColourNote(msg_colour, "", "There are no epic runs scheduled for ", help_command_colour, "", sendwhat, msg_colour, "", ".")
+					ColourNote(msg_colour, "", "There are no epic runs scheduled for ", qty_colour, "", sendwhat, msg_colour, "", ".")
 				else
 					SendNoEcho (reportchannel .. " @R[EpicCAL] @DThere are no epic runs scheduled for @C" .. sendwhat .. "@D.@w")
 					reportchannel = nil
 				end
 			elseif nexttype == "epic" or nexttype == "search" then
 				if reportchannel == nil then
-					ColourNote(msg_colour, "", "There are no ", help_command_colour, "", wnext, msg_colour, "", " epic runs scheduled.")
+					ColourNote(msg_colour, "", "There are no ", qty_colour, "", wnext, msg_colour, "", " epic runs scheduled.")
 				else
 					SendNoEcho (reportchannel .. " @R[EpicCAL] @DThere are no @C" .. wnext .. " @Depic runs scheduled.@w")
 					reportchannel = nil
@@ -2332,6 +2562,91 @@ function DisplayNextFail(nexttype, day, wnext)
 	end
 end -- DisplayNextFail
 
+----------------------------------------------
+------- APPROXIMATE RUN TIME FUNCTIONS -------
+----------------------------------------------
+function AddRemoveEditRunTime(rcmd, rtname, rttime)
+	if rcmd == "add" then
+		if EpicMisc["ApproxRunTimes"][rtname] == nil then
+			EpicMisc["ApproxRunTimes"][rtname] = rttime
+			
+			ColourNote(msg_colour, "", "Approximate run time for ", qty_colour, "", rtname, msg_colour, "", " has been set to ", qty_colour, "", rttime, msg_colour, "", " minutes.")
+			
+			SaveState()
+		else
+			ColourNote(msg_colour, "", "The approximate run time for ", qty_colour, "", rtname, msg_colour, "", " has already been added and set to ", qty_colour, "", EpicMisc["ApproxRunTimes"][rtname], msg_colour, "", " minutes. If you wish to change this please type ecal rt edit ", qty_colour, "", rtname, msg_colour, "", " <minutes>")
+		end
+	elseif rcmd == "remove" then
+		if EpicMisc["ApproxRunTimes"][rtname] == nil then
+			ColourNote(qty_colour, "", rtname, msg_colour, "", " has not been added to the approximate run time list. For a complete list please use ", qty_colour, "", "ecal rt list", msg_colour, "", ".")
+		else		
+			EpicMisc["ApproxRunTimes"][rtname] = nil
+			
+			ColourNote(msg_colour, "", "Approximate run time for ", qty_colour, "", rtname, msg_colour, "", " has been removed from the list.")
+			
+			SaveState()
+		end
+	elseif rcmd == "edit" then
+		if rtname == "if1" then rtname = "icefall1" end
+		if rtname == "if2" then rtname = "icefall2" end
+		
+		if EpicMisc["ApproxRunTimes"][rtname] == nil then
+			ColourNote(qty_colour, "", rtname, msg_colour, "", " has not been added to the approximate run time list. For a complete list please use ", qty_colour, "", "ecal rt list", msg_colour, "", ".")
+		else		
+			EpicMisc["ApproxRunTimes"][rtname] = rttime
+			
+			ColourNote(msg_colour, "", "Approximate run time for ", qty_colour, "", rtname, msg_colour, "", " has been set to ", qty_colour, "", rttime, msg_colour, "", " minutes.")
+			
+			SaveState()
+		end
+	end
+end -- AddRemoveEditRunTime
+
+function ListRunTimes()
+	title = "Approximate Epic Run Time List"
+
+	local title2 = "+-----------------+------------+"
+	
+	local leng = tonumber(string.len(title))
+	local leng2 = tonumber(string.len(title2))
+	
+	spacing = HelpSpacing(title, title2)
+	
+	ColourNote(help_colour, "", spacing, help_command_colour, "", title)
+
+	if EpicMisc["VI"] == "NO" then
+		Note("")
+		ColourNote(msg_colour, "", title2)	
+		ColourNote(msg_colour, "", "| Epic Name       | Approx. RT |")
+		ColourNote(msg_colour, "", title2)
+	elseif EpicMisc["VI"] == "YES" then
+		Note("")
+	end
+	
+	-- table.sort(EpicMisc["ApproxRunTimes"], function (a, b) return a < b end)
+	
+	table.sort(EpicMisc["ApproxRunTimes"])
+	
+	for i,v in pairs(EpicMisc["ApproxRunTimes"]) do
+
+		epicname = i
+		runtime = tonumber(v)
+
+		if epicname == nil then enamespace = 15 else enamespace = MakeSpace(epicname, 15) end
+		if runtime == nil then rtspace = 2 else rtspace = MakeSpace(runtime, 2) end
+		
+		if EpicMisc["VI"] == "NO" then
+			ColourNote(msg_colour, "", "| ", epic_colour, "", epicname .. enamespace, msg_colour, "", " | ", leader_colour, "", rtspace .. runtime .. " minutes", msg_colour, "", " | ")
+		elseif EpicMisc["VI"] == "YES" then
+			ColourNote(msg_colour, "", "Epic Name: ", epic_colour, "", epicname, msg_colour, "", " Approximate Run Time: ", leader_colour, "", runtime .. " minutes")
+		end	
+	end
+	
+	if EpicMisc["VI"] == "NO" then
+		ColourNote(msg_colour, "", title2)
+	end
+end -- ListRunTimes
+ 
 ---------------------------------------------
 --------------- BOT FUNCTIONS ---------------
 ---------------------------------------------
@@ -2530,7 +2845,7 @@ function UserPermission(cmd, user)
 	
 	SaveState()
 end -- UserPermission
-
+ 
 function TogglePermissions()
 	if EpicMisc["NotificationBot"]["Permissions"] == "list" then
 		ColourNote(msg_colour, "", "Channel commands permissions set to ", qty_colour, "", "ALL")
@@ -2545,7 +2860,7 @@ end -- TogglePermissions
 
 function EnableBot()
 	ColourNote(msg_colour, "", "Epic Notification Bot enabled.")
-	EpicMisc["NotificationBot"]["enabled"] = true
+	EpicMisc["NotificationBot"]["Enabled"] = true
 
 	SaveState()
 
@@ -2564,7 +2879,7 @@ end -- EnableBot
 
 function DisableBot()
 	ColourNote(msg_colour, "", "Epic Notification Bot disabled.")
-	EpicMisc["NotificationBot"]["enabled"] = false
+	EpicMisc["NotificationBot"]["Enabled"] = false
 
 	SaveState()
 
@@ -2821,8 +3136,16 @@ function ChannelListDay(channel, day)
 			
 			day2 = string.gsub (DaysofWeekShort[dindex], "^.", string.upper)
 			
-			if EpicTable[i]["Time Table"]["min"] ~= 0 then
+			if EpicTable[i]["Approx"] == "YES" then 
+				apxhour = "*"
+			else
+				apxhour = " "
+			end
+
+			if EpicTable[i]["Time Table"]["min"] > 9 then
 				hour = EpicTable[i]["Hour"] .. ":" .. EpicTable[i]["Time Table"]["min"] .. " " ..  string.upper(EpicTable[i]["AMPM"])
+			elseif EpicTable[i]["Time Table"]["min"] ~= 0 then
+				hour = EpicTable[i]["Hour"] .. ":0" .. EpicTable[i]["Time Table"]["min"] .. " " ..  string.upper(EpicTable[i]["AMPM"])
 			else
 				hour = EpicTable[i]["Hour"] .. ":00 " .. string.upper(EpicTable[i]["AMPM"])
 			end
@@ -2835,12 +3158,12 @@ function ChannelListDay(channel, day)
 			if wday == dindex then
 				daycheck = "YES"
 				if message == message2 then
-					message = message .. "@R[@C" .. ename .. " @G" .. hour
+					message = message .. "@R[@C" .. ename .. " @G" .. hour .. "@R" .. apxhour
 				else
 					if EpicTable[i]["Time Table"]["yday"] == EpicTable[previndex]["Time Table"]["yday"] then
-						message = message .. "@R/@C" .. ename .. " @G" .. hour
+						message = message .. "@R/@C" .. ename .. " @G" .. hour .. "@R" .. apxhour
 					else
-						message = message .. "@R] [@C" .. ename .. " @G" .. hour
+						message = message .. "@R] [@C" .. ename .. " @G" .. hour .. "@R" .. apxhour
 					end
 				end
 			end
@@ -2926,9 +3249,17 @@ function ChannelListEpic(channel, ltype)
 			dindex = EpicTable[i]["Time Table"]["wday"]
 			
 			day = string.gsub (DaysofWeekShort[dindex], "^.", string.upper)
-			
-			if EpicTable[i]["Time Table"]["min"] ~= 0 then
-				hour = EpicTable[i]["Hour"] .. ":" .. EpicTable[i]["Time Table"]["min"] .. " " ..  string.upper(EpicTable[i]["AMPM"])
+
+			if EpicTable[i]["Approx"] == "YES" then 
+				apxhour = "*"
+			else
+				apxhour = " "
+			end
+
+			if EpicTable[i]["Time Table"]["min"] > 9 then
+				hour = EpicTable[i]["Hour"] .. ":" .. EpicTable[i]["Time Table"]["min"] .. " " ..  string.upper(EpicTable[i]["AMPM"])			
+			elseif EpicTable[i]["Time Table"]["min"] ~= 0 then
+				hour = EpicTable[i]["Hour"] .. ":0" .. EpicTable[i]["Time Table"]["min"] .. " " ..  string.upper(EpicTable[i]["AMPM"])
 			else
 				hour = EpicTable[i]["Hour"] .. ":00 " .. string.upper(EpicTable[i]["AMPM"])
 			end
@@ -2940,34 +3271,34 @@ function ChannelListEpic(channel, ltype)
     	
 			if ltype == nil then
 				if message == message2 then
-					message = message .. "@R[" .. day .. ": @C" .. ename .. " @G" .. hour
+					message = message .. "@R[" .. day .. ": @C" .. ename .. " @G" .. hour .. "@R" .. apxhour
 				else
 					if EpicTable[i]["Time Table"]["yday"] == EpicTable[previndex]["Time Table"]["yday"] then
-						message = message .. "@R/@C" .. ename .. " @G" .. hour
+						message = message .. "@R/@C" .. ename .. " @G" .. hour .. "@R" .. apxhour
 					else
-						message = message .. "@R] [" .. day .. ": @C" .. ename .. " @G" .. hour
+						message = message .. "@R] [" .. day .. ": @C" .. ename .. " @G" .. hour .. "@R" .. apxhour
 					end
 				end
 			elseif ltype == "epic" then
 				if message == message2 then
-					message = message .. "@R[" .. ename .. ": @C" .. day .. " (" .. date .. ") @R- @G" .. hour
+					message = message .. "@R[" .. ename .. ": @C" .. day .. " (" .. date .. ") @R- @G" .. hour .. "@R" .. apxhour
 				else
 					if EpicTable[i]["Epic Name"] == EpicTable[previndex]["Epic Name"] then
-						message = message .. "@R/@C" .. day .. " (" .. date .. ") @R- @G" .. hour
+						message = message .. "@R/@C" .. day .. " (" .. date .. ") @R- @G" .. hour .. "@R" .. apxhour
 					else
-						message = message .. "@R] [" .. ename .. ": @C" .. day .. " (" .. date .. ") @R- @G" .. hour
+						message = message .. "@R] [" .. ename .. ": @C" .. day .. " (" .. date .. ") @R- @G" .. hour .. "@R" .. apxhour
 					end
 				end
 			elseif ltype == "leader" then
 				leader = string.gsub (EpicTable[i]["Epic Leader"], "^.", string.upper)
 			
 				if message == message2 then
-					message = message .. "@R[" .. leader .. ": @C" .. ename .. " @R- @Y" .. day .. " (" .. date .. ") @R- @G" .. hour
+					message = message .. "@R[" .. leader .. ": @C" .. ename .. " @R- @Y" .. day .. " (" .. date .. ") @R- @G" .. hour .. "@R" .. apxhour
 				else
 					if EpicTable[i]["Epic Leader"] == EpicTable[previndex]["Epic Leader"] then
-						message = message .. "@R/@C" .. ename .. " @R- @Y" .. day .. " (" .. date .. ") @R- @G" .. hour
+						message = message .. "@R/@C" .. ename .. " @R- @Y" .. day .. " (" .. date .. ") @R- @G" .. hour .. "@R" .. apxhour
 					else
-						message = message .. "@R] [" .. leader .. ": @C" .. ename .. " @R- @Y" .. day .. " (" .. date .. ") @R- @G" .. hour
+						message = message .. "@R] [" .. leader .. ": @C" .. ename .. " @R- @Y" .. day .. " (" .. date .. ") @R- @G" .. hour .. "@R" .. apxhour
 					end
 				end
 			else
@@ -2977,9 +3308,9 @@ function ChannelListEpic(channel, ltype)
 				
 				if string.find(string.sub(epicname,1,len),ltype) ~= nil then
 					if message == message2 then
-						message = message .. "@R[@C" .. ename .. " @R- @Y" .. day .. " (" .. date .. ") @G" .. hour
+						message = message .. "@R[@C" .. ename .. " @R- @Y" .. day .. " (" .. date .. ") @G" .. hour .. "@R" .. apxhour
 					else 
-						message = message .. "@R] [@C" .. ename .. " @R- @Y" .. day .. " (" .. date .. ") @G" .. hour
+						message = message .. "@R] [@C" .. ename .. " @R- @Y" .. day .. " (" .. date .. ") @G" .. hour .. "@R" .. apxhour
 					end
 				end
 			end
@@ -2989,12 +3320,6 @@ function ChannelListEpic(channel, ltype)
 	SendNoEcho (channel .. " " .. message .. "@R]@w")
 end -- ChannelListEpic
 
-function DelayOn(user, channel)
-	user = string.gsub (user, "^.", string.upper)
-	
-	SendNoEcho (channel .. " @R[EpicCAL] @DSorry @R" .. user .. "@D, but I am unable to process your request at this time. Reason: 5 second delay to prevent error.")
-end -- DelayOn
-
 function TellChannel(name, line, wc)
 	user = string.lower(wc[1])
 	cmd = string.lower(wc[2])
@@ -3002,24 +3327,19 @@ function TellChannel(name, line, wc)
 	channel = "tell " .. user
 
 	GetCharName()
-
-	if user ~= charname then 
-		if EpicMisc["NotificationBot"]["Permissions"] == "list" then
-			if (CheckPermission(user)) == "no" then
-				return
-			end
-		end
 	
-		if TellChannelDelay == false then
-			TellDelayEnable()
-		
-			ChannelBot(user, cmd, search, channel)
-		else
-			DelayOn(user, channel)
+	if EpicMisc["NotificationBot"]["Permissions"] == "list" then
+		if (CheckPermission(user)) == "no" then
+			return
 		end
-	else
+	end
+
+	if TellChannelDelay == false then
+		TellDelayEnable()
+	
 		ChannelBot(user, cmd, search, channel)
 	end
+
 end -- TellChannel
 
 function ClanChannel(name, line, wc)
@@ -3034,13 +3354,7 @@ function ClanChannel(name, line, wc)
 		end
 	end
 
-	if ClanChannelDelay == false then
-		ClanDelayEnable()
-	
-		ChannelBot(user, cmd, search, channel)
-	else
-		DelayOn(user, channel)
-	end
+	ChannelBot(user, cmd, search, channel)
 end -- ClanChannel
 
 function ClanChannelYou(name, line, wc)
@@ -3066,23 +3380,13 @@ function GroupChannel(name, line, wc)
 
 	GetCharName()
 
-	if user ~= charname then 
-		if EpicMisc["NotificationBot"]["Permissions"] == "list" then
-			if (CheckPermission(user)) == "no" then
-				return
-			end
+	if EpicMisc["NotificationBot"]["Permissions"] == "list" then
+		if (CheckPermission(user)) == "no" then
+			return
 		end
-	
-		if GroupChannelDelay == false then
-			GroupTellDelayEnable()
-		
-			ChannelBot(user, cmd, search, channel)
-		else
-			DelayOn(user, channel)
-		end
-	else
-		ChannelBot(user, cmd, search, channel)
 	end
+
+	ChannelBot(user, cmd, search, channel)
 end -- GroupChannel
 
 function FriendChannel(name, line, wc)
@@ -3097,13 +3401,7 @@ function FriendChannel(name, line, wc)
 		end
 	end
 
-	if FriendChannelDelay == false then
-		FriendTalkDelayEnable()
-	
-		ChannelBot(user, cmd, search, channel)
-	else
-		DelayOn(user, channel)
-	end
+	ChannelBot(user, cmd, search, channel)
 end -- FriendChannel
 
 function FriendChannelYou(name, line, wc)
@@ -3118,43 +3416,10 @@ end -- FriendChannelYou
 
 -- Channel Command Delay Functions
 
-function ClanDelayDisable()
-	check (EnableTimer ("clandelay", 0))
-	ClanChannelDelay = false
-end -- ClanDelayDisable
-
-function GroupTellDelayDisable()
-	check (EnableTimer ("gtdelay", 0))
-	GroupChannelDelay = false
-end -- GroupTellDelayDisable
-
-function FriendTalkDelayDisable()
-	check (EnableTimer ("ftdelay", 0))
-	FriendChannelDelay = false
-end -- FriendTalkDelayDisable
-
 function TellDelayDisable()
 	check (EnableTimer ("telldelay", 0))
 	TellChannelDelay = false
 end -- TellDelayDisable
-
-function ClanDelayEnable()
-	check (EnableTimer ("clandelay", 1))
-	check (ResetTimer ("clandelay"))
-	ClanChannelDelay = true
-end -- ClanDelayEnable
-
-function GroupTellDelayEnable()
-	check (EnableTimer ("gtdelay", 1))
-	check (ResetTimer ("gtdelay"))
-	GroupChannelDelay = true
-end -- GroupTellDelayEnable
-
-function FriendTalkDelayEnable()
-	check (EnableTimer ("ftdelay", 1))
-	check (ResetTimer ("ftdelay"))
-	FriendChannelDelay = true
-end -- FriendTalkDelayEnable
 
 function TellDelayEnable()
 	check (EnableTimer ("telldelay", 1))
@@ -3268,8 +3533,11 @@ function GetSystemTimeTrig(name, line, wc)
       year = year,
       }
 	
-	world.EnableGroup("SystemTime", 0)
+	OSSystemTimeTable = os.date("*t")
+	OSSystemTime = os.time(OSSystemTimeTable)
 
+	world.EnableGroup("SystemTime", 0)
+	
 	if listtype == "next" then  
 		NextEpic()
 	elseif listtype == "none" then
@@ -3283,7 +3551,17 @@ function GetSystemTimeTrig(name, line, wc)
 end -- GetSystemTimeTrig
 
 function EpicTimeDifference(TableIndex, ReturnType)	
+-- return here 
+
+	OSSystemTimeTable2 = os.date("*t")
+	OSSystemTime2 = os.time(OSSystemTimeTable2)
+
+	tdef = OSSystemTime2 - OSSystemTime
+	
 	timenow = os.time(SystemTimeTable)
+
+	timenow = timenow + tdef
+
 	timenow2 = os.time(EpicTable[TableIndex]["Time Table"])
 	
 	if timenow > timenow2 then
@@ -3650,6 +3928,9 @@ function EpicCalendarHelp()
 	ColourNote(help_command_colour, "", "ecal help bot ", help_colour, "", " - for more information on a notification and channel command bot")
 
 	ColourNote(help_command_colour, "", "ecal help next", help_colour, "", " - for more information on some useful commands to display the next upcoming epic")
+	
+	ColourNote(help_command_colour, "", "ecal help rt  ", help_colour, "", " - for more information on some useful commands to display the next upcoming epic")
+
 	Note("")
 	
 	ColourNote(help_command_colour, "", "PLEASE NOTE", help_colour, "", ": the user can also use ", help_command_colour, "", "epiccalendar", help_colour, "", " instead of ", help_command_colour, "", "ecal")
@@ -3802,18 +4083,95 @@ function EpicCalendarHelpNext()
 	Note("")
 end	-- EpicCalendarHelpNext
 
+function EpicCalendarHelpRT()
+	local title = "Tallimos' Epic Calendar Help - Approximate Run Time"
+	local title2 = noteline
+	
+	spacing = HelpSpacing(title, title2)	
+	
+	ColourNote(help_colour, "", spacing, help_command_colour, "", "Tallimos' Epic Calendar Help - Approximate Run Time")
+
+	if EpicMisc["VI"] == "NO" then
+		ColourNote(help_colour, "", noteline)
+	elseif EpicMisc["VI"] == "YES" then
+		Note("")
+	end
+
+	ColourNote(help_colour, "", "The epic calendar comes with a customizable Approximate Run Time calculator. When epic leaders")
+	ColourNote(help_colour, "", "post multiple epics in one note earlier versions of the calendar would set them with the same")
+	ColourNote(help_colour, "", "start time. Since v1.9 approximate start times will now be given instead.")
+	
+	if EpicMisc["VI"] == "NO" then
+		ColourNote(help_colour, "", noteline)
+	end
+	
+	Note("")
+
+	ColourNote(help_colour, "", "Customizable Commands")
+
+	if EpicMisc["VI"] == "NO" then
+		ColourNote(help_colour, "", "---------------------")
+	elseif EpicMisc["VI"] == "YES" then
+		Note("")
+	end
+
+	ColourNote(help_command_colour, "", "ecal rt list                 ", help_colour, "", " - lists current stored approximate run times")
+
+	ColourNote(help_command_colour, "", "ecal rt add <epic> <minutes> ", help_colour, "", " - adds <epic> to the approximate run times list")
+	
+	ColourNote(help_command_colour, "", "ecal rt edit <epic> <minutes>", help_colour, "", " - changes the approximate run time for <epic>")
+
+	ColourNote(help_command_colour, "", "ecal rt remove <epic>        ", help_colour, "", " - removes <epic> from the approximate run times list")
+
+	Note("")
+	
+	ColourNote(help_command_colour, "", "PLEASE NOTE", help_colour, "", " the user may also use ", help_command_colour, "", "ecal runtime", help_colour, "", " as well")
+
+	if EpicMisc["VI"] == "NO" then
+		ColourNote(help_colour, "", noteline)
+	end
+
+	Note("")
+end	-- EpicCalendarHelpRT
+
 function GetSavedData()
 	if GetVariable ("ecpastfirstinstall") == "true" then
 		assert (loadstring (GetVariable ("EpicTable") or "")) ()
 		assert (loadstring (GetVariable ("EpicPermissionTable") or "")) ()
 		assert (loadstring (GetVariable ("EpicMisc") or "")) ()
 		assert (loadstring (GetVariable ("TableIndex") or "")) ()
+		
+		if 	EpicMisc["ApproxRunTimes"] == nil then
+			EpicMisc["ApproxRunTimes"] = {}
+			EpicMisc["ApproxRunTimes"]["genie"] = 20
+			EpicMisc["ApproxRunTimes"]["icefall1"] = 30
+			EpicMisc["ApproxRunTimes"]["icefall2"] = 40
+			EpicMisc["ApproxRunTimes"]["inferno"] = 40
+			EpicMisc["ApproxRunTimes"]["oc"] = 5
+			EpicMisc["ApproxRunTimes"]["winds"] = 15
+		end
+
+		if EpicMisc["ApproxRunTimes"]["grouping time"] == nil then
+			EpicMisc["ApproxRunTimes"]["grouping time"] = 5
+		end
+		
+		if EpicMisc["NotificationBot"]["enabled"] ~= nil then
+			EpicMisc["NotificationBot"]["enabled"] = nil
+		end
 	else
 		TableIndex = 0
 		EpicTable = {}
 		EpicMisc = {}
 		EpicMisc["VI"] = "NO"
 		EpicMisc["Updating"] = "NO"
+		EpicMisc["ApproxRunTimes"] = {}
+		EpicMisc["ApproxRunTimes"]["grouping time"] = 5
+		EpicMisc["ApproxRunTimes"]["genie"] = 20
+		EpicMisc["ApproxRunTimes"]["icefall1"] = 30
+		EpicMisc["ApproxRunTimes"]["icefall2"] = 40
+		EpicMisc["ApproxRunTimes"]["inferno"] = 40
+		EpicMisc["ApproxRunTimes"]["oc"] = 5
+		EpicMisc["ApproxRunTimes"]["winds"] = 15
 		EpicMisc["NoteRooms"] = {}
 		EpicMisc["NoteRooms"][32418] = {}
 		EpicMisc["NoteRooms"][32418]["Area"] = "aylor"
@@ -3849,7 +4207,7 @@ function Connected()
 	ran = true
 	
 	if EpicMisc["NotificationBot"]["Enabled"] == true then EnableBot() end
-	ResetEpicTable()
+	ResetEpicTable()	
 end -- Connected
 
 function OnPluginInstall()
@@ -3897,6 +4255,12 @@ function OnPluginBroadcast(msg, id, name, text)
 					Connected()
 				end
 			end
+		elseif (text == 'comm.tick') then		
+			gmcptick = gmcp("comm.tick")
+			
+			SystemTimeTable = os.date("*t", gmcptick.ctime)
+			OSSystemTimeTable = os.date("*t")
+			OSSystemTime = os.time(OSSystemTimeTable)
 		end
 	end
 end -- OnPluginBroadcast
