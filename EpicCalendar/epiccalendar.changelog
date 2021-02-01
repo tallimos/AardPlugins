@@ -1,5 +1,12 @@
 dbot.changelog = {}
 
+dbot.changelog[1.92] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Fixed bug with ecal nupdate and it adding the same epic twice"
+  },
+}
+
 dbot.changelog[1.91] =
 {
   { change = drlDbotChangeLogTypeFix,

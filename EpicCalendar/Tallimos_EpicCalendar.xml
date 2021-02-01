@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="1.91"
+   version="1.92"
    >
    
 </plugin>
@@ -1383,12 +1383,6 @@ function AddEpic(notenum, notedate, cname, subjectline)
 		timecheck = "YES"	
 	end
 	
-	-- for i,v in ipairs(EpicTable) do
-		-- if (tonumber(EpicTable[i]["Note Number"])) == notenum then
-			-- return
-		-- end
-	-- end
-	
 	epname = ""
 	
 	for wordindex,b in ipairs(wordtable) do
@@ -1445,6 +1439,8 @@ function AddEpic(notenum, notedate, cname, subjectline)
 
 		end
 
+		echeckname = ""
+		
 		for i,v in ipairs(EpicNames) do
 			
 			if (CheckEpic(EpicNames[i], wordtable[wordindex])) ~= nil and wordtable[wordindex] ~= afterepicorig and wordtable[wordindex] ~= beforeepicorig then 
@@ -1467,6 +1463,8 @@ function AddEpic(notenum, notedate, cname, subjectline)
 						EpicTable[TableIndex]["Epic Name"] = wordtable[wordindex]
 					end
 				end
+				
+				echeckname = EpicTable[TableIndex]["Epic Name"]
 				
 				if approxcheck == "NO" then
 					EpicTable[TableIndex]["Approx"] = "NO"
@@ -1501,119 +1499,132 @@ function AddEpic(notenum, notedate, cname, subjectline)
 		end				
 		
 		if epiccheck == "YES" then
-			EpicTable[TableIndex]["Epic Leader"] = cname
-			EpicTable[TableIndex]["Note Number"] = notenum
-			EpicTable[TableIndex]["Note Date"] = notedate
+			oktoadd = "YES"
+			
+			for i,v in ipairs(EpicTable) do
+				if (tonumber(EpicTable[i]["Note Number"])) == notenum then
+					if EpicTable[i]["Epic Name"] == echeckname then
+						oktoadd = "NO"
+						table.remove (EpicTable, TableIndex)
+						TableIndex = TableIndex - 1
+					end
+				end
+			end
 		
-			if todaycheck == "YES" then
-				tindex = SystemTimeTable["wday"]
-				EpicTable[TableIndex]["Day of Week"] = DaysofWeekShort[tindex]
-			else
-				DayCheck = "NO"
+			if oktoadd ~= "NO" then
+				EpicTable[TableIndex]["Epic Leader"] = cname
+				EpicTable[TableIndex]["Note Number"] = notenum
+				EpicTable[TableIndex]["Note Date"] = notedate
+			
+				if todaycheck == "YES" then
+					tindex = SystemTimeTable["wday"]
+					EpicTable[TableIndex]["Day of Week"] = DaysofWeekShort[tindex]
+				else
+					DayCheck = "NO"
 
-				for i,v in ipairs(DaysofWeekShort) do
-					for q,r in ipairs(wordtable) do
-					
-						search = wordtable[q]
-						SearchItem = DaysofWeekShort[i]
+					for i,v in ipairs(DaysofWeekShort) do
+						for q,r in ipairs(wordtable) do
 						
-						len = string.len(SearchItem)
-
-						for j,k in pairs(string.split(search," ")) do
-							if string.find(string.sub(k,1,len),SearchItem) == nil then
-							else
-								DayCheck = "YES"
-								EpicTable[TableIndex]["Day of Week"] = DaysofWeekShort[i]
-							end
-						end
-					end
-				end
-
-				if DayCheck == "NO" then
-					EpicTable[TableIndex]["Day of Week"] = "UNKNOWN"
-				end
-			end
-			
-			for date in subjectline2:gmatch("%a%a%a%d%d") do
-				SeperateDate(date)
-				checkdate = date
-			end
-
-			if checkdate == nil then 
-				if DayCheck == "YES" then
-					NoDateFound()
-				end
-			end
-
-			timecheck = "NO"
-			
-			for time in subjectline:gmatch("(%d+[%s+]*[ap]m)") do
-				time = time:gsub(" ", "")
-				
-				timecheck = "YES"
-				
-				for tday in time:gmatch("[ap]m") do
-					EpicTable[TableIndex]["AMPM"] = tday
-				end
-				
-				SeperateTime(time)
-				PopulateTimeTable(TableIndex)
-			end			
-
-			if aftercheck == "YES" then
-				acfail = "YES"
-				
-				for i,v in ipairs(EpicTable) do
-					if EpicTable[TableIndex]["Day of Week"] == EpicTable[i]["Day of Week"] then
-						if EpicTable[i]["Epic Name"] == afterepic then
-							if timecheck ~= "YES" then
-								
-								EpicTable[TableIndex]["Time Table"] = {}
-	
-								for i,v in pairs(EpicTable[i]["Time Table"]) do
-									EpicTable[TableIndex]["Time Table"][i] = v
-								end
-
-								EpicTable[TableIndex]["Hour"] = EpicTable[i]["Hour"]
-								EpicTable[TableIndex]["Minute"] = EpicTable[i]["Minute"]
-								EpicTable[TableIndex]["AMPM"] = EpicTable[i]["AMPM"]
-								
-								acfail = "NO"
-
-								if EpicTable[TableIndex]["Approx"] == "YES" then
-									
-									FixApproxTime(TableIndex, aftercheck)
-								end
-								
-							end
+							search = wordtable[q]
+							SearchItem = DaysofWeekShort[i]
 							
-							-- EpicTable[TableIndex]["Time Table"] = EpicTable[i]["Time Table"]
+							len = string.len(SearchItem)
+
+							for j,k in pairs(string.split(search," ")) do
+								if string.find(string.sub(k,1,len),SearchItem) == nil then
+								else
+									DayCheck = "YES"
+									EpicTable[TableIndex]["Day of Week"] = DaysofWeekShort[i]
+								end
+							end
 						end
+					end
+
+					if DayCheck == "NO" then
+						EpicTable[TableIndex]["Day of Week"] = "UNKNOWN"
 					end
 				end
 				
-				
-				if acfail == "YES" then
-					table.remove (EpicTable, TableIndex)
-					TableIndex = TableIndex - 1
+				for date in subjectline2:gmatch("%a%a%a%d%d") do
+					SeperateDate(date)
+					checkdate = date
 				end
-			elseif beforecheck == "YES" then
-				for i,v in ipairs(EpicTable) do
-					if EpicTable[TableIndex]["Day of Week"] == EpicTable[i]["Day of Week"] then
 
-						if EpicTable[i]["Epic Name"] == beforeepic then
-							if timecheck ~= "YES" then
-								EpicTable[TableIndex]["Hour"] = EpicTable[i]["Hour"]
-								EpicTable[TableIndex]["Time Table"] = EpicTable[i]["Time Table"]
-								EpicTable[TableIndex]["Minute"] = EpicTable[i]["Minute"]
-								EpicTable[TableIndex]["AMPM"] = EpicTable[i]["AMPM"]
+				if checkdate == nil then 
+					if DayCheck == "YES" then
+						NoDateFound()
+					end
+				end
+
+				timecheck = "NO"
+				
+				for time in subjectline:gmatch("(%d+[%s+]*[ap]m)") do
+					time = time:gsub(" ", "")
+					
+					timecheck = "YES"
+					
+					for tday in time:gmatch("[ap]m") do
+						EpicTable[TableIndex]["AMPM"] = tday
+					end
+					
+					SeperateTime(time)
+					PopulateTimeTable(TableIndex)
+				end			
+
+				if aftercheck == "YES" then
+					acfail = "YES"
+					
+					for i,v in ipairs(EpicTable) do
+						if EpicTable[TableIndex]["Day of Week"] == EpicTable[i]["Day of Week"] then
+							if EpicTable[i]["Epic Name"] == afterepic then
+								if timecheck ~= "YES" then
+									
+									EpicTable[TableIndex]["Time Table"] = {}
+		
+									for i,v in pairs(EpicTable[i]["Time Table"]) do
+										EpicTable[TableIndex]["Time Table"][i] = v
+									end
+
+									EpicTable[TableIndex]["Hour"] = EpicTable[i]["Hour"]
+									EpicTable[TableIndex]["Minute"] = EpicTable[i]["Minute"]
+									EpicTable[TableIndex]["AMPM"] = EpicTable[i]["AMPM"]
+									
+									acfail = "NO"
+
+									if EpicTable[TableIndex]["Approx"] == "YES" then
+										
+										FixApproxTime(TableIndex, aftercheck)
+									end
+									
+								end
+								
+								-- EpicTable[TableIndex]["Time Table"] = EpicTable[i]["Time Table"]
+							end
+						end
+					end
+					
+					
+					if acfail == "YES" then
+						table.remove (EpicTable, TableIndex)
+						TableIndex = TableIndex - 1
+					end
+				elseif beforecheck == "YES" then
+					for i,v in ipairs(EpicTable) do
+						if EpicTable[TableIndex]["Day of Week"] == EpicTable[i]["Day of Week"] then
+
+							if EpicTable[i]["Epic Name"] == beforeepic then
+								if timecheck ~= "YES" then
+									EpicTable[TableIndex]["Hour"] = EpicTable[i]["Hour"]
+									EpicTable[TableIndex]["Time Table"] = EpicTable[i]["Time Table"]
+									EpicTable[TableIndex]["Minute"] = EpicTable[i]["Minute"]
+									EpicTable[TableIndex]["AMPM"] = EpicTable[i]["AMPM"]
+								end
 							end
 						end
 					end
 				end
 			end
 		end
-		
 		if (GetTriggerOption ("EpicUpdateEnd", "enabled")) == 0 then		
 			world.EnableGroup ("EpicUpdateEnd", 1)
 		end
@@ -3904,13 +3915,14 @@ function EpicCalendarHelp()
 
 	ColourNote(help_command_colour, "", "ecal vi      ", help_colour, "", " - enables/disables the vi friendly option")
 	
+	ColourNote(help_command_colour, "", "ecal search <epic>      ", help_colour, "", " - searches the epic runs list")
+	
 	ColourNote(help_command_colour, "", "ecal nupdate <note #>   ", help_colour, "", " - used when epic leader posts a subject line to long")
 	
 	ColourNote(help_command_colour, "", "ecal checkversion       ", help_colour, "", " - checks to see if there is a newer version of the plugin available")
 	
 	ColourNote(help_command_colour, "", "ecal changelog          ", help_colour, "", " - displays the changelog for the plugin")
 
-	ColourNote(help_command_colour, "", "ecal search <epic>      ", help_colour, "", " - searches the epic runs list")
 	
 	Note("")
 
