@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="1.9"
+   version="1.91"
    >
    
 </plugin>
@@ -1824,16 +1824,15 @@ function SearchEpic(epicname)
 		return
 	end
 	
+	local ltype = string.lower(epicname)
+	listtype = CheckType(ltype)
+	
+	if listtype == nil then listtype = ltype end
 	
 	if SystemTimeTable["year"] == 0 then
-		local ltype = string.lower(epicname)
-		listtype = CheckType(ltype)
-		
-		if listtype == nil then listtype = ltype end
-
 		GetSystemTime()
 	else
-	
+		ListEpic()	
 	end	
 end -- SearchEpic
 
@@ -2513,7 +2512,7 @@ function DisplayNext(nexttype, day, lowestindex)
 		end
 
 		message = message .. " @D/ @Y" .. hour .. "@R" .. apxhour .. "@D/ @G" .. timeremaining  .. "@R]@w"
-		Send(reportchannel .. " " .. message)
+		SendNoEcho(reportchannel .. " " .. message)
 		reportchannel = nil	
 	end
 end -- DisplayNext
@@ -2652,19 +2651,17 @@ end -- ListRunTimes
 ---------------------------------------------
 function BotHelp(channel, user, cmd)
 	if cmd == "nextepic" then
-		SendNoEcho (channel .. " @R[EpicCAL] @C!nextepic <epic> @D- displays when the next specified epic is scheduled. Using @R!nextepic @Don its own will display the next scheduled epic.@w")
+		SendNoEcho (channel .. " @R[EpicCAL] @C!nextepic <epic> @D- displays when the next specified epic is scheduled. Using @C!nextepic @Don its own will display the next scheduled epic. Note: @R*@D next to the time indiciates an approximate start time, actual start time may vary.@w")
 	elseif cmd == "nextday" then
-		SendNoEcho (channel .. " @R[EpicCAL] @C!nextday <day> @D- displays the first epic of the day on that particular day@w")
+		SendNoEcho (channel .. " @R[EpicCAL] @C!nextday <day> @D- displays the first epic of the day on that particular day. Note: @R*@D next to the time indiciates an approximate start time, actual start time may vary.@w")
 	elseif cmd == "nextleader" then
-		SendNoEcho (channel .. " @R[EpicCAL] @C!nextleader <leader> @D- displays the first epic scheduled for that particular leader@w")
+		SendNoEcho (channel .. " @R[EpicCAL] @C!nextleader <leader> @D- displays the first epic scheduled for that particular leader. Note: @R*@D next to the time indiciates an approximate start time, actual start time may vary.@w")
 	elseif cmd == "listepic" then
-		SendNoEcho (channel .. " @R[EpicCAL] @C!listepic @D- displays the entire epic schedule on one line sorted by day. @C!listepic leader @Dand @C!listepic epic @Dwill display the schedule but grouped together. @C!listepic <epic name> @Dwill display only that particular epic. And finally @C!listepic note @Dwill send the schedule to the user via a note.@w")
+		SendNoEcho (channel .. " @R[EpicCAL] @C!listepic @D- displays the entire epic schedule on one line sorted by day. @C!listepic leader @Dand @C!listepic epic @Dwill display the schedule but grouped together. @C!listepic <epic name> @Dwill display only that particular epic. And finally @C!listepic note @Dwill send the schedule to the user via a note. Note: @R*@D next to the time indiciates an approximate start time, actual start time may vary.@w@w")
 	elseif cmd == "listday" then
-		SendNoEcho (channel .. " @R[EpicCAL] @C!listday @D- displays the entire epic schedule for today. @C!listday <day> @Dwill display the full schedule for that paritcular day.@w")
+		SendNoEcho (channel .. " @R[EpicCAL] @C!listday @D- displays the entire epic schedule for today. @C!listday <day> @Dwill display the full schedule for that paritcular day. Note: @R*@D next to the time indiciates an approximate start time, actual start time may vary.@w@w")
 	elseif cmd == "noteremove" then
 		SendNoEcho (channel .. " @R[EpicCAL] @C!noteremove <notenum> @D- will request the bot to remove the schedule note@w")
-	elseif cmd == "todo" then
-		SendNoEcho (channel .. " @R[EpicCAL] @Dsend for beta testing to help with @Cerror trapping@w")
 	else
 		user = string.gsub (user, "^.", string.upper)
 		SendNoEcho (channel .. " @R[EpicCAL] @DSorry @C" .. user .. "@D, that is not a valid option.@w")
@@ -2988,12 +2985,12 @@ function ChannelBot(user, cmd, search, channel)
 			if search == "note" then
 				if user ~= nil then
 					if user == charname then
-						Send(channel .. " @R[EpicCAL] @DSorry, type @Cecal list @Dinstead of sending a note to yourself.@w")
+						SendNoEcho (channel .. " @R[EpicCAL] @DSorry, type @Cecal list @Dinstead of sending a note to yourself.@w")
 
 						return
 					elseif (CheckRoom()) == "no" then
 						user = string.gsub (user, "^.", string.upper)
-						Send(channel .. "@R[EpicCAL] @DSorry @C" .. user .. "@D, I can not complete your request at this time Reason: @CI am not in a designated note safe room. Please try again later.@w")
+						SendNoEcho (channel .. "@R[EpicCAL] @DSorry @C" .. user .. "@D, I can not complete your request at this time Reason: @CI am not in a designated note safe room. Please try again later.@w")
 
 						return
 					end

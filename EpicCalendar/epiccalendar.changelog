@@ -1,5 +1,12 @@
 dbot.changelog = {}
 
+dbot.changelog[1.91] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Fixed bug with ecal search not working"
+  },
+}
+
 dbot.changelog[1.9] =
 {
   { change = drlDbotChangeLogTypeNew,
