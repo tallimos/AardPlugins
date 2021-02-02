@@ -1,5 +1,12 @@
 dbot.changelog = {}
 
+dbot.changelog[1.93] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Cosmetic changes and code to help prevent notell, nochan and nonote"
+  },
+}
+
 dbot.changelog[1.92] =
 {
   { change = drlDbotChangeLogTypeFix,
