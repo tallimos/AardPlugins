@@ -1,5 +1,12 @@
 dbot.changelog = {}
 
+dbot.changelog[1.94] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Updated command structure, making last minute changes for public release"
+  },
+}
+
 dbot.changelog[1.93] =
 {
   { change = drlDbotChangeLogTypeFix,

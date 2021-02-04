@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="1.93"
+   version="1.94"
    >
    
 </plugin>
@@ -374,13 +374,6 @@
 
 <timers>
 	<timer
-		name="lastnote" 
-		second="10" 
-		enabled="n"
-		script="LastNote"
-		>
-	</timer>
-	<timer
 		name="lastcmdtell" 
 		second="5" 
 		enabled="n"
@@ -410,37 +403,9 @@
 	</timer>
 	<timer
 		name="autonodelay" 
-		second="5" 
+		second="10" 
 		enabled="n"
 		script="RTUpdateNo"
-		>
-	</timer>
-	<timer
-		name="telldelay" 
-		second="20" 
-		enabled="n"
-		script="TellDelayDisable"
-		>
-	</timer>
-	<timer
-		name="HourlyNextEpicSilent" 
-		hour="1"   
-		enabled="n"
-		script="HourlyNextEpicSilent"
-		>
-	</timer>
-	<timer
-		name="NextEpicComingUp" 
-		hour="1" 
-		enabled="n"
-		script="NextEpicComingUp"
-		>
-	</timer>
-	<timer
-		name="NextEpic5Minutes" 
-		minute="1" 
-		enabled="n"
-		script="NextEpic5Minutes"
 		>
 	</timer>
 	<timer
@@ -501,6 +466,9 @@ require "aard_lua_extras"
 require "wait"
 require "async"
 
+local remain_colour   = "lime"
+local user_colour   = "yellow"
+local reason_colour     = "red"
 local remain_colour   = "lime"
 local time_colour     = "lightslategrey"
 local day_colour      = "lightslategrey"
@@ -919,8 +887,6 @@ function CommandMenu(name, line, wc)
 	if cmd == "clear" then
 		ClearEpicTable()
 	elseif cmd == "update" then
-		-- update_plugin()
-		--dbot.version.update.release(drlDbotUpdateInstall, endTag)
 		ecal_update()
 		EpicMisc["Updating"] = "YES"
 	elseif cmd == "changelog" then
@@ -1039,7 +1005,44 @@ function CommandMenu(name, line, wc)
 				end
 			end
 		elseif attrib == "list" then
-			ListRunTimes()
+			ListRunTimes()	
+		elseif attrib == "gt" then
+			gtime = wordtable[3]
+			
+			if gtime == nil then 
+				ColourNote(qty_colour, "", EpicMisc["ApproxRunTimes"]["grouping time"]["Time"], msg_colour, "", " minutes have been allocated for the grouping time for the approximate run time calculation.")
+			elseif gtime == "enable" then
+				if EpicMisc["ApproxRunTimes"]["grouping time"]["enabled"] == true then
+					ColourNote(msg_colour, "", "Grouping time calculation has already been ", qty_colour, "", "enabled")
+				else
+					EpicMisc["ApproxRunTimes"]["grouping time"]["enabled"] = true
+					
+					ColourNote(msg_colour, "", "Grouping time will be taken into account when calculating approximate start times. Current grouping time set to ", qty_colour, "", EpicMisc["ApproxRunTimes"]["grouping time"]["Time"], msg_colour, "", " minutes.")
+					
+					RunTimeUpdate()
+				end
+			elseif gtime == "disable" then			
+				if EpicMisc["ApproxRunTimes"]["grouping time"]["enabled"] == false then 
+					ColourNote(msg_colour, "", "Grouping time calculation has already been ", qty_colour, "", "disabled")
+				else
+					EpicMisc["ApproxRunTimes"]["grouping time"]["enabled"] = false				
+					ColourNote(msg_colour, "", "Grouping time will not be taken into account when calculating approximate start times.")
+					
+					RunTimeUpdate()
+				end
+			elseif tonumber(gtime) ~= nil then
+				EpicMisc["ApproxRunTimes"]["grouping time"]["Time"] = tonumber(gtime)
+				
+				ColourNote(msg_colour, "", "Grouping time allocation has been changed to ", qty_colour, "", EpicMisc["ApproxRunTimes"]["grouping time"]["Time"], msg_colour, "", " minutes.")
+				
+				if EpicMisc["ApproxRunTimes"]["grouping time"]["enabled"] == true then
+					RunTimeUpdate()
+				end
+			else
+				ColourNote(msg_colour, "", "Invalid command. Please see ", qty_colour, "", "ecal help rt", msg_colour, "", " for more information.")
+			end
+		elseif attrib == "help" then
+			EpicCalendarHelpRT()
 		else
 			ColourNote(msg_colour, "", "Invalid command. Please see ", qty_colour, "", "ecal help", msg_colour, "", " for more information.")
 			Note("")
@@ -1048,9 +1051,17 @@ function CommandMenu(name, line, wc)
 		attrib = wordtable[2]
 
 		if attrib == "enable" then
-			EnableBot()
+			if 	EpicMisc["NotificationBot"]["Enabled"] == true then
+				ColourNote(msg_colour, "", "Notifcation Bot has already been ", qty_colour, "", "enabled")
+			else
+				EnableBot()
+			end
 		elseif attrib == "disable" then
-			DisableBot()
+			if 	EpicMisc["NotificationBot"]["Enabled"] == false then
+				ColourNote(msg_colour, "", "Notifcation Bot has already been ", qty_colour, "", "disabled")
+			else
+				DisableBot()
+			end
 		elseif attrib == "help" then
 			EpicCalendarHelpBot()
 		elseif attrib == "add" then
@@ -1083,19 +1094,13 @@ function CommandMenu(name, line, wc)
 			if wordtable[3] == "room" then
 				ListRooms()
 			else
-				ColourNote(msg_colour, "", "Invalid command. Please see ", qty_colour, "", "ecal help", msg_colour, "", " for more information.")
+				ColourNote(msg_colour, "", "Invalid command. Please see ", qty_colour, "", "ecal help bot", msg_colour, "", " for more information.")
 				Note("")
 			end
 		elseif attrib == "auto" then
 			sub = wordtable[3]
 			
-			if sub == "add" then
-				channel = wordtable[4]
-				AutoAddRemoveChannel(sub, channel)
-			elseif sub == "remove" then
-				channel = wordtable[4]
-				AutoAddRemoveChannel(sub, channel)
-			elseif sub == "list" then
+			if sub == "list" then
 				ListChannels(attrib)
 			elseif sub == "enable" then
 				if wordtable[4] ~= nil then
@@ -1110,9 +1115,17 @@ function CommandMenu(name, line, wc)
 						EpicMisc["NotificationBot"]["Auto"][channel] = true
 					end
 				else
-					EpicMisc["NotificationBot"]["AutoEnabled"] = true
-					
-					EnableAutoBot()
+					if EpicMisc["NotificationBot"]["AutoEnabled"] == true then
+						ColourNote(msg_colour, "", "Automatic notifications have already been ", qty_colour, "", "enabled")
+					else
+						EpicMisc["NotificationBot"]["AutoEnabled"] = true
+						
+						if EpicMisc["NotificationBot"]["Enabled"] == true then
+							EnableAutoBot()
+						else
+							ColourNote(msg_colour, "", "The notification bot is currently disabled. Please type ", qty_colour, "", "ecal bot enable", msg_colour, "", " to use this feature.")
+						end
+					end
 				end
 			elseif sub == "disable" then
 				if wordtable[4] ~= nil then
@@ -1127,10 +1140,19 @@ function CommandMenu(name, line, wc)
 						EpicMisc["NotificationBot"]["Auto"][channel] = false
 					end
 				else
-					EpicMisc["NotificationBot"]["AutoEnabled"] = false
+					if EpicMisc["NotificationBot"]["AutoEnabled"] == false then
+						ColourNote(msg_colour, "", "Automatic notifications have already been ", qty_colour, "", "disabled")
+					else
+						EpicMisc["NotificationBot"]["AutoEnabled"] = false
 
-					DisableAutoBot()
+						if EpicMisc["NotificationBot"]["Enabled"] == true then
+							DisableAutoBot()
+						end
+					end
 				end
+			else
+				ColourNote(msg_colour, "", "Invalid command. Please see ", qty_colour, "", "ecal help bot", msg_colour, "", " for more information.")
+				Note("")
 			end
 		elseif attrib == "commands" then
 			sub = wordtable[3]
@@ -1150,9 +1172,17 @@ function CommandMenu(name, line, wc)
 						EpicMisc["NotificationBot"]["Commands"][channel] = true
 					end
 				else
-					EpicMisc["NotificationBot"]["CommandsEnabled"] = true
+					if EpicMisc["NotificationBot"]["CommandsEnabled"] == true then
+						ColourNote(msg_colour, "", "Channel Commands have already been ", qty_colour, "", "enabled")
+					else
+						EpicMisc["NotificationBot"]["CommandsEnabled"] = true
 
-					EnableCommandBot()
+						if EpicMisc["NotificationBot"]["Enabled"] == true then
+							EnableCommandBot()
+						else
+							ColourNote(msg_colour, "", "The notification bot is currently disabled. Please type ", qty_colour, "", "ecal bot enable", msg_colour, "", " to use this feature.")
+						end
+					end
 				end
 			elseif sub == "disable" then
 				if wordtable[4] ~= nil then
@@ -1167,22 +1197,92 @@ function CommandMenu(name, line, wc)
 						EpicMisc["NotificationBot"]["Commands"][channel] = false
 					end
 				else
-					EpicMisc["NotificationBot"]["CommandsEnabled"] = false
-				
-					DisableCommandBot()
+					if EpicMisc["NotificationBot"]["CommandsEnabled"] == false then
+						ColourNote(msg_colour, "", "Channel Commands have already been ", qty_colour, "", "disabled")
+					else
+						EpicMisc["NotificationBot"]["CommandsEnabled"] = false
+					
+						if EpicMisc["NotificationBot"]["Enabled"] == true then
+							DisableCommandBot()	
+						end
+					end
 				end
+			else
+				ColourNote(msg_colour, "", "Invalid command. Please see ", qty_colour, "", "ecal help bot", msg_colour, "", " for more information.")
+				Note("")
 			end
-		elseif attrib == "warning" then
+		elseif attrib == "alert" then
 			sub = wordtable[3]
 			
 			if sub == "enable" then
-				EpicMisc["NotificationBot"]["Warning"]["Enabled"] = true
+				if EpicMisc["NotificationBot"]["AlertEnabled"] == true then
+					ColourNote(msg_colour, "", "Alert System has already been ", qty_colour, "", "enabled")
+				else
+					EpicMisc["NotificationBot"]["AlertEnabled"] = true
 
-				EnableWarningBot()
+					if EpicMisc["NotificationBot"]["Enabled"] == true then
+						EnableAlertBot()
+					else
+						ColourNote(msg_colour, "", "The notification bot is currently disabled. Please type ", qty_colour, "", "ecal bot enable", msg_colour, "", " to use this feature.")
+					end
+				end
 			elseif sub == "disable" then
-				EpicMisc["NotificationBot"]["Warning"]["Enabled"] = false
-			
-				DisableWarningBot()
+				if EpicMisc["NotificationBot"]["AlertEnabled"] == false then
+					ColourNote(msg_colour, "", "Alert System has already been ", qty_colour, "", "disabled")
+				else
+					EpicMisc["NotificationBot"]["AlertEnabled"] = false
+
+					if EpicMisc["NotificationBot"]["Enabled"] == true then
+						DisableAlertBot()
+					end
+				end
+			else
+				ColourNote(msg_colour, "", "Invalid command. Please see ", qty_colour, "", "ecal help bot", msg_colour, "", " for more information.")
+				Note("")
+			end
+		elseif attrib == "blacklist" or attrib == "bl" then
+			if wordtable[3] == nil then
+				ListBlacklist()
+			else
+				sub = wordtable[3]
+				
+				if sub == "enable" then					
+					if EpicMisc["NotificationBot"]["Enabled"] == true then
+						EnableBlacklist()
+					else
+						ColourNote(msg_colour, "", "The notification bot is currently disabled. Please type ", qty_colour, "", "ecal bot enable", msg_colour, "", " to use this feature.")
+					end
+				elseif sub == "disable" then
+					if EpicMisc["NotificationBot"]["Enabled"] == true then
+						DisableBlacklist()
+					end
+				elseif sub == "add" then
+					reason = nil
+					
+					user = wordtable[4]
+					wordcount = 0
+
+					for i,v in ipairs(wordtable) do
+						wordcount = wordcount + 1
+					end
+					
+					for x = 5, wordcount, 1 do
+						if reason == nil then
+							reason = wordtable[x]
+						else
+							reason = reason .. " " .. wordtable[x]
+						end
+					end
+					
+					if reason == nil then reason = "N/A" end
+					
+					AddBlacklist(user, reason)
+				elseif sub == "remove" then
+					user = wordtable[4]
+					RemoveBlacklist(user)
+				else
+					ColourNote(msg_colour, "", "Invalid command. Please see ", help_command_colour, "", "ecal help bot", msg_colour, "", " for more information.")
+				end
 			end
 		else
 			ColourNote(msg_colour, "", "Invalid command. Please see ", qty_colour, "", "ecal help bot", msg_colour, "", " for more information.")
@@ -1381,7 +1481,7 @@ function EpicUpdateEnd()
 	world.EnableGroup ("EpicCalendar", 0)
 	world.EnableGroup ("EpicUpdateEnd", 0)
 
-	if EpicMisc["NotificationBot"]["Enabled"] == true and EpicMisc["NotificationBot"]["Warning"]["Enabled"] == true then
+	if EpicMisc["NotificationBot"]["Enabled"] == true and EpicMisc["NotificationBot"]["AlertEnabled"] == true then
 		GetNextEpicSilent()
 	end
 	
@@ -1711,9 +1811,12 @@ function AddEpic(notenum, notedate, cname, subjectline)
 end -- AddEpic
 
 function FixApproxTime(atindex, aftercheck)
-	
 	hours = 0
 	remainmin = 0
+	
+	if EpicMisc["ApproxRunTimes"]["grouping time"]["enabled"] == true then
+		approxtime = approxtime + EpicMisc["ApproxRunTimes"]["grouping time"]["Time"]
+	end
 	
 	if approxtime > 59 then 
 		hours = math.floor(approxtime / 60)
@@ -1935,6 +2038,24 @@ function SearchEpic(epicname)
 end -- SearchEpic
 
 function ListEpic()		
+	highesttimedeflen = 0
+	
+	for i,v in ipairs (EpicTable) do 
+		if EpicMisc["VI"] == "YES" then
+			ReturnType = "VI"
+		else
+			ReturnType = "normal"
+		end
+
+		timedef = EpicTimeDifference(i, ReturnType)
+		
+		timdefleng = tonumber(string.len(trim(timedef)))
+	
+	if timdefleng > highesttimedeflen then
+			highesttimedeflen = timdefleng
+		end
+	end
+	
 	local hour = ""
 
 	if listtype == "nextleader" then
@@ -1949,7 +2070,11 @@ function ListEpic()
 		title = "Epic Run List - Searching: " .. listtype
 	end
 	
-	local title2 = "+-----------+------------+-----------+-----------+---------------------------------+"
+	if highesttimedeflen < 25 then
+		title2 = "+-----------+------------+-----------+-----------+-------------------------+"
+	else
+		title2 = "+-----------+------------+-----------+-----------+---------------------------------+"
+	end
 	
 	local leng = tonumber(string.len(title))
 	local leng2 = tonumber(string.len(title2))
@@ -1970,7 +2095,13 @@ function ListEpic()
 
 	if EpicMisc["VI"] == "NO" then
 		ColourNote(msg_colour, "", title2)
-		ColourNote(msg_colour, "", "| Epic      | Leader     | Day       | Time      | Time Until Epic                 |")
+	
+		if highesttimedeflen < 25 then
+			ColourNote(msg_colour, "", "| Epic      | Leader     | Day       | Time      | Time Until Epic         |")
+		else
+			ColourNote(msg_colour, "", "| Epic      | Leader     | Day       | Time      | Time Until Epic                 |")
+		end
+		
 		ColourNote(msg_colour, "", title2)
 	end
 	
@@ -2122,8 +2253,12 @@ function DisplayRow(ename, eleader, eday, hour, timedef, apindex)
 	
 	if hour == nil then timespace = 8 else timespace = MakeSpace(hour, 8) end
 	
-	if timedef == nil then remainspace = 31 else remainspace = MakeSpace(timedef,31) end
-
+	if highesttimedeflen < 25 then
+		if timedef == nil then remainspace = 24 else remainspace = MakeSpace(timedef,24) end
+	else
+		if timedef == nil then remainspace = 32 else remainspace = MakeSpace(timedef,32) end
+	end
+	
 	if EpicMisc["VI"] == "NO" then
 		ColourNote(msg_colour, "", "| ", epic_colour, "", ename .. namespace, msg_colour, "", " | ", leader_colour, "", eleader .. leaderspace, msg_colour, "", " | ", day_colour, "", eday .. dayspace, msg_colour, "", " | ", time_colour, "", timespace .. hour, epic_colour, "", apxhour, msg_colour, "", " | ", remain_colour, "",remainspace .. timedef, msg_colour, "", "|")
 	elseif EpicMisc["VI"] == "YES" then
@@ -2131,11 +2266,6 @@ function DisplayRow(ename, eleader, eday, hour, timedef, apindex)
 	end
 	
 end -- DisplayRow
-
-function LastNote()
-	check (EnableTimer ("lastnote", 0))
-	lastnoteuser = nil
-end
 
 function StartPost()
 	if SystemTimeTable["year"] == 0 then
@@ -2148,15 +2278,56 @@ end -- StartPost()
 
 function StartNotePost()
 	noteuser = string.gsub (noteuser, "^.", string.upper)
-	
-	if lastnoteuser == noteuser then
-		return
-	else
-		lastnoteuser = noteuser
-		check (EnableTimer ("lastnote", 1))
-		check (ResetTimer ("lastnote"))
-	end
 
+	for i, v in pairs (EpicMisc["PostedNotes"]) do
+		if i == noteuser then 
+			timenow = os.time()
+			timenow2 = EpicMisc["PostedNotes"][noteuser]["Note Sent"]
+		
+			timediff2 = {}
+
+			timeDiff(timenow,timenow2,timediff2)
+
+			if timediff2 ~= nil then 
+				seconds = TimeToSeconds(timediff2)
+			end
+			
+			if seconds < 43199 then
+				local remainseconds = 43199 - seconds
+				local remainmsg = TimeToNormal(remainseconds)
+				
+				ColourNote(qty_colour, "", noteuser, msg_colour, "", " has requested the epic schedule note already within the last 12 hours.")
+				
+				if EpicMisc["PostedNotes"][noteuser]["Last Request"] == nil then 
+					EpicMisc["PostedNotes"][noteuser]["Last Request"] = os.time()
+				else				
+					local lrtimenow = os.time()
+					local lrtimenow2 = EpicMisc["PostedNotes"][noteuser]["Last Request"]
+				
+					local lrtimediff2 = {}
+
+					timeDiff(lrtimenow,lrtimenow2,lrtimediff2)
+
+					if lrtimediff2 ~= nil then 
+						lrseconds = TimeToSeconds(lrtimediff2)
+					end
+					
+					if lrseconds < 3600 then
+						return
+					end
+				end
+
+				EpicMisc["PostedNotes"][noteuser]["Last Request"] = os.time()
+			
+				SendNoEcho("tell " .. noteuser .. " @DI am sorry @R" .. noteuser .. " @Dbut you can only request @C1 @Depic schedule note in a @C12 hour @Dtime frame. You may request again in @C" .. remainmsg .. "@D.@w")
+				
+				SaveState()
+				
+				return
+			end
+		end
+	end
+	
 	SendNoEcho ("board personal")
 	SendNoEcho ("note write")
 	SendNoEcho (noteuser)
@@ -2241,6 +2412,11 @@ function PostEpic()
 	SendNoEcho (timestamp)
 	SendNoEcho ("end")
 	SendNoEcho ("p")
+	
+	EpicMisc["PostedNotes"][noteuser] = {}
+	EpicMisc["PostedNotes"][noteuser]["Note Sent"] = os.time()
+	
+	SaveState()
 end -- PostEpic
 
 function PostRow(ename, eleader, eday, hour, timedef, apindex)
@@ -2445,16 +2621,6 @@ function GetLowestDay(lowestindex)
 	return day
 end -- GetLowestDay
 
-function GetNextEpicSilent()
-	silentcheck = "YES"
-	if SystemTimeTable["year"] == 0 then 
-		listtype = "next"
-		GetSystemTime()
-	else
-		NextEpic()
-	end
-end -- GetNextEpicSilent
-
 function NextEpic()
 	lowestseconds = 604800 -- amount of seconds in a week 
 	lowestindex = 0 -- index of epic with lowest amount of seconds
@@ -2512,26 +2678,10 @@ function NextEpic()
 			end
 
 			if lowestindex > 0 then
-				if silentcheck == "YES" then
-					silentcheck = "NO"
-					ReturnType = "table"
-					timeremaining = EpicTimeDifference(lowestindex, ReturnType)
-
-					if timeremaining["hour"] <= 2 then
-						EnableNextEpicNotification(lowestindex, timeremaining)
-					elseif timeremaining["hour"] == 3 then
-						if timeremaining["min"] < 0 then
-							if timeremaining["sec"] < 0 then
-								EnableNextEpicNotification(lowestindex, timeremaining)
-							end
-						end
-					end
-				else
-					day = GetLowestDay(lowestindex)
-					
-					nexttype = "epic"
-					DisplayNext(nexttype, day, lowestindex)
-				end
+				day = GetLowestDay(lowestindex)
+				
+				nexttype = "epic"
+				DisplayNext(nexttype, day, lowestindex)
 			else
 				nexttype = "epic"
 				DisplayNextFail(nexttype, day, wnext)
@@ -2766,7 +2916,7 @@ function RunTimeUpdate()
 	ColourNote(msg_colour, "", "Changes will not take affect until you reset the epic list.")
 	ColourNote(msg_colour, "", "Would you like to do that now? ", qty_colour, "", "(yes/no)")
 	Note("")
-	ColourNote(msg_colour, "", "Will auto reply ", qty_colour, "", "NO", msg_colour, "", " in ", qty_colour, "", "5", msg_colour, "", " seconds.")
+	ColourNote(msg_colour, "", "Will auto reply ", qty_colour, "", "NO", msg_colour, "", " in ", qty_colour, "", "10", msg_colour, "", " seconds.")
 	Note("")
 end
 
@@ -3071,8 +3221,8 @@ function EnableBot()
 		EnableCommandBot()
 	end
 
-	if EpicMisc["NotificationBot"]["Warning"]["Enabled"] == true then
-		EnableWarningBot()
+	if EpicMisc["NotificationBot"]["AlertEnabled"] == true then
+		EnableAlertBot()
 	end
 	
 	if EpicMisc["NotificationBot"]["AutoEnabled"] == true then
@@ -3091,8 +3241,8 @@ function DisableBot()
 		DisableCommandBot()
 	end
 
-	if EpicMisc["NotificationBot"]["Warning"]["Enabled"] == true then
-		DisableWarningBot()
+	if EpicMisc["NotificationBot"]["AlertEnabled"] == true then
+		DisableAlertBot()
 	end
 	
 	if EpicMisc["NotificationBot"]["AutoEnabled"] == true then
@@ -3100,24 +3250,18 @@ function DisableBot()
 	end	
 end -- DisableBot
 
-function EnableWarningBot()
-	ColourNote(msg_colour, "", "Warning System Enabled. You will now be notified roughly 3 hours in advance of any upcoming epic runs.")
+function EnableAlertBot()
+	ColourNote(msg_colour, "", "Alert System Enabled. You will now be notified roughly 1 hour in advance of any upcoming epic runs.")
 	Note("")
-	
-	check (EnableTimer ("HourlyNextEpicSilent", 1))
-	check (ResetTimer ("HourlyNextEpicSilent"))
-	
+		
 	GetNextEpicSilent()
-end -- EnableWarningBot
+end -- EnableAlertBot
 
-function DisableWarningBot()
-	ColourNote(msg_colour, "", "Warning System Disabled. You will now no longer be notified in advance of any upcoming epic runs.")
+function DisableAlertBot()
+	ColourNote(msg_colour, "", "Alert System Disabled. You will now no longer be notified in advance of any upcoming epic runs.")
 	Note("")
 	
-	check (EnableTimer ("HourlyNextEpicSilent", 0))
-	check (EnableTimer ("NextEpic5Minutes", 0))
-	check (EnableTimer ("NextEpicComingUp", 0))
-end -- DisableWarningBot
+end -- DisableAlertBot
 
 function EnableAutoBot()
 	ColourNote(msg_colour, "", "Auto Notifications Enabled.")
@@ -3139,7 +3283,12 @@ function DisableAutoBot()
 end	 -- DisableAutoBot
 
 function EnableCommandBot()
-	ColourNote(msg_colour, "", "Channel Command Bot enabled and privileges set to ", qty_colour, "", string.upper(EpicMisc["NotificationBot"]["Permissions"]))
+	if EpicMisc["BlacklistEnabled"] == true then
+		ColourNote(msg_colour, "", "Channel Command Bot enabled and privileges set to ", qty_colour, "", string.upper(EpicMisc["NotificationBot"]["Permissions"]), msg_colour, "", ". Blacklist is ", qty_colour, "", "ON.")
+	else
+		ColourNote(msg_colour, "", "Channel Command Bot enabled and privileges set to ", qty_colour, "", string.upper(EpicMisc["NotificationBot"]["Permissions"]), msg_colour, "", ". Blacklist is ", qty_colour, "", "OFF.")
+	end
+
 	Note("")
 	
 	if EpicMisc["NotificationBot"]["Commands"]["gt"] == true then
@@ -3203,11 +3352,11 @@ function ChannelBot(user, cmd, search, channel)
 						return
 					elseif (CheckRoom()) == "no" then
 						user = string.gsub (user, "^.", string.upper)
-						SendNoEcho (channel .. "@R[EpicCAL] @DSorry @C" .. user .. "@D, I can not complete your request at this time Reason: @CI am not in a designated note safe room. Please try again later.@w")
+						SendNoEcho (channel .. " @R[EpicCAL] @DSorry @C" .. user .. "@D, I can not complete your request at this time Reason: @CI am not in a designated note safe room. Please try again later.@w")
 
 						return
 					end
-
+				
 					noteuser = user
 					StartPost()
 				end
@@ -3537,6 +3686,14 @@ function TellChannel(name, line, wc)
 
 	GetCharName()
 	
+	if EpicMisc["BlacklistEnabled"] == true then
+		if CheckBlackList(user) == "yes" then
+			reason = EpicMisc["Blacklist"][user]["Reason"]
+			ColourNote(qty_colour, "", user, msg_colour, "", " has been blacklisted. Reason: ", qty_colour, "", reason)
+			return
+		end
+	end
+
 	if EpicMisc["NotificationBot"]["Permissions"] == "list" then
 		if (CheckPermission(user)) == "no" then
 			return
@@ -3566,6 +3723,14 @@ function ClanChannel(name, line, wc)
 	cmd = string.lower(wc[2])
 	search = string.lower(wc[3])
 	channel = "clan"
+
+	if EpicMisc["BlacklistEnabled"] == true then
+		if CheckBlackList(user) == "yes" then
+			reason = EpicMisc["Blacklist"][user]["Reason"]
+			ColourNote(qty_colour, "", user, msg_colour, "", " has been blacklisted. Reason: ", qty_colour, "", reason)
+			return
+		end
+	end
 	
 	if EpicMisc["NotificationBot"]["Permissions"] == "list" then
 		if (CheckPermission(user)) == "no" then
@@ -3627,6 +3792,14 @@ function GroupChannel(name, line, wc)
 
 	GetCharName()
 
+	if EpicMisc["BlacklistEnabled"] == true then
+		if CheckBlackList(user) == "yes" then
+			reason = EpicMisc["Blacklist"][user]["Reason"]
+			ColourNote(qty_colour, "", user, msg_colour, "", " has been blacklisted. Reason: ", qty_colour, "", reason)
+			return
+		end
+	end
+
 	if EpicMisc["NotificationBot"]["Permissions"] == "list" then
 		if (CheckPermission(user)) == "no" then
 			return
@@ -3656,6 +3829,14 @@ function FriendChannel(name, line, wc)
 	search = string.lower(wc[3])
 	channel = "ft"
 	
+	if EpicMisc["BlacklistEnabled"] == true then
+		if CheckBlackList(user) == "yes" then
+			reason = EpicMisc["Blacklist"][user]["Reason"]
+			ColourNote(qty_colour, "", user, msg_colour, "", " has been blacklisted. Reason: ", qty_colour, "", reason)
+			return
+		end
+	end
+
 	if EpicMisc["NotificationBot"]["Permissions"] == "list" then
 		if (CheckPermission(user)) == "no" then
 			return
@@ -3725,70 +3906,6 @@ function LastCmdClan()
 	clanlastcommand = nil
 end
 
-function TellDelayDisable()
-	check (EnableTimer ("telldelay", 0))
-	TellChannelDelay = false
-end -- TellDelayDisable
-
-function TellDelayEnable()
-	check (EnableTimer ("telldelay", 1))
-	check (ResetTimer ("telldelay"))
-	TellChannelDelay = true
-end -- TellDelayEnable
-
-function EnableNextEpicNotification(index, time)
-	NextEpicNotification = index
-	
-	hour = time["hour"]
-	min = time["min"]
-	sec = 0
-	
-	min = min - 5
-	
-	if min < 0 then
-		min = min + 60
-		hour = hour - 1
-	end
-
-	day = GetLowestDay(index)				
-
-	SetTimerOption ("NextEpic5Minutes", "hour", hour)
-	SetTimerOption ("NextEpic5Minutes", "minute", min)
-	SetTimerOption ("NextEpic5Minutes", "second", sec)
-	check (EnableTimer ("NextEpic5Minutes", 1))
-	check (ResetTimer ("NextEpic5Minutes"))
-
-	NextEpicComingUp()	
-
-	check (EnableTimer ("NextEpicComingUp", 1))
-	check (ResetTimer ("NextEpicComingUp"))
-	
-	check (EnableTimer ("HourlyNextEpicSilent", 0))
-end -- EnableNextEpicNotification
-
-function HourlyNextEpicSilent()
-	GetNextEpicSilent()
-end -- HourlyNextEpicSilent
-
-function NextEpicComingUp()
-	ReturnType = "VI"
-	timeremaining = EpicTimeDifference(NextEpicNotification, ReturnType)
-
-	ColourNote("red", "" , "[" .. EpicTable[NextEpicNotification]["Epic Name"] .. " epic]", msg_colour, "" , " starting in ", help_command_colour, "", trim(timeremaining))
-	Note("")
-end -- NextEpicComingUp
-
-function NextEpic5Minutes()
-	ColourNote("red", "" , "[" .. EpicTable[NextEpicNotification]["Epic Name"] .. " Epic]", msg_colour, "" , " starting in ", help_command_colour, "", "5", msg_colour, "", " minutes.")
-	Note("")
-	
-	check (EnableTimer ("NextEpic5Minutes", 0))
-	check (EnableTimer ("NextEpicComingUp", 0))
-	
-	check (EnableTimer ("HourlyNextEpicSilent", 1))
-	check (ResetTimer ("HourlyNextEpicSilent"))
-end -- NextEpic5Minutes
-
 function HourlyNextEpicNotification()
 	for i,v in pairs(EpicMisc["NotificationBot"]["Auto"]) do
 		if v == true then
@@ -3796,10 +3913,334 @@ function HourlyNextEpicNotification()
 		end
 	end
 end -- HourlyNextEpicNotification
- 
+
+---------------------------------------------
+------------ BLACKLIST FUNCTIONS ------------
+---------------------------------------------
+function AddBlacklist(user, reason)	
+	if CheckBlackList(user) == "yes" then
+		ColourNote(qty_colour, "", user, msg_colour, "", " has already been added to the blacklist.")
+		
+		return
+	end
+		
+	ColourNote(qty_colour, "", user, msg_colour, "", " has been added to the blacklist. Reason: ", qty_colour, "", reason)
+
+	EpicMisc["Blacklist"][user] = {}
+	EpicMisc["Blacklist"][user]["Reason"] = reason
+	EpicMisc["Blacklist"][user]["Since"] = os.time()
+	SaveState()
+end -- AddBlacklist
+
+function RemoveBlacklist(user)
+	if CheckBlackList(user) == "no" then
+		ColourNote(qty_colour, "", user, msg_colour, "", " was not found on the blacklist.")
+		return
+	end
+	
+	ColourNote(qty_colour, "", user, msg_colour, "", " has been removed from the blacklist.")
+
+	EpicMisc["Blacklist"][user] = nil
+	SaveState()
+end -- RemoveBlacklist
+
+function CheckBlackList(user)
+	bcheck = "no"
+	
+	for i,v in pairs(EpicMisc["Blacklist"]) do
+		if user == i then
+			bcheck = "yes"
+		end
+	end
+	
+	return bcheck
+end -- CheckBlackList
+
+function ListBlacklist()
+	title = "Players on the Blacklist"
+	
+	local title2 = "+--------------+--------------------------------+--------------------------------------------+"
+	
+	local leng = tonumber(string.len(title))
+	local leng2 = tonumber(string.len(title2))
+	
+	spacing = HelpSpacing(title, title2)
+	
+	ColourNote(help_colour, "", spacing, help_command_colour, "", title)
+	Note("")
+
+	if EpicMisc["VI"] == "NO" then
+		ColourNote(msg_colour, "", title2)
+		ColourNote(msg_colour, "", "| Name         | Reason                         | Time on List                               |")
+		ColourNote(msg_colour, "", title2)
+	end
+	
+	for i,v in pairs(EpicMisc["Blacklist"]) do
+		username = string.gsub (i, "^.", string.upper)
+		reason = EpicMisc["Blacklist"][i]["Reason"]
+		
+		local timenow = os.time()
+		local timenow2 = EpicMisc["Blacklist"][i]["Since"]
+		
+		local timediff2 = {}
+
+		timeDiff(timenow,timenow2,timediff2)
+
+		local timeonlist = remainingtime_noteVI(timediff2)
+		
+		if username == nil then namespace = 12 else namespace = MakeSpace(username, 12) end
+		
+		if reason == nil then reasonspace = 30 else reasonspace = MakeSpace(reason, 30) end
+		
+		if timeonlist == nil then onlistspace = 42 else onlistspace = MakeSpace(timeonlist, 42) end
+
+		if EpicMisc["VI"] == "NO" then
+			ColourNote(msg_colour, "", "| ", user_colour, "", username .. namespace, msg_colour, "", " | ", reason_colour, "", reason .. reasonspace, msg_colour, "", " | ", remain_colour, "", onlistspace .. timeonlist,  msg_colour, "", " |")
+		elseif EpicMisc["VI"] == "YES" then
+			ColourNote(msg_colour, "", "User: ", user_colour, "", username .. namespace, msg_colour, "", " Reason: ", reason_colour, "", reason, msg_colour, "", " Time on Blacklist: ", remain_colour, "", timeonlist)
+		end
+	end
+
+	if EpicMisc["VI"] == "NO" then
+		ColourNote(msg_colour, "", title2)
+	end
+	
+	Note("")
+end -- ListBlacklist
+
+function EnableBlacklist()
+	if EpicMisc["BlacklistEnabled"] == true then 
+		ColourNote(msg_colour, "", "Blacklist has already been ", qty_colour, "", "enabled")
+	else
+		ColourNote(msg_colour, "", "Blacklist Enabled.")
+		Note("")
+		ColourNote(msg_colour, "", "Any requests from players on the blacklist will be ignored.")
+		Note("")
+		
+		EpicMisc["BlacklistEnabled"] = true
+		SaveState()
+	end
+end -- EnableBlacklist
+
+function DisableBlacklist()
+	if EpicMisc["NotificationBot"]["Enabled"] == true then
+		ColourNote(msg_colour, "", "The notification bot is currently disabled.")
+	else
+		if EpicMisc["BlacklistEnabled"] == false then 
+			ColourNote(msg_colour, "", "Blacklist has already been ", qty_colour, "", "disabled")
+		else
+			ColourNote(msg_colour, "", "Blacklist Disabled.")
+			Note("")
+			ColourNote(msg_colour, "", "No requests will be ignored.")
+			Note("")
+			
+			EpicMisc["BlacklistEnabled"] = false
+			SaveState()
+		end
+	end
+end	 -- DisableBlacklist
+
+-----------------------------------------------
+--------------- ALERT FUNCTIONS ---------------
+-----------------------------------------------
+function GetNextEpicSilent()
+	if SystemTimeTable["year"] == 0 then 
+		listtype = "nextsilent"
+		GetSystemTime()
+	else
+		NextEpicSilent()
+	end
+end -- GetNextEpicSilent
+
+function NextEpicSilent()
+	lowestseconds = 604800 -- amount of seconds in a week 
+	lowestindex = 0 -- index of epic with lowest amount of seconds
+
+	for i, v in ipairs(EpicTable) do
+		CheckLowest(i)
+	end
+	
+	ReturnType = "table"
+	alertremaining = EpicTimeDifference(lowestindex, ReturnType)
+	
+	AlertCheck()
+end
+-- return here
+function AlertCheck()
+	if alertremaining == nil then
+		GetNextEpicSilent()
+	end
+	
+	if alertcheck == nil then
+		if alertremaining["hour"] == 0 then
+			if alertremaining["min"] > 9 then
+				alertcheck = "YES" 
+				NextEpicComingUp()
+				alerttime = os.time()
+			end
+		else
+			alertcheck = "NO"
+			alerttime = os.time()
+		end
+	elseif alertcheck == "YES" then
+	
+		OSSystemTimeTable2 = os.date("*t")
+		OSSystemTime2 = os.time()
+
+		tdef = OSSystemTime2 - OSSystemTime
+		
+		-- timenow = os.time(SystemTimeTable)
+		timenow = sertime2
+		timenow = timenow + tdef
+
+		timenow2 = alerttime
+		
+		timediff2 = {}
+		
+		timeDiff(timenow,timenow2,timediff2)
+		
+		if timediff2["day"] == 0 then
+			if timediff2["hour"] == 0 then
+				if timediff2["min"] <= 30 then
+					alertcheck = "PAUSE"
+					alerttime = os.time()
+					NextEpicComingUp()
+				end
+			end
+		end
+	elseif alertcheck == "NO" then
+		OSSystemTimeTable2 = os.date("*t")
+		OSSystemTime2 = os.time()
+
+		tdef = OSSystemTime2 - OSSystemTime
+
+		-- timenow = os.time(SystemTimeTable)
+		timenow = sertime2
+		timenow = timenow + tdef
+		timenow2 = alerttime
+
+		timediff2 = {}
+
+		timeDiff(timenow,timenow2,timediff2)
+
+		if timediff2["day"] == 0 then
+			if timediff2["hour"] == 0 then
+				if timediff2["min"] > 9 then
+				 	alertcheck = nil
+					GetNextEpicSilent()
+				end
+			end
+		end
+	elseif alertcheck == "PAUSE" then
+		OSSystemTimeTable2 = os.date("*t")
+		OSSystemTime2 = os.time()
+
+		tdef = OSSystemTime2 - OSSystemTime
+		
+		-- timenow = os.time(SystemTimeTable)
+		timenow = sertime2
+		timenow = timenow + tdef
+
+		timenow2 = alerttime
+				
+		timediff2 = {}
+
+		timeDiff(timenow,timenow2,timediff2)
+
+		if timediff2["day"] == 0 then
+			if timediff2["hour"] == 0 then
+				if timediff2["min"] > 29 then
+					alertcheck = nil
+					GetNextEpicSilent()
+				end
+			end
+		end
+	end
+end
+
+function NextEpicComingUp()
+	lowestseconds = 604800 -- amount of seconds in a week 
+	lowestindex = 0 -- index of epic with lowest amount of seconds
+
+	for i, v in ipairs(EpicTable) do
+		CheckLowest(i)
+	end
+
+	ReturnType = "VI"
+	timeremaining = EpicTimeDifference(lowestindex, ReturnType)
+
+	ColourNote("red", "" , "[" .. EpicTable[lowestindex]["Epic Name"] .. " epic]", msg_colour, "" , " starting in ", help_command_colour, "", trim(timeremaining))
+	Note("")
+end -- NextEpicComingUp
+
 -----------------------------------------------
 -------------- UTILITY FUNCTIONS --------------
 -----------------------------------------------
+function SetServerTime(sertime)
+	timeline = string.lower(sertime)
+	SystemTimeTable = {}
+	SystemTimeTable["isdst"] = false
+
+	for time in timeline:gmatch("%d%d:%d%d:%d%d") do		
+		hour = time:gsub(":%d+:%d+", "------")
+	
+		for shour in hour:gmatch("%d+") do
+			SystemTimeTable["hour"] = tonumber(shour)
+		end
+		
+		for min in time:gmatch(":%d%d:") do
+			for smin in min:gmatch("%d+") do
+				SystemTimeTable["min"] = tonumber(smin)
+			end
+		end
+
+		sec = time:gsub("%d+:%d+:", "------")
+
+		for ssec in sec:gmatch("%d+") do
+			SystemTimeTable["sec"] = tonumber(ssec)
+		end		
+	end
+	
+	for day in timeline:gmatch("%-%s%a+") do
+		for sday in day:gmatch("%a+") do
+			for i,v in ipairs (DaysofWeek) do
+				if v == sday then
+					SystemTimeTable["wday"] = i
+				end
+			end
+		end		
+	end
+	
+	for date in timeline:gmatch("%d+%s%a+,%s%d+") do
+		for year in date:gmatch(",%s%d+") do
+			for syear in year:gmatch("%d+") do
+				SystemTimeTable["year"] = tonumber(syear)
+			end
+		end
+		
+		for month in date:gmatch("%a+") do
+			for i,v in ipairs (Months) do 
+				if v == month then
+					SystemTimeTable["month"] = i
+				end
+			end
+		end
+		
+		for day in date:gmatch("%d+%s") do
+			for sday in day:gmatch("%d+") do	
+				SystemTimeTable["day"] = tonumber(sday)
+			end
+		end
+	end
+	
+	MonthIndex = SystemTimeTable["month"]
+	yday = MonthsYDay[MonthIndex] + SystemTimeTable["day"]
+	
+	if (SystemTimeTable["year"]%4) == 0 then yday = yday + 1 end
+	
+	SystemTimeTable["yday"] = yday
+end
+
 function GetSystemTime()
 	world.EnableGroup("SystemTime", 1)
 	SendNoEcho ("real time")
@@ -3846,12 +4287,14 @@ function GetSystemTimeTrig(name, line, wc)
       }
 	
 	OSSystemTimeTable = os.date("*t")
-	OSSystemTime = os.time(OSSystemTimeTable)
+	OSSystemTime = os.time()
 
 	world.EnableGroup("SystemTime", 0)
 	
 	if listtype == "next" then  
 		NextEpic()
+	elseif listtype == "nextsilent" then
+		NextEpicSilent()
 	elseif listtype == "none" then
 	elseif listtype == "permissions" then
 		ListPermissions()
@@ -3863,13 +4306,17 @@ function GetSystemTimeTrig(name, line, wc)
 end -- GetSystemTimeTrig
 
 function EpicTimeDifference(TableIndex, ReturnType)	
+	if TableIndex == nil then
+		return
+	end
+	
 	OSSystemTimeTable2 = os.date("*t")
-	OSSystemTime2 = os.time(OSSystemTimeTable2)
+	OSSystemTime2 = os.time()
 
 	tdef = OSSystemTime2 - OSSystemTime
 	
 	timenow = os.time(SystemTimeTable)
-
+	
 	timenow = timenow + tdef
 
 	timenow2 = os.time(EpicTable[TableIndex]["Time Table"])
@@ -4034,22 +4481,38 @@ function GetTimeMessage(time, ttype, remaining_time)
 	
 	if time[ttype] ~= nil then
 		if tonumber(time[ttype]) == 0 then
-			if ttype == "min" or ttype == "sec" then
+			if ttype == "min" then
 				remaining_time = remaining_time .. "        "
 			elseif ttype == "hour" then
 				remaining_time = remaining_time .. "         "
 			end
 		elseif tonumber(time[ttype]) == 1 then
-			if remaining_time == "" then
-				remaining_time = time[ttype] .. " " .. ttype .. "  "
+			if ttype ~= "sec" then
+				if remaining_time == "" then
+					remaining_time = time[ttype] .. " " .. ttype .. "  "
+				else
+					remaining_time = remaining_time .. " " .. time[ttype] .. " " .. ttype .. "  "
+				end
 			else
-				remaining_time = remaining_time .. " " .. time[ttype] .. " " .. ttype .. "  "
+				if remaining_time == "" then
+					remaining_time = time[ttype] .. ttype .. "  "
+				else
+					remaining_time = remaining_time .. time[ttype] .. " " .. ttype .. "  "
+				end
 			end
 		elseif tonumber(time[ttype]) < 10 then
-			if remaining_time == "" then
-				remaining_time = time[ttype] .. " " .. ttype .. "s "
+			if ttype ~= "sec" then
+				if remaining_time == "" then
+					remaining_time = time[ttype] .. " " .. ttype .. "s "
+				else
+					remaining_time = remaining_time .. " " .. time[ttype] .. " " .. ttype .. "s "
+				end
 			else
-				remaining_time = remaining_time .. " " .. time[ttype] .. " " .. ttype .. "s "
+				if remaining_time == "" then
+					remaining_time = time[ttype] .. ttype .. "s "
+				else
+					remaining_time = remaining_time .. time[ttype] .. " " .. ttype .. "s "
+				end
 			end
 		else 
 			remaining_time = remaining_time .. time[ttype] .. " " .. ttype .. "s "
@@ -4088,6 +4551,102 @@ function TimeToSeconds(tablename)
 
     return(seconds)
 end -- TimeToSeconds
+
+function TimeToNormal(time)
+	local years = 0
+	local months = 0
+	local days = 0
+	local hours = 0
+	local days = 0
+	local mins = 0
+	local days = 0
+	local secs = 0
+	local message = ""
+	
+	if time > 31535999 then
+		years = math.floor(time / 31536000)
+		
+		time = time - (years * 31536000)
+	end
+
+	if time > 2591999 then
+		months = math.floor(time / 2592000)
+		
+		time = time - (months * 2592000)
+	end
+	
+	if time > 86399 then
+		days = math.floor(time / 86400)
+		
+		time = time - (days * 86400)
+	end
+
+	if time > 3599 then
+		hours = math.floor(time / 3600)
+		
+		time = time - (hours * 3600)
+	end
+
+	if time > 59 then
+		mins = math.floor(time / 60)
+		
+		time = time - (mins * 60)
+	end
+	
+	if time < 59 then
+		secs = time
+	end
+	
+	if years ~= 0 then
+		if years == 1 then
+			message = "@R" .. years .. " @Dyear@w "
+		elseif years ~= 0 then
+			message = "@R" .. years .. " @Dyears@w "
+		end
+	end
+
+	if months ~= 0 then
+		if months == 1 then
+			message = message .. "@R" .. months .. " @Dmonth@w "
+		elseif months ~= 0 then
+			message = message .. "@R" .. months .. " @Dmonths@w "
+		end
+	end
+		
+	if days ~= 0 then
+		if days == 1 then
+			message = message .. "@R" .. days .. " @Dday@w "
+		elseif days ~= 0 then
+			message = message .. "@R" .. days .. " @Ddays@w "
+		end
+	end
+	
+	if hours ~= 0 then
+		if hours == 1 then
+			message = message .. "@R" .. hours .. " @Dhour@w "
+		elseif hours ~= 0 then
+			message = message .. "@R" .. hours .. " @Dhours@w "
+		end
+	end
+
+	if mins ~= 0 then
+		if mins == 1 then
+			message = message .. "@R" .. mins .. " @Dmin@w "
+		elseif mins ~= 0 then
+			message = message .. "@R" .. mins .. " @Dmins@w "
+		end
+	end
+
+	if secs ~= 0 then
+		if secs == 1 then
+			message = message .. "@R" .. secs .. " @Dsec@w"
+		elseif secs ~= 0 then
+			message = message .. "@R" .. secs .. " @Dsecs@w"
+		end
+	end
+	
+	return (message)
+end -- TimeToNormal
 
 function SeperateDate(dateonly)	
 	EpicTable[TableIndex]["Time Table"] = {}
@@ -4349,9 +4908,9 @@ function EpicCalendarHelpBot()
 		Note("")
 	end
 
-	ColourNote(help_colour, "", "The notification bot allows the user to warn themselves of upcoming epic runs. If an is going")
-	ColourNote(help_colour, "", "to start within 3 hours or less the system will remind the user every hour of the upcoming epic")
-	ColourNote(help_colour, "", "run as well as a 5 minute notice of it starting.")
+	ColourNote(help_colour, "", "The notification bot allows the user to alert themselves of upcoming epic runs. If an epic is")
+	ColourNote(help_colour, "", "going to start within 1 hour or less the system will remind the user about the upcoming epic")
+	ColourNote(help_colour, "", "run.")
 	Note("")
 	ColourNote(help_colour, "", "Also with this system the user can grant whoever they want access to " , qty_colour, "", "next", help_colour, "", " commands without")
 	ColourNote(help_colour, "", "having to install the plugin themselves. See ", help_command_colour, "", "ecal help next", help_colour, "", " for more information on those")
@@ -4366,6 +4925,27 @@ function EpicCalendarHelpBot()
 		Note("")
 	end
 
+	ColourNote(help_command_colour, "", "ecal bot <auto|commands> list", help_colour, ""," - lists the channels and their settings for the specified system")
+
+	ColourNote(help_command_colour, "", "ecal bot <auto|commands|alert> <enable|disable>  ", help_colour, "", " - enables/disables the specified system")
+
+	ColourNote(help_command_colour, "", "ecal bot <auto|commands> <enable|disable> <channel>", help_colour, "", " - enables/disables the channel notification")
+	ColourNote(help_colour, "", "                                                      in the specified system")
+
+	ColourNote(help_command_colour, "", "ecal bot <add|remove> room", help_colour, "", " - adds/removes the current room to the approved note sending")
+	ColourNote(help_colour, "", "                             room list")
+
+	ColourNote(help_command_colour, "", "ecal bot list room        ", help_colour, "", " - displays the list of approved note sending rooms")
+	Note("")
+
+	ColourNote(help_colour, "", "Power User Commands")
+	
+	if EpicMisc["VI"] == "NO" then
+		ColourNote(help_colour, "", "-------------------")
+	elseif EpicMisc["VI"] == "YES" then
+		Note("")
+	end
+
 	ColourNote(help_command_colour, "", "ecal bot <enable|disable>    ", help_colour, "", " - enables/disables the main bot system")
 
 	ColourNote(help_command_colour, "", "ecal bot <add|remove> <user> ", help_colour, "", " - add/removes users to the channel command permission system")
@@ -4375,19 +4955,24 @@ function EpicCalendarHelpBot()
 	ColourNote(help_command_colour, "", "ecal bot permissions         ", help_colour, "", " - toggles channel command access between ", qty_colour, "", "LIST", help_colour, "", " and ", qty_colour, "", "ALL", help_colour, "", ". default is")
 	ColourNote(help_colour, "", "                                set to ", qty_colour, "", "LIST")
 
-	ColourNote(help_command_colour, "", "ecal bot <auto|commands> list", help_colour, ""," - lists the channels and their settings for the specified system")
+	ColourNote(help_colour, "", "Blacklist Commands")
+	
+	if EpicMisc["VI"] == "NO" then
+		ColourNote(help_colour, "", "------------------")
+	elseif EpicMisc["VI"] == "YES" then
+		Note("")
+	end
 
-	ColourNote(help_command_colour, "", "ecal bot <auto|commands|warning> <enable|disable>  ", help_colour, "", " - enables/disables the specified system")
-
-	ColourNote(help_command_colour, "", "ecal bot <auto|commands> <enable|disable> <channel>", help_colour, "", " - enables/disables the channel notification")
-	ColourNote(help_colour, "", "                                                      in the specified system")
-
-	ColourNote(help_command_colour, "", "ecal bot auto <add|remove> <channel>", help_colour, "", " - adds/removes channels to the auto notification list")
-
-	ColourNote(help_command_colour, "", "ecal bot <add|remove> room", help_colour, "", " - adds/removes the current room to the approved note sending")
-	ColourNote(help_colour, "", "                             room list")
-
-	ColourNote(help_command_colour, "", "ecal bot list room        ", help_colour, "", " - displays the list of approved note sending rooms")
+	ColourNote(help_command_colour, "", "ecal bot bl enable               ", help_colour, "", " - enables the blacklist")
+	
+	ColourNote(help_command_colour, "", "ecal bot bl disable              ", help_colour, "", " - disables the blacklist")
+	
+	ColourNote(help_command_colour, "", "ecal bot bl                      ", help_colour, "", " - displays who is on the blacklist")
+	
+	ColourNote(help_command_colour, "", "ecal bot bl add <player> <reason>", help_colour, "", " - adds a player to the blacklist with the option to list the")
+	ColourNote(help_colour, "", "                                    reason why")
+	
+	ColourNote(help_command_colour, "", "ecal bot bl remove <player>      ", help_colour, "", " - remove a player from the blacklist")
 	Note("")
 	
 	ColourNote(help_command_colour, "", "PLEASE NOTE", help_colour, "", ": only ", qty_colour, "", "ft", help_colour, "", ", ", qty_colour, "", "gt", help_colour, "", ", ", qty_colour, "", "clan", help_colour, "", " and ", qty_colour, "", "tells", help_colour, "", " have been added to the channel command system")
@@ -4510,6 +5095,12 @@ function EpicCalendarHelpRT()
 
 	ColourNote(help_command_colour, "", "ecal rt list                 ", help_colour, "", " - lists current stored approximate run times")
 
+	ColourNote(help_command_colour, "", "ecal rt gt                   ", help_colour, "", " - displays time allocated for grouping time")
+	
+	ColourNote(help_command_colour, "", "ecal rt gt <enable|disable>  ", help_colour, "", " - adds/removes grouping time from approximate start time equation")
+	
+	ColourNote(help_command_colour, "", "ecal rt gt <minutes>         ", help_colour, "", " - changes time allocated for grouping time")
+
 	ColourNote(help_command_colour, "", "ecal rt add <epic> <minutes> ", help_colour, "", " - adds <epic> to the approximate run times list")
 	
 	ColourNote(help_command_colour, "", "ecal rt edit <epic> <minutes>", help_colour, "", " - changes the approximate run time for <epic>")
@@ -4533,31 +5124,18 @@ function GetSavedData()
 		assert (loadstring (GetVariable ("EpicPermissionTable") or "")) ()
 		assert (loadstring (GetVariable ("EpicMisc") or "")) ()
 		assert (loadstring (GetVariable ("TableIndex") or "")) ()
-		
-		if 	EpicMisc["ApproxRunTimes"] == nil then
-			EpicMisc["ApproxRunTimes"] = {}
-			EpicMisc["ApproxRunTimes"]["genie"] = 25
-			EpicMisc["ApproxRunTimes"]["icefall1"] = 45
-			EpicMisc["ApproxRunTimes"]["icefall2"] = 60
-			EpicMisc["ApproxRunTimes"]["inferno"] = 60
-			EpicMisc["ApproxRunTimes"]["oc"] = 10
-			EpicMisc["ApproxRunTimes"]["winds"] = 15
-		end
-		
-		if EpicMisc["ApproxRunTimes"]["grouping time"] ~= nil then 
-			EpicMisc["ApproxRunTimes"]["grouping time"] = nil
-		end
-		
-		if EpicMisc["NotificationBot"]["enabled"] ~= nil then
-			EpicMisc["NotificationBot"]["enabled"] = nil
-		end
 	else
 		TableIndex = 0
 		EpicTable = {}
 		EpicMisc = {}
 		EpicMisc["VI"] = "NO"
 		EpicMisc["Updating"] = "NO"
+		EpicMisc["BlacklistEnabled"] = false
+		EpicMisc["Blacklist"] = {}
 		EpicMisc["ApproxRunTimes"] = {}
+		EpicMisc["ApproxRunTimes"]["grouping time"] = {}
+		EpicMisc["ApproxRunTimes"]["grouping time"]["Time"] = 5
+		EpicMisc["ApproxRunTimes"]["grouping time"]["enabled"] = false
 		EpicMisc["ApproxRunTimes"]["genie"] = 25
 		EpicMisc["ApproxRunTimes"]["icefall1"] = 45
 		EpicMisc["ApproxRunTimes"]["icefall2"] = 60
@@ -4582,15 +5160,11 @@ function GetSavedData()
 		EpicMisc["NotificationBot"]["Auto"]["gt"] = false
 		EpicMisc["NotificationBot"]["Auto"]["clan"] = false
 		EpicMisc["NotificationBot"]["Auto"]["ft"] = false
-		EpicMisc["NotificationBot"]["Warning"] = {}
-		EpicMisc["NotificationBot"]["Warning"]["Enabled"] = false
+		EpicMisc["NotificationBot"]["Alert"] = {}
+		EpicMisc["NotificationBot"]["AlertEnabled"] = false
+		EpicMisc["PostedNotes"] = {}
 		EpicPermissionTable = {}
 	end
-
-	ClanChannelDelay = false
-	FriendChannelDelay = false
-	GroupChannelDelay = false
-	TellChannelDelay = false
 
 	SaveState()
 end -- GetSavedData
@@ -4599,6 +5173,11 @@ function Connected()
 	ran = true
 	
 	if EpicMisc["NotificationBot"]["Enabled"] == true then EnableBot() end
+	
+	if EpicMisc["NotificationBot"]["AlertEnabled"] == true then
+		GetNextEpicSilent()
+	end
+	
 	ResetEpicTable()	
 end -- Connected
 
@@ -4650,11 +5229,18 @@ function OnPluginBroadcast(msg, id, name, text)
 		elseif (text == 'comm.tick') then		
 			gmcptick = gmcp("comm.tick")
 			
-			SystemTimeTable = os.date("*t", gmcptick.ctime)
+			sertime = gmcptick.time
+			SetServerTime(sertime)
+			sertime2 = gmcptick.ctime
+			
 			OSSystemTimeTable = os.date("*t")
-			OSSystemTime = os.time(OSSystemTimeTable)
+			OSSystemTime = os.time()
+			
+			if EpicMisc["NotificationBot"]["AlertEnabled"] == true then
+				AlertCheck()
+			end
 		end
-	end
+	end	
 end -- OnPluginBroadcast
 
 -- Update code taken from Pwar's installer menu
