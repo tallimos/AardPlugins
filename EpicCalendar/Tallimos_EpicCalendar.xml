@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="1.94"
+   version="1.95"
    >
    
 </plugin>
@@ -604,6 +604,18 @@ approxtime = 0
 		[14] = "transcendence", 
 	}
 
+	SearchNames = {
+		["genie"] = "Genie's Last Wish",
+		["inferno"] = "Journey to the Inferno",
+		["oc"] = "Oradrins Chosen",
+		["winds"] = "Winds of Fate",
+		["terra"] = "Cracks of Terra",
+		["titan"] = "Titans Keep",
+		["oldvanir"] = "oldvanir",
+		["testmaze10"] = "testmaze10",
+		["transcendence"] = "transcendence", 
+	}
+
 	-- Borrowed for SnD
 	AreaNames = {
 		-- A --
@@ -1010,32 +1022,32 @@ function CommandMenu(name, line, wc)
 			gtime = wordtable[3]
 			
 			if gtime == nil then 
-				ColourNote(qty_colour, "", EpicMisc["ApproxRunTimes"]["grouping time"]["Time"], msg_colour, "", " minutes have been allocated for the grouping time for the approximate run time calculation.")
+				ColourNote(qty_colour, "", EpicMisc["ApproxRunTimes"]["Grouping Time"]["Time"], msg_colour, "", " minutes have been allocated for the grouping time for the approximate run time calculation.")
 			elseif gtime == "enable" then
-				if EpicMisc["ApproxRunTimes"]["grouping time"]["enabled"] == true then
+				if EpicMisc["ApproxRunTimes"]["Grouping Time"]["Enabled"] == true then
 					ColourNote(msg_colour, "", "Grouping time calculation has already been ", qty_colour, "", "enabled")
 				else
-					EpicMisc["ApproxRunTimes"]["grouping time"]["enabled"] = true
+					EpicMisc["ApproxRunTimes"]["Grouping Time"]["Enabled"] = true
 					
-					ColourNote(msg_colour, "", "Grouping time will be taken into account when calculating approximate start times. Current grouping time set to ", qty_colour, "", EpicMisc["ApproxRunTimes"]["grouping time"]["Time"], msg_colour, "", " minutes.")
+					ColourNote(msg_colour, "", "Grouping time will be taken into account when calculating approximate start times. Current grouping time set to ", qty_colour, "", EpicMisc["ApproxRunTimes"]["Grouping Time"]["Time"], msg_colour, "", " minutes.")
 					
 					RunTimeUpdate()
 				end
 			elseif gtime == "disable" then			
-				if EpicMisc["ApproxRunTimes"]["grouping time"]["enabled"] == false then 
+				if EpicMisc["ApproxRunTimes"]["Grouping Time"]["Enabled"] == false then 
 					ColourNote(msg_colour, "", "Grouping time calculation has already been ", qty_colour, "", "disabled")
 				else
-					EpicMisc["ApproxRunTimes"]["grouping time"]["enabled"] = false				
+					EpicMisc["ApproxRunTimes"]["Grouping Time"]["Enabled"] = false				
 					ColourNote(msg_colour, "", "Grouping time will not be taken into account when calculating approximate start times.")
 					
 					RunTimeUpdate()
 				end
 			elseif tonumber(gtime) ~= nil then
-				EpicMisc["ApproxRunTimes"]["grouping time"]["Time"] = tonumber(gtime)
+				EpicMisc["ApproxRunTimes"]["Grouping Time"]["Time"] = tonumber(gtime)
 				
-				ColourNote(msg_colour, "", "Grouping time allocation has been changed to ", qty_colour, "", EpicMisc["ApproxRunTimes"]["grouping time"]["Time"], msg_colour, "", " minutes.")
+				ColourNote(msg_colour, "", "Grouping time allocation has been changed to ", qty_colour, "", EpicMisc["ApproxRunTimes"]["Grouping Time"]["Time"], msg_colour, "", " minutes.")
 				
-				if EpicMisc["ApproxRunTimes"]["grouping time"]["enabled"] == true then
+				if EpicMisc["ApproxRunTimes"]["Grouping Time"]["Enabled"] == true then
 					RunTimeUpdate()
 				end
 			else
@@ -1064,6 +1076,8 @@ function CommandMenu(name, line, wc)
 			end
 		elseif attrib == "help" then
 			EpicCalendarHelpBot()
+		elseif attrib == "status" then
+			EpicBotStatus()			
 		elseif attrib == "add" then
 			user = wordtable[3]
 			
@@ -1413,7 +1427,7 @@ function CheckEpicName(CheckEpicName)
 	end	
 	
 	return repic
-end
+end -- CheckEpicName
 
 ---------------------------------------------
 -------- GET CURRENT BOARD FUNCTIONS --------
@@ -1425,15 +1439,15 @@ end -- GetCurrentBoard
 
 function CurrentBoard(name, line, wc)
 	cboard = wc[1]
-end
+end -- CurrentBoard
 
 function EndGetCurrentBoard()
 	world.EnableGroup ("GetCurrentBoardTrig", 0)
-end
+end -- EndGetCurrentBoard
 
 function GetBoardEnd()
 	world.EnableGroup ("GetBoardEndTrig", 0)
-end
+end -- GetBoardEnd
 
 ---------------------------------------------
 --------- MAIN EPIC TABLE FUNCTIONS ---------
@@ -1814,8 +1828,8 @@ function FixApproxTime(atindex, aftercheck)
 	hours = 0
 	remainmin = 0
 	
-	if EpicMisc["ApproxRunTimes"]["grouping time"]["enabled"] == true then
-		approxtime = approxtime + EpicMisc["ApproxRunTimes"]["grouping time"]["Time"]
+	if EpicMisc["ApproxRunTimes"]["Grouping Time"]["Enabled"] == true then
+		approxtime = approxtime + EpicMisc["ApproxRunTimes"]["Grouping Time"]["Time"]
 	end
 	
 	if approxtime > 59 then 
@@ -1861,7 +1875,7 @@ function FixApproxTime(atindex, aftercheck)
 	SaveState()
 	
 	return approxtime
-end
+end -- FixApproxTime
 
 function NoDateFound()
 	EpicTable[TableIndex]["Time Table"] = {}
@@ -1959,18 +1973,6 @@ function EpicList()
 end -- EpicList
 
 function CheckType(ltype)
-	SearchNames = {
-		["genie"] = "Genie's Last Wish",
-		["inferno"] = "Journey to the Inferno",
-		["oc"] = "Oradrins Chosen",
-		["winds"] = "Winds of Fate",
-		["terra"] = "Cracks of Terra",
-		["titan"] = "Titans Keep",
-		["oldvanir"] = "oldvanir",
-		["testmaze10"] = "testmaze10",
-		["transcendence"] = "transcendence", 
-	}
-
 	if ltype == "if1" or ltype == "icefall 1" then
 		ltype = "icefall1" 
 		return ltype
@@ -2002,7 +2004,7 @@ function CheckType(ltype)
 	end
 	
 	return ltype
-end
+end -- CheckType
 
 function SearchEpic(epicname)
 	if EpicTable == nil then
@@ -2049,7 +2051,11 @@ function ListEpic()
 
 		timedef = EpicTimeDifference(i, ReturnType)
 		
-		timdefleng = tonumber(string.len(trim(timedef)))
+		if timedef ~= nil then 
+			timdefleng = tonumber(string.len(trim(timedef)))
+		else
+			timdefleng = tonumber(string.len(timedef))
+		end
 	
 	if timdefleng > highesttimedeflen then
 			highesttimedeflen = timdefleng
@@ -2478,7 +2484,7 @@ function NoteUpdateEnableEnd()
 	world.EnableGroup ("NoteUpdateLine2", 0)
 	world.EnableGroup ("NoteUpdateEnd", 1)
 	world.EnableGroup ("NoteUpdateNoteContent", 1)
-end
+end -- NoteUpdateEnableEnd
 
 function NoteUpdateNoteNum(name, line, wc)
 	nuboard = string.lower(wc[1])
@@ -2918,25 +2924,25 @@ function RunTimeUpdate()
 	Note("")
 	ColourNote(msg_colour, "", "Will auto reply ", qty_colour, "", "NO", msg_colour, "", " in ", qty_colour, "", "10", msg_colour, "", " seconds.")
 	Note("")
-end
+end -- RunTimeUpdate
 
 function RTUpdateYes()
 	RunTimeUpdateEnd()
 	ResetEpicTable()
 	rcheck = "YES"
-end
+end -- RTUpdateYes
 
 function RTUpdateNo()
 	RunTimeUpdateEnd()
 	
 	ColourNote(msg_colour, "", "Epic List has not be updated. Please type ", qty_colour, "", "ecal reset", msg_colour, "", " to see changes to run times.")
 	Note("")
-end
+end -- RTUpdateNo
 
 function RunTimeUpdateEnd()
 	world.EnableGroup ("RTUpdateCommands", 0)	
 	check (EnableTimer ("autonodelay", 0))
-end
+end -- RunTimeUpdateEnd
 
 function ListRunTimes()
 	title = "Approximate Epic Run Time List"
@@ -2961,33 +2967,95 @@ function ListRunTimes()
 	
 	-- table.sort(EpicMisc["ApproxRunTimes"], function (a, b) return a < b end)
 	
-	table.sort(EpicMisc["ApproxRunTimes"])
+	-- table.sort(EpicMisc["ApproxRunTimes"])
 	
 	for i,v in pairs(EpicMisc["ApproxRunTimes"]) do
 
 		epicname = i
-		runtime = tonumber(v)
-
-		if epicname == nil then enamespace = 15 else enamespace = MakeSpace(epicname, 15) end
-		if runtime == nil then rtspace = 2 else rtspace = MakeSpace(runtime, 2) end
 		
-		if EpicMisc["VI"] == "NO" then
-			ColourNote(msg_colour, "", "| ", epic_colour, "", epicname .. enamespace, msg_colour, "", " | ", leader_colour, "", rtspace .. runtime .. " minutes", msg_colour, "", " | ")
-		elseif EpicMisc["VI"] == "YES" then
-			ColourNote(msg_colour, "", "Epic Name: ", epic_colour, "", epicname, msg_colour, "", " Approximate Run Time: ", leader_colour, "", runtime .. " minutes")
-		end	
+		if epicname ~= "Grouping Time" then
+			runtime = tonumber(v)
+			
+			epicname = string.gsub (epicname, "^.", string.upper)
+			
+			if epicname == "Icefall1" then epicname = "Icefall 1" end
+			if epicname == "Icefall2" then epicname = "Icefall 2" end
+			if epicname == "Oc" then epicname = "OC" end
+			
+			if epicname == nil then enamespace = 15 else enamespace = MakeSpace(epicname, 15) end
+			if runtime == nil then rtspace = 2 else rtspace = MakeSpace(runtime, 2) end
+			
+
+			if EpicMisc["VI"] == "NO" then
+				ColourNote(msg_colour, "", "| ", epic_colour, "", epicname .. enamespace, msg_colour, "", " | ", leader_colour, "", rtspace .. runtime .. " minutes", msg_colour, "", " | ")
+			elseif EpicMisc["VI"] == "YES" then
+				ColourNote(msg_colour, "", "Epic Name: ", epic_colour, "", epicname, msg_colour, "", " Approximate Run Time: ", leader_colour, "", runtime .. " minutes")
+			end	
+		end
 	end
-	
+
 	if EpicMisc["VI"] == "NO" then
 		ColourNote(msg_colour, "", title2)
 	end
 	
+	Note("")
+
+	gttime = EpicMisc["ApproxRunTimes"]["Grouping Time"]["Time"]
+	
+	if EpicMisc["ApproxRunTimes"]["Grouping Time"]["Enabled"] == false then
+		gtstatus = "Disabled"
+		gtcolour = "red"
+		factormessage = "will not"
+	elseif EpicMisc["ApproxRunTimes"]["Grouping Time"]["Enabled"] == true then
+		gtstatus = "Enabled"
+		gtcolour = "green"
+		factormessage = "will"
+	end
+
+	ColourNote(msg_colour, "", "Grouping Time is set to ", "red", "", gttime, msg_colour, "", " minute(s)")
+	Note("")
+	
+	ColourNote(msg_colour, "", "Grouping Time is currently ", gtcolour, "", gtstatus, msg_colour, "", ". Approximate start times ", gtcolour, "", factormessage, msg_colour, "", " factor in grouping time.")
 	Note("")
 end -- ListRunTimes
  
 ---------------------------------------------
 --------------- BOT FUNCTIONS ---------------
 ---------------------------------------------
+function EpicBotStatus()
+	if EpicMisc["NotificationBot"]["Enabled"] == false then
+		sysstatus = "Disabled"
+		syscolour = "red"
+	elseif EpicMisc["NotificationBot"]["Enabled"] == true then
+		sysstatus = "Enabled"
+		syscolour = "green"
+	end
+
+	ColourNote(msg_colour, "", "Epic Calendar Notification System - ", syscolour, "", sysstatus)
+	
+	if EpicMisc["VI"] == "NO" then
+		ColourNote(msg_colour, "", "--------------------------------------------")
+	end
+	Note("")
+
+	cmd = "auto"
+	ListChannels(cmd)
+
+	cmd = "commands"
+	ListChannels(cmd)
+
+	if EpicMisc["NotificationBot"]["AlertEnabled"] == false then
+		sysstatus = "Disabled"
+		syscolour = "red"
+	elseif EpicMisc["NotificationBot"]["AlertEnabled"] == true then
+		sysstatus = "Enabled"
+		syscolour = "green"
+	end
+
+	ColourNote(msg_colour, "", "Upcoming Epic Alert System - ", syscolour, "", sysstatus)
+	Note("")
+end -- EpicBotStatus
+
 function BotHelp(channel, user, cmd)
 	if cmd == "nextepic" then
 		SendNoEcho (channel .. " @R[EpicCAL] @C!nextepic <epic> @D- displays when the next specified epic is scheduled. Using @C!nextepic @Don its own will display the next scheduled epic. Note: @R*@D next to the time indiciates an approximate start time, actual start time may vary.@w")
@@ -3042,6 +3110,19 @@ function AutoAddRemoveChannel(cmd, channel)
 end -- AutoAddRemoveChannel
 
 function ListPermissions()
+	local plist = 0
+
+	for i,v in pairs (EpicPermissionTable) do 
+		if EpicPermissionTable[i]["Since"] ~= nil then
+			plist = plist + 1
+		end
+	end
+
+	if plist == 0 then
+		ColourNote(msg_colour, "", "There are currently no users added to the permission's list")
+		return
+	end
+
 	title = "Bot Permissions List"
 	
 	local title2 = "+--------------+--------------------------------+--------------------------------------------+"
@@ -3080,7 +3161,7 @@ function ListPermissions()
 
 		timeDiff(timenow,timenow2,timediff2)
 
-		local timeonlist = remainingtime_note(timediff2)
+		local timeonlist = remainingtime_noteVI(timediff2)
 		
 		if user == nil then namespace = 12 else namespace = MakeSpace(user, 12) end
 		
@@ -3106,16 +3187,29 @@ function ListChannels(cmd)
 	if cmd == "auto" then
 		title = "Auto Notification Channels"
 		display = "Auto"
+		sysname = "AutoEnabled"
 	elseif cmd == "commands" then
 		title = "Command System Channels"
 		display = "Commands"
+		sysname = "CommandsEnabled"
 	end
 	
 	local title2 = "+---------+----------+"
 	
 	spacing = HelpSpacing(title, title2)
 	
-	ColourNote(help_colour, "", spacing, help_command_colour, "", title)
+	syscolour = msg_colour
+	sysstatus = ""
+		
+	if EpicMisc["NotificationBot"][sysname] == false then
+		sysstatus = "Disabled"
+		syscolour = "red"
+	elseif EpicMisc["NotificationBot"][sysname] == true then
+		sysstatus = "Enabled"
+		syscolour = "green"
+	end
+	
+	ColourNote(msg_colour, "", spacing, msg_colour, "", title, help_colour, "", " - ", syscolour, "", sysstatus)
 	Note("")
 
 	if EpicMisc["VI"] == "NO" then
@@ -3439,7 +3533,7 @@ function CheckOver(eindex)
 	end
 
 	return ocheck
-end
+end -- CheckOver
 
 function ChannelListDay(channel, day)
 
@@ -3889,22 +3983,22 @@ end -- FriendChannelYou
 function LastCmdTell()
 	check (EnableTimer ("lastcmdtell", 0))
 	telllastcommand	= nil
-end
+end -- LastCmdTell
 
 function LastCmdGT()
 	check (EnableTimer ("lastcmdgt", 0))
 	gtlastcommand = nil
-end
+end -- LastCmdGT
 
 function LastCmdFT()
 	check (EnableTimer ("lastcmdft", 0))
 	ftlastcommand = nil
-end
+end -- LastCmdFT
 
 function LastCmdClan()
 	check (EnableTimer ("lastcmdclan", 0))
 	clanlastcommand = nil
-end
+end -- LastCmdClan
 
 function HourlyNextEpicNotification()
 	for i,v in pairs(EpicMisc["NotificationBot"]["Auto"]) do
@@ -4064,7 +4158,7 @@ function NextEpicSilent()
 	alertremaining = EpicTimeDifference(lowestindex, ReturnType)
 	
 	AlertCheck()
-end
+end -- NextEpicSilent
 -- return here
 function AlertCheck()
 	if alertremaining == nil then
@@ -4073,7 +4167,7 @@ function AlertCheck()
 	
 	if alertcheck == nil then
 		if alertremaining["hour"] == 0 then
-			if alertremaining["min"] > 9 then
+			if alertremaining["min"] > 4 then
 				alertcheck = "YES" 
 				NextEpicComingUp()
 				alerttime = os.time()
@@ -4125,7 +4219,7 @@ function AlertCheck()
 
 		if timediff2["day"] == 0 then
 			if timediff2["hour"] == 0 then
-				if timediff2["min"] > 9 then
+				if timediff2["min"] > 4 then
 				 	alertcheck = nil
 					GetNextEpicSilent()
 				end
@@ -4156,7 +4250,7 @@ function AlertCheck()
 			end
 		end
 	end
-end
+end -- AlertCheck
 
 function NextEpicComingUp()
 	lowestseconds = 604800 -- amount of seconds in a week 
@@ -4169,7 +4263,7 @@ function NextEpicComingUp()
 	ReturnType = "VI"
 	timeremaining = EpicTimeDifference(lowestindex, ReturnType)
 
-	ColourNote("red", "" , "[" .. EpicTable[lowestindex]["Epic Name"] .. " epic]", msg_colour, "" , " starting in ", help_command_colour, "", trim(timeremaining))
+	ColourNote(msg_colour, "", "NEXT EPIC ALERT ", "red", "" , "[" .. EpicTable[lowestindex]["Epic Name"] .. " epic]", msg_colour, "" , " starting in ", qty_colour, "", trim(timeremaining))
 	Note("")
 end -- NextEpicComingUp
 
@@ -4239,7 +4333,7 @@ function SetServerTime(sertime)
 	if (SystemTimeTable["year"]%4) == 0 then yday = yday + 1 end
 	
 	SystemTimeTable["yday"] = yday
-end
+end -- SetServerTime
 
 function GetSystemTime()
 	world.EnableGroup("SystemTime", 1)
@@ -4936,6 +5030,8 @@ function EpicCalendarHelpBot()
 	ColourNote(help_colour, "", "                             room list")
 
 	ColourNote(help_command_colour, "", "ecal bot list room        ", help_colour, "", " - displays the list of approved note sending rooms")
+	
+	ColourNote(help_command_colour, "", "ecal bot status           ", help_colour, "", " - displays the status on the different notification system features")
 	Note("")
 
 	ColourNote(help_colour, "", "Power User Commands")
@@ -5133,9 +5229,9 @@ function GetSavedData()
 		EpicMisc["BlacklistEnabled"] = false
 		EpicMisc["Blacklist"] = {}
 		EpicMisc["ApproxRunTimes"] = {}
-		EpicMisc["ApproxRunTimes"]["grouping time"] = {}
-		EpicMisc["ApproxRunTimes"]["grouping time"]["Time"] = 5
-		EpicMisc["ApproxRunTimes"]["grouping time"]["enabled"] = false
+		EpicMisc["ApproxRunTimes"]["Grouping Time"] = {}
+		EpicMisc["ApproxRunTimes"]["Grouping Time"]["Time"] = 5
+		EpicMisc["ApproxRunTimes"]["Grouping Time"]["Enabled"] = false
 		EpicMisc["ApproxRunTimes"]["genie"] = 25
 		EpicMisc["ApproxRunTimes"]["icefall1"] = 45
 		EpicMisc["ApproxRunTimes"]["icefall2"] = 60
