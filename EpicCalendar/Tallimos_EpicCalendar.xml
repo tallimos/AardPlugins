@@ -2040,27 +2040,7 @@ function SearchEpic(epicname)
 end -- SearchEpic
 
 function ListEpic()		
-	highesttimedeflen = 0
 	
-	for i,v in ipairs (EpicTable) do 
-		if EpicMisc["VI"] == "YES" then
-			ReturnType = "VI"
-		else
-			ReturnType = "normal"
-		end
-
-		timedef = EpicTimeDifference(i, ReturnType)
-		
-		if timedef ~= nil then 
-			timdefleng = tonumber(string.len(trim(timedef)))
-		else
-			timdefleng = tonumber(string.len(timedef))
-		end
-	
-	if timdefleng > highesttimedeflen then
-			highesttimedeflen = timdefleng
-		end
-	end
 	
 	local hour = ""
 
@@ -2076,11 +2056,7 @@ function ListEpic()
 		title = "Epic Run List - Searching: " .. listtype
 	end
 	
-	if highesttimedeflen < 25 then
-		title2 = "+-----------+------------+-----------+-----------+-------------------------+"
-	else
-		title2 = "+-----------+------------+-----------+-----------+---------------------------------+"
-	end
+	title2 = "+-----------+------------+-----------+-----------+---------------------------------+"
 	
 	local leng = tonumber(string.len(title))
 	local leng2 = tonumber(string.len(title2))
@@ -2102,11 +2078,7 @@ function ListEpic()
 	if EpicMisc["VI"] == "NO" then
 		ColourNote(msg_colour, "", title2)
 	
-		if highesttimedeflen < 25 then
-			ColourNote(msg_colour, "", "| Epic      | Leader     | Day       | Time      | Time Until Epic         |")
-		else
-			ColourNote(msg_colour, "", "| Epic      | Leader     | Day       | Time      | Time Until Epic                 |")
-		end
+		ColourNote(msg_colour, "", "| Epic      | Leader     | Day       | Time      | Time Until Epic                 |")
 		
 		ColourNote(msg_colour, "", title2)
 	end
@@ -2259,11 +2231,7 @@ function DisplayRow(ename, eleader, eday, hour, timedef, apindex)
 	
 	if hour == nil then timespace = 8 else timespace = MakeSpace(hour, 8) end
 	
-	if highesttimedeflen < 25 then
-		if timedef == nil then remainspace = 24 else remainspace = MakeSpace(timedef,24) end
-	else
-		if timedef == nil then remainspace = 32 else remainspace = MakeSpace(timedef,32) end
-	end
+	if timedef == nil then remainspace = 32 else remainspace = MakeSpace(timedef,32) end
 	
 	if EpicMisc["VI"] == "NO" then
 		ColourNote(msg_colour, "", "| ", epic_colour, "", ename .. namespace, msg_colour, "", " | ", leader_colour, "", eleader .. leaderspace, msg_colour, "", " | ", day_colour, "", eday .. dayspace, msg_colour, "", " | ", time_colour, "", timespace .. hour, epic_colour, "", apxhour, msg_colour, "", " | ", remain_colour, "",remainspace .. timedef, msg_colour, "", "|")
