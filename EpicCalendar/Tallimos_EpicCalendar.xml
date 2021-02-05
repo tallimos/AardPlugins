@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="1.95"
+   version="1.96"
    >
    
 </plugin>
@@ -1064,13 +1064,13 @@ function CommandMenu(name, line, wc)
 
 		if attrib == "enable" then
 			if 	EpicMisc["NotificationBot"]["Enabled"] == true then
-				ColourNote(msg_colour, "", "Notifcation Bot has already been ", qty_colour, "", "enabled")
+				ColourNote(msg_colour, "", "Notifcation Bot has already been ", "green", "", "enabled")
 			else
 				EnableBot()
 			end
 		elseif attrib == "disable" then
 			if 	EpicMisc["NotificationBot"]["Enabled"] == false then
-				ColourNote(msg_colour, "", "Notifcation Bot has already been ", qty_colour, "", "disabled")
+				ColourNote(msg_colour, "", "Notifcation Bot has already been ", "red", "", "disabled")
 			else
 				DisableBot()
 			end
@@ -1121,23 +1121,23 @@ function CommandMenu(name, line, wc)
 					channel = wordtable[4]
 					
 					if EpicMisc["NotificationBot"]["Auto"][channel] == nil then
-						ColourNote(qty_colour, "", channel, msg_colour, "", " has not been be added to the auto notification list")
+						ColourNote(qty_colour, "", channel, msg_colour, "", " has not been be added to the automatic next epic notification list")
 						Note("")
 					else
-						ColourNote(msg_colour, "", "Automatic notifications for ", qty_colour, "", channel, msg_colour, "", " has been enabled.")
+						ColourNote(msg_colour, "", "Automatic next epic notifications for ", qty_colour, "", channel, msg_colour, "", " have been ", "green", "", "Enabled.")
 						Note("")
 						EpicMisc["NotificationBot"]["Auto"][channel] = true
 					end
 				else
 					if EpicMisc["NotificationBot"]["AutoEnabled"] == true then
-						ColourNote(msg_colour, "", "Automatic notifications have already been ", qty_colour, "", "enabled")
+						ColourNote(msg_colour, "", "Automatic next epic notification system has already been ", "green", "", "Enabled.")
 					else
 						EpicMisc["NotificationBot"]["AutoEnabled"] = true
 						
 						if EpicMisc["NotificationBot"]["Enabled"] == true then
 							EnableAutoBot()
 						else
-							ColourNote(msg_colour, "", "The notification bot is currently disabled. Please type ", qty_colour, "", "ecal bot enable", msg_colour, "", " to use this feature.")
+							ColourNote(msg_colour, "", "Automatic next epic notification system has been ", "green", "", " Enabled.", msg_colour, "", " The notification bot is currently disabled. Please type ", qty_colour, "", "ecal bot enable", msg_colour, "", " to use this feature.")
 						end
 					end
 				end
@@ -1149,19 +1149,17 @@ function CommandMenu(name, line, wc)
 						ColourNote(qty_colour, "", channel, msg_colour, "", " has not been be added to the auto notification list")
 						Note("")
 					else
-						ColourNote(msg_colour, "", "Automatic notifications for ", qty_colour, "", channel, msg_colour, "", " has been disabled.")
-						Note("")
 						EpicMisc["NotificationBot"]["Auto"][channel] = false
+						
+						ColourNote(msg_colour, "", "Automatic next epic notifications for ", qty_colour, "", channel, msg_colour, "", " have been ", "red", "", "Disabled.")
+						Note("")
 					end
 				else
 					if EpicMisc["NotificationBot"]["AutoEnabled"] == false then
-						ColourNote(msg_colour, "", "Automatic notifications have already been ", qty_colour, "", "disabled")
-					else
+						ColourNote(msg_colour, "", "Automatic next epic notification system has already been ", "red", "", "Eisabled")
+					else						
 						EpicMisc["NotificationBot"]["AutoEnabled"] = false
-
-						if EpicMisc["NotificationBot"]["Enabled"] == true then
-							DisableAutoBot()
-						end
+						DisableAutoBot()
 					end
 				end
 			else
@@ -1181,20 +1179,21 @@ function CommandMenu(name, line, wc)
 						ColourNote(qty_colour, "", channel, msg_colour, "", " has not been be added to the command channel notification list")
 						Note("")
 					else
-						ColourNote(msg_colour, "", "Channel commands for ", qty_colour, "", channel, msg_colour, "", " have been enabled.")
-						Note("")
 						EpicMisc["NotificationBot"]["Commands"][channel] = true
+						
+						ColourNote(msg_colour, "", "Channel commands for ", qty_colour, "", channel, msg_colour, "", " channel have been ", "green", "", "Enabled.")
+						Note("")
 					end
 				else
 					if EpicMisc["NotificationBot"]["CommandsEnabled"] == true then
-						ColourNote(msg_colour, "", "Channel Commands have already been ", qty_colour, "", "enabled")
+						ColourNote(msg_colour, "", "Channel Commands System has already been ", "green", "", "Enabled")
 					else
 						EpicMisc["NotificationBot"]["CommandsEnabled"] = true
 
 						if EpicMisc["NotificationBot"]["Enabled"] == true then
 							EnableCommandBot()
 						else
-							ColourNote(msg_colour, "", "The notification bot is currently disabled. Please type ", qty_colour, "", "ecal bot enable", msg_colour, "", " to use this feature.")
+							ColourNote(msg_colour, "", "Channel Commands System has been ", "green", "", " Enabled.", msg_colour, "", " The Notification Bot is currently ", "red", "", "Disabled", msg_colour, "", ". Please type ", qty_colour, "", "ecal bot enable", msg_colour, "", " to use this feature.")
 						end
 					end
 				end
@@ -1206,19 +1205,17 @@ function CommandMenu(name, line, wc)
 						ColourNote(qty_colour, "", channel, msg_colour, "", " has not been be added to the command channel notification list")
 						Note("")
 					else
-						ColourNote(msg_colour, "", "Channel commands for ", qty_colour, "", channel, msg_colour, "", " have been disabled.")
-						Note("")
 						EpicMisc["NotificationBot"]["Commands"][channel] = false
+						
+						ColourNote(msg_colour, "", "Channel commands for ", qty_colour, "", channel, msg_colour, "", " have been ", "red", "", "Disabled.")
+						Note("")
 					end
 				else
 					if EpicMisc["NotificationBot"]["CommandsEnabled"] == false then
-						ColourNote(msg_colour, "", "Channel Commands have already been ", qty_colour, "", "disabled")
+						ColourNote(msg_colour, "", "Channel Commands System has already been ", "red", "", "Disabled")
 					else
 						EpicMisc["NotificationBot"]["CommandsEnabled"] = false
-					
-						if EpicMisc["NotificationBot"]["Enabled"] == true then
-							DisableCommandBot()	
-						end
+						DisableCommandBot()	
 					end
 				end
 			else
@@ -1230,14 +1227,14 @@ function CommandMenu(name, line, wc)
 			
 			if sub == "enable" then
 				if EpicMisc["NotificationBot"]["AlertEnabled"] == true then
-					ColourNote(msg_colour, "", "Alert System has already been ", qty_colour, "", "enabled")
+					ColourNote(msg_colour, "", "Upcoming Epic Alert System has already been ", "green", "", "Enabled")
 				else
 					EpicMisc["NotificationBot"]["AlertEnabled"] = true
-
+					
 					if EpicMisc["NotificationBot"]["Enabled"] == true then
 						EnableAlertBot()
 					else
-						ColourNote(msg_colour, "", "The notification bot is currently disabled. Please type ", qty_colour, "", "ecal bot enable", msg_colour, "", " to use this feature.")
+						ColourNote(msg_colour, "", "Upcoming Epic Alert System has been ", "green", "", " Enabled.", msg_colour, "", " The Notification Bot is currently ", "red", "", "Disabled", msg_colour, "", ". Please type ", qty_colour, "", "ecal bot enable", msg_colour, "", " to use this feature.")
 					end
 				end
 			elseif sub == "disable" then
@@ -1245,10 +1242,7 @@ function CommandMenu(name, line, wc)
 					ColourNote(msg_colour, "", "Alert System has already been ", qty_colour, "", "disabled")
 				else
 					EpicMisc["NotificationBot"]["AlertEnabled"] = false
-
-					if EpicMisc["NotificationBot"]["Enabled"] == true then
-						DisableAlertBot()
-					end
+					DisableAlertBot()
 				end
 			else
 				ColourNote(msg_colour, "", "Invalid command. Please see ", qty_colour, "", "ecal help bot", msg_colour, "", " for more information.")
@@ -1260,16 +1254,20 @@ function CommandMenu(name, line, wc)
 			else
 				sub = wordtable[3]
 				
-				if sub == "enable" then					
+				if sub == "enable" then
+					EpicMisc["BlacklistEnabled"] = true
+					
 					if EpicMisc["NotificationBot"]["Enabled"] == true then
 						EnableBlacklist()
 					else
-						ColourNote(msg_colour, "", "The notification bot is currently disabled. Please type ", qty_colour, "", "ecal bot enable", msg_colour, "", " to use this feature.")
+						ColourNote(msg_colour, "", "Channel Command User Blacklist has been ", "green", "", " Enabled.", msg_colour, "", " The Notification Bot is currently ", "red", "", "Disabled", msg_colour, "", ". Please type ", qty_colour, "", "ecal bot enable", msg_colour, "", " to use this feature.")
 					end
 				elseif sub == "disable" then
-					if EpicMisc["NotificationBot"]["Enabled"] == true then
+					if EpicMisc["BlacklistEnabled"] == false then
+						ColourNote(msg_colour, "", "Channel Command User Blacklist has already been ", "red", "", "Disabled")
+					else
 						DisableBlacklist()
-					end
+					end					
 				elseif sub == "add" then
 					reason = nil
 					
@@ -3322,13 +3320,12 @@ end -- EnableAlertBot
 function DisableAlertBot()
 	ColourNote(msg_colour, "", "Alert System Disabled. You will now no longer be notified in advance of any upcoming epic runs.")
 	Note("")
-	
 end -- DisableAlertBot
 
 function EnableAutoBot()
-	ColourNote(msg_colour, "", "Auto Notifications Enabled.")
+	ColourNote(msg_colour, "", "Automatic Next Epic Notifications Enabled.")
 	Note("")
-	ColourNote(msg_colour, "", "You will now hourly broadcast the next upcoming epic run.")
+	ColourNote(msg_colour, "", "You will now broadcast hourly the next upcoming epic run on channels you have enabled.")
 	Note("")
 	
 	check (EnableTimer ("HourlyNextEpicNotification", 1))
@@ -3336,9 +3333,9 @@ function EnableAutoBot()
 end -- EnableAutoBot
 
 function DisableAutoBot()
-	ColourNote(msg_colour, "", "Auto Notifications Disabled.")
+	ColourNote(msg_colour, "", "Automatic Next Epic Notifications Disabled.")
 	Note("")
-	ColourNote(msg_colour, "", "You will longer broadcast upcoming epic run.")
+	ColourNote(msg_colour, "", "You will longer broadcast the next upcoming epic run.")
 	Note("")
 	
 	check (EnableTimer ("HourlyNextEpicNotification", 0))	
@@ -3383,7 +3380,7 @@ function EnableCommandBot()
 end -- EnableCommandBot
 
 function DisableCommandBot()
-	ColourNote(msg_colour, "", "Channel Command Bot disabled.")
+	ColourNote(msg_colour, "", "Channel Commands System has been ", "red", "", "Disabled.")
 	Note("")
 	
 	EnableTrigger ("GroupChannel", false)
@@ -4071,35 +4068,20 @@ function ListBlacklist()
 end -- ListBlacklist
 
 function EnableBlacklist()
-	if EpicMisc["BlacklistEnabled"] == true then 
-		ColourNote(msg_colour, "", "Blacklist has already been ", qty_colour, "", "enabled")
-	else
-		ColourNote(msg_colour, "", "Blacklist Enabled.")
-		Note("")
-		ColourNote(msg_colour, "", "Any requests from players on the blacklist will be ignored.")
-		Note("")
-		
-		EpicMisc["BlacklistEnabled"] = true
-		SaveState()
-	end
+	ColourNote(msg_colour, "", "Blacklist Enabled.")
+	Note("")
+	ColourNote(msg_colour, "", "Any requests from players on the blacklist will be ignored.")
+	Note("")
 end -- EnableBlacklist
 
 function DisableBlacklist()
-	if EpicMisc["NotificationBot"]["Enabled"] == true then
-		ColourNote(msg_colour, "", "The notification bot is currently disabled.")
-	else
-		if EpicMisc["BlacklistEnabled"] == false then 
-			ColourNote(msg_colour, "", "Blacklist has already been ", qty_colour, "", "disabled")
-		else
-			ColourNote(msg_colour, "", "Blacklist Disabled.")
-			Note("")
-			ColourNote(msg_colour, "", "No requests will be ignored.")
-			Note("")
-			
-			EpicMisc["BlacklistEnabled"] = false
-			SaveState()
-		end
-	end
+	ColourNote(msg_colour, "", "Blacklist Disabled.")
+	Note("")
+	ColourNote(msg_colour, "", "No requests will be ignored.")
+	Note("")
+	
+	EpicMisc["BlacklistEnabled"] = false
+	SaveState()
 end	 -- DisableBlacklist
 
 -----------------------------------------------
