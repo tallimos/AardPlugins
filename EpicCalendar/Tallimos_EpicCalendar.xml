@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="1.96"
+   version="1.97"
    >
    
 </plugin>
@@ -509,10 +509,10 @@ approxtime = 0
     }
 
 	Helpers = {
-		[1] = "Quadrapus",
-		[2] = "Hadar",
-		[3] = "Fiendish",
-		[4] = "Areia",
+		["Quadrapus"] = "Helped with coming up with the original idea for the plugin",
+		["Hadar"] = "Various code advice",
+		["Fiendish"] = "Various code advice including table sorting",
+		["Areia"] = "Primary beta tester",
 	}
 		
 	EpicMobs = {
@@ -973,34 +973,7 @@ function CommandMenu(name, line, wc)
 	elseif cmd == "rt" or cmd == "runtime" then
 		attrib = wordtable[2]
 		
-		if attrib == "add" then
-			rtname = string.lower(wordtable[3])
-	
-			if rtname == nil then
-				ColourNote(msg_colour, "", "Command Usage: ", qty_colour, "", "ecal rt add <epic name> <runtime in minutes>")
-				Note("")
-			else
-				rttime = wordtable[4]
-			
-				if tonumber(rttime) == nil then
-					ColourNote(msg_colour, "", "Command Usage: ", qty_colour, "", "ecal rt add <epic name> <runtime in minutes>")
-					Note("")
-				else
-					AddRemoveEditRunTime(attrib, rtname, rttime)		
-				end
-			end
-		elseif attrib == "remove" then
-			rtname = string.lower(wordtable[3])
-	
-			if rtname == nil then
-				ColourNote(msg_colour, "", "Command Usage: ", qty_colour, "", "ecal rt remove <epic name>")
-				Note("")
-			else
-				rttime = nil
-
-				AddRemoveEditRunTime(attrib, rtname, rttime)
-			end
-		elseif attrib == "edit" then
+		if attrib == "edit" then
 			rtname = string.lower(wordtable[3])
 	
 			if rtname == nil then
@@ -1322,6 +1295,8 @@ function CommandMenu(name, line, wc)
 				EpicCalendarHelpNext()
 			elseif attrib == "rt" or attrib == "runtime" then
 				EpicCalendarHelpRT()
+			elseif attrib == "credits" then
+				EpicCalendarHelpCredits()
 			else
 				ColourNote(msg_colour, "", "Invalid command. Please see ", qty_colour, "", "ecal help", msg_colour, "", " for more information.")
 				Note("")
@@ -1493,8 +1468,8 @@ function EpicUpdateEnd()
 	world.EnableGroup ("EpicCalendar", 0)
 	world.EnableGroup ("EpicUpdateEnd", 0)
 
-	if EpicMisc["NotificationBot"]["Enabled"] == true and EpicMisc["NotificationBot"]["AlertEnabled"] == true then
-		GetNextEpicSilent()
+	if TableFilled == "NO" then
+		TableFilled = "YES"
 	end
 	
 	for i,v in ipairs(EpicTable) do
@@ -2931,33 +2906,37 @@ function ListRunTimes()
 		Note("")
 	end
 	
-	-- table.sort(EpicMisc["ApproxRunTimes"], function (a, b) return a < b end)
-	
-	-- table.sort(EpicMisc["ApproxRunTimes"])
-	
-	for i,v in pairs(EpicMisc["ApproxRunTimes"]) do
+	IndexedApproxTable = {}
 
-		epicname = i
-		
-		if epicname ~= "Grouping Time" then
-			runtime = tonumber(v)
-			
-			epicname = string.gsub (epicname, "^.", string.upper)
-			
-			if epicname == "Icefall1" then epicname = "Icefall 1" end
-			if epicname == "Icefall2" then epicname = "Icefall 2" end
-			if epicname == "Oc" then epicname = "OC" end
-			
-			if epicname == nil then enamespace = 15 else enamespace = MakeSpace(epicname, 15) end
-			if runtime == nil then rtspace = 2 else rtspace = MakeSpace(runtime, 2) end
-			
-
-			if EpicMisc["VI"] == "NO" then
-				ColourNote(msg_colour, "", "| ", epic_colour, "", epicname .. enamespace, msg_colour, "", " | ", leader_colour, "", rtspace .. runtime .. " minutes", msg_colour, "", " | ")
-			elseif EpicMisc["VI"] == "YES" then
-				ColourNote(msg_colour, "", "Epic Name: ", epic_colour, "", epicname, msg_colour, "", " Approximate Run Time: ", leader_colour, "", runtime .. " minutes")
-			end	
+	for k, v in pairs(EpicMisc["ApproxRunTimes"]) do
+		if k ~= "Grouping Time" then
+			table.insert(IndexedApproxTable, {["Name"]=k, ["Time"]=v})
 		end
+	end
+	
+	table.sort(IndexedApproxTable, function (a, b) return a["Name"] < b["Name"] end)
+
+	for i,v in ipairs(IndexedApproxTable) do
+
+		epicname = IndexedApproxTable[i]["Name"]
+		
+		runtime = tonumber(IndexedApproxTable[i]["Time"])
+		
+		epicname = string.gsub (epicname, "^.", string.upper)
+		
+		if epicname == "Icefall1" then epicname = "Icefall 1" end
+		if epicname == "Icefall2" then epicname = "Icefall 2" end
+		if epicname == "Oc" then epicname = "OC" end
+		
+		if epicname == nil then enamespace = 15 else enamespace = MakeSpace(epicname, 15) end
+		if runtime == nil then rtspace = 2 else rtspace = MakeSpace(runtime, 2) end
+		
+
+		if EpicMisc["VI"] == "NO" then
+			ColourNote(msg_colour, "", "| ", epic_colour, "", epicname .. enamespace, msg_colour, "", " | ", leader_colour, "", rtspace .. runtime .. " minutes", msg_colour, "", " | ")
+		elseif EpicMisc["VI"] == "YES" then
+			ColourNote(msg_colour, "", "Epic Name: ", epic_colour, "", epicname, msg_colour, "", " Approximate Run Time: ", leader_colour, "", runtime .. " minutes")
+		end	
 	end
 
 	if EpicMisc["VI"] == "NO" then
@@ -3314,7 +3293,9 @@ function EnableAlertBot()
 	ColourNote(msg_colour, "", "Alert System Enabled. You will now be notified roughly 1 hour in advance of any upcoming epic runs.")
 	Note("")
 		
-	GetNextEpicSilent()
+	if TableFilled == "YES" then
+		GetNextEpicSilent()
+	end
 end -- EnableAlertBot
 
 function DisableAlertBot()
@@ -4109,7 +4090,7 @@ function NextEpicSilent()
 	
 	AlertCheck()
 end -- NextEpicSilent
--- return here
+
 function AlertCheck()
 	if alertremaining == nil then
 		GetNextEpicSilent()
@@ -4969,6 +4950,7 @@ function EpicCalendarHelpBot()
 		Note("")
 	end
 
+	ColourNote(help_command_colour, "", "ecal bot <enable|disable>    ", help_colour, "", " - enables/disables the main bot system")
 	ColourNote(help_command_colour, "", "ecal bot <auto|commands> list", help_colour, ""," - lists the channels and their settings for the specified system")
 
 	ColourNote(help_command_colour, "", "ecal bot <auto|commands|alert> <enable|disable>  ", help_colour, "", " - enables/disables the specified system")
@@ -4981,7 +4963,8 @@ function EpicCalendarHelpBot()
 
 	ColourNote(help_command_colour, "", "ecal bot list room        ", help_colour, "", " - displays the list of approved note sending rooms")
 	
-	ColourNote(help_command_colour, "", "ecal bot status           ", help_colour, "", " - displays the status on the different notification system features")
+	ColourNote(help_command_colour, "", "ecal bot status           ", help_colour, "", " - displays the status of the notification bot and its features")
+
 	Note("")
 
 	ColourNote(help_colour, "", "Power User Commands")
@@ -4992,13 +4975,12 @@ function EpicCalendarHelpBot()
 		Note("")
 	end
 
-	ColourNote(help_command_colour, "", "ecal bot <enable|disable>    ", help_colour, "", " - enables/disables the main bot system")
 
-	ColourNote(help_command_colour, "", "ecal bot <add|remove> <user> ", help_colour, "", " - add/removes users to the channel command permission system")
+	ColourNote(help_command_colour, "", "ecal bot <add|remove> <player> ", help_colour, "", " - add/removes players to the channel command permission system")
 
-	ColourNote(help_command_colour, "", "ecal bot plist               ", help_colour, "", " - list all users who have access to the channel commands")
+	ColourNote(help_command_colour, "", "ecal bot plist                 ", help_colour, "", " - list all players who have access to the channel commands")
 
-	ColourNote(help_command_colour, "", "ecal bot permissions         ", help_colour, "", " - toggles channel command access between ", qty_colour, "", "LIST", help_colour, "", " and ", qty_colour, "", "ALL", help_colour, "", ". default is")
+	ColourNote(help_command_colour, "", "ecal bot permissions           ", help_colour, "", " - toggles channel command access between ", qty_colour, "", "LIST", help_colour, "", " and ", qty_colour, "", "ALL", help_colour, "", ". default is")
 	ColourNote(help_colour, "", "                                set to ", qty_colour, "", "LIST")
 
 	ColourNote(help_colour, "", "Blacklist Commands")
@@ -5009,13 +4991,11 @@ function EpicCalendarHelpBot()
 		Note("")
 	end
 
-	ColourNote(help_command_colour, "", "ecal bot bl enable               ", help_colour, "", " - enables the blacklist")
-	
-	ColourNote(help_command_colour, "", "ecal bot bl disable              ", help_colour, "", " - disables the blacklist")
+	ColourNote(help_command_colour, "", "ecal bot bl <enable|disable>     ", help_colour, "", " - enables/disables blacklist for channel command access")
 	
 	ColourNote(help_command_colour, "", "ecal bot bl                      ", help_colour, "", " - displays who is on the blacklist")
 	
-	ColourNote(help_command_colour, "", "ecal bot bl add <player> <reason>", help_colour, "", " - adds a player to the blacklist with the option to list the")
+	ColourNote(help_command_colour, "", "ecal bot bl add <player> <reason>", help_colour, "", " - adds a player to the blacklist with the option to add the")
 	ColourNote(help_colour, "", "                                    reason why")
 	
 	ColourNote(help_command_colour, "", "ecal bot bl remove <player>      ", help_colour, "", " - remove a player from the blacklist")
@@ -5146,12 +5126,8 @@ function EpicCalendarHelpRT()
 	ColourNote(help_command_colour, "", "ecal rt gt <enable|disable>  ", help_colour, "", " - adds/removes grouping time from approximate start time equation")
 	
 	ColourNote(help_command_colour, "", "ecal rt gt <minutes>         ", help_colour, "", " - changes time allocated for grouping time")
-
-	ColourNote(help_command_colour, "", "ecal rt add <epic> <minutes> ", help_colour, "", " - adds <epic> to the approximate run times list")
 	
 	ColourNote(help_command_colour, "", "ecal rt edit <epic> <minutes>", help_colour, "", " - changes the approximate run time for <epic>")
-
-	ColourNote(help_command_colour, "", "ecal rt remove <epic>        ", help_colour, "", " - removes <epic> from the approximate run times list")
 
 	Note("")
 	
@@ -5163,6 +5139,54 @@ function EpicCalendarHelpRT()
 
 	Note("")
 end	-- EpicCalendarHelpRT
+
+function EpicCalendarHelpCredits()
+	local title = "Tallimos' Epic Calendar Help - Credits"
+	local title2 = noteline
+	
+	spacing = HelpSpacing(title, title2)	
+	
+	ColourNote(help_colour, "", spacing, help_command_colour, "", "Tallimos' Epic Calendar Help - Credits")
+
+	if EpicMisc["VI"] == "NO" then
+		ColourNote(help_colour, "", noteline)
+	elseif EpicMisc["VI"] == "YES" then
+		Note("")
+	end
+
+	ColourNote(help_colour, "", "Without the help from the people listed below Tallimos' Epic Calendar would not exist. So I")
+	ColourNote(help_colour, "", "would like to thank each and every one of them no matter how big or small of a contribute they")
+	ColourNote(help_colour, "", "had.")
+	
+	if EpicMisc["VI"] == "NO" then
+		ColourNote(help_colour, "", noteline)
+	end
+	
+	Note("")
+
+	IndexedHelpersTable = {}
+
+	for k, v in pairs(Helpers) do
+		table.insert(IndexedHelpersTable, {["Name"]=k, ["Contribution"]=v})
+	end
+	
+	table.sort(IndexedHelpersTable, function (a, b) return a["Name"] < b["Name"] end)
+
+	for i,v in ipairs(IndexedHelpersTable) do
+		name = IndexedHelpersTable[i]["Name"]
+		contribution = IndexedHelpersTable[i]["Contribution"]
+	
+		if name == nil then namespace = 9 else namespace = MakeSpace(name, 9) end
+	
+		ColourNote(help_command_colour, "", name .. namespace, help_colour, "", " - " .. contribution)
+	end
+	
+	if EpicMisc["VI"] == "NO" then
+		ColourNote(help_colour, "", noteline)
+	end
+
+	Note("")
+end	-- EpicCalendarHelpCredits
 
 function GetSavedData()
 	if GetVariable ("ecpastfirstinstall") == "true" then
@@ -5218,13 +5242,11 @@ end -- GetSavedData
 function Connected()
 	ran = true
 	
-	if EpicMisc["NotificationBot"]["Enabled"] == true then EnableBot() end
-	
-	if EpicMisc["NotificationBot"]["AlertEnabled"] == true then
-		GetNextEpicSilent()
-	end
+	TableFilled = "NO"
 	
 	ResetEpicTable()	
+
+	if EpicMisc["NotificationBot"]["Enabled"] == true then EnableBot() end	
 end -- Connected
 
 function OnPluginInstall()
@@ -5281,9 +5303,11 @@ function OnPluginBroadcast(msg, id, name, text)
 			
 			OSSystemTimeTable = os.date("*t")
 			OSSystemTime = os.time()
-			
-			if EpicMisc["NotificationBot"]["AlertEnabled"] == true then
-				AlertCheck()
+
+			if TableFilled == "YES" then 
+				if EpicMisc["NotificationBot"]["AlertEnabled"] == true then
+					AlertCheck()
+				end
 			end
 		end
 	end	

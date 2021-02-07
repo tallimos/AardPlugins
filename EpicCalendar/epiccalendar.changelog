@@ -1,5 +1,12 @@
 dbot.changelog = {}
 
+dbot.changelog[1.97] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Cosmetic changes and bug fixes. Still getting ready for public release"
+  },
+}
+
 dbot.changelog[1.96] =
 {
   { change = drlDbotChangeLogTypeFix,
