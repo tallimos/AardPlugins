@@ -616,6 +616,18 @@ approxtime = 0
 		["transcendence"] = "transcendence", 
 	}
 
+	ApprovedChannels = {
+		[1] = "gtell",
+		[2] = "gt",
+		[3] = "ftalk",
+		[4] = "ft",
+		[5] = "clantalk",
+		[6] = "clan",
+		[7] = "cla",
+		[8] = "clant",
+		[9] = "tell",
+	}
+	
 	-- Borrowed for SnD
 	AreaNames = {
 		-- A --
@@ -930,7 +942,7 @@ function CommandMenu(name, line, wc)
 			GetNextEpic(attrib, channel)
 		else
 			attrib = wordtable[2]
-		
+
 			if attrib == "epic" then
 				if wordtable[3] == nil then
 					channel = nil
@@ -948,9 +960,32 @@ function CommandMenu(name, line, wc)
 					channel = nil
 					GetNextEpic(attrib, channel)
 				else
-					channel = wordtable[3]
+					wordcount = 0
+
+					for i,v in ipairs(wordtable) do
+						wordcount = wordcount + 1
+					end
+	
+					channel = nil
+					tellcheck = "no"
 					
-					if channel == "tell" then channel = channel .. " " .. wordtable[4] end
+					for x = 3, wordcount, 1 do
+						if tellcheck == "no" then
+							if CheckChannel(wordtable[x]) == "no" then
+								attrib = attrib .. " " .. wordtable[x]
+							else
+								channel = wordtable[x]
+								
+								if channel == "tell" then
+									x = x + 1
+									channel = channel .. " " .. wordtable[x]
+									tellcheck = "yes"
+								end
+							end
+						else
+							tellcheck = "no"
+						end
+					end
 					
 					GetNextEpic(attrib, channel)
 				end
@@ -1313,6 +1348,18 @@ end -- CommandMenu
 ---------------------------------------------
 -------------- CHECK FUNCTIONS --------------
 ---------------------------------------------
+function CheckChannel(word)	
+	rcheck = "no"
+	
+	for i, v in ipairs(ApprovedChannels) do
+		if v == word then
+			rcheck = "yes"
+		end	
+	end
+
+	return rcheck
+end -- CheckChannel
+
 function CheckRoom()
 	GetRoom()
 	
@@ -5064,9 +5111,13 @@ function EpicCalendarHelpNext()
 
 	ColourNote(help_command_colour, "", "!nextepic <epic>     ", help_colour, "", " - displays when the next specified epic is scheduled")
 	
+	ColourNote(help_command_colour, "", "!nextleader <leader> ", help_colour, "", " - displays the first epic scheduled for that particular leader")
+
 	ColourNote(help_command_colour, "", "!nextday <day>       ", help_colour, "", " - displays the first epic of the day on that particular day")
 	
-	ColourNote(help_command_colour, "", "!nextleader <leader> ", help_colour, "", " - displays the first epic scheduled for that particular leader")
+	ColourNote(help_command_colour, "", "!listday             ", help_colour, "", " - displays the epic schedule for the current day on one line")
+
+	ColourNote(help_command_colour, "", "!listday <day>       ", help_colour, "", " - displays the epic schedule for a particular day on one line")
 
 	ColourNote(help_command_colour, "", "!listepic            ", help_colour, "", " - displays the entire epic schedule on one line, sorted by day")
 
