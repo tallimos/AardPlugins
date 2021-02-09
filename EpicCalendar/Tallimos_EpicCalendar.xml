@@ -4938,6 +4938,8 @@ function GetSavedData()
 		["Hadar"] = "Various code advice",
 		["Fiendish"] = "Various code advice including table sorting",
 		["Areia"] = "Primary beta tester",
+		["Durel"] = "Provided changelog code",
+		["Pwar"] = "Borrowed update code from their script",
 	}
 		
 	EpicMobs = {
