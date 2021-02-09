@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="1.97"
+   version="1.971"
    >
    
 </plugin>
@@ -220,7 +220,7 @@
 	</trigger>
 	<trigger
 		group="BotCommandCapture"
-		match="^(\w+)\stells\syou\s\'\!(help|noteremove|listday|listepic|nextepic|nextday|nextleader)\s?(\w+)?\'$"
+		match="^(\w+)\stells\syou\s\'\!(help|noteremove|listday|listepic|nextepic|nextday|nextleader)\s?(.*?)?\'$"
 		name="TellChannel"
 		script="TellChannel"
 		sequence="100"
@@ -230,7 +230,7 @@
 	</trigger>
 	<trigger
 		group="BotCommandCapture"
-		match="^You tell the CLAN\:\s\'(?:.*?)?\s?\!(help|noteremove|listday|listepic|nextepic|nextday|nextleader)\s?(\w+)?\'$"
+		match="^You tell the CLAN\:\s\'(?:.*?)?\s?\!(help|noteremove|listday|listepic|nextepic|nextday|nextleader)\s?(.*?)?\'$"
 		name="ClanChannelYou"
 		script="ClanChannelYou"
 		sequence="100"
@@ -240,7 +240,7 @@
 	</trigger>
 	<trigger
 		group="BotCommandCapture"
-		match="^\(Group\)\s(\w+)\:\s\'\!(help|noteremove|listday|listepic|nextepic|nextday|nextleader)\s?(\w+)?\'$"
+		match="^\(Group\)\s(\w+)\:\s\'\!(help|noteremove|listday|listepic|nextepic|nextday|nextleader)\s?(.*?)?\'$"
 		name="GroupChannel"
 		script="GroupChannel"
 		sequence="100"
@@ -250,7 +250,7 @@
 	</trigger>
 	<trigger
 		group="BotCommandCapture"
-		match="^\(Friend\)\s(\w+)\:\s\'\!(help|noteremove|listday|listepic|nextepic|nextday|nextleader)\s?(\w+)?\'$"
+		match="^\(Friend\)\s(\w+)\:\s\'\!(help|noteremove|listday|listepic|nextepic|nextday|nextleader)\s?(.*?)?\'$"
 		name="FriendChannel"
 		script="FriendChannel"
 		sequence="100"
@@ -260,7 +260,7 @@
 	</trigger>
 	<trigger
 		group="BotCommandCapture"
-		match="^You tell your friends\:\s\'(?:.*?)?\s?\!(help|noteremove|listday|listepic|nextepic|nextday|nextleader)\s?(\w+)?\'$"
+		match="^You tell your friends\:\s\'(?:.*?)?\s?\!(help|noteremove|listday|listepic|nextepic|nextday|nextleader)\s?(.*?)?\'$"
 		name="FriendChannelYou"
 		script="FriendChannelYou"
 		sequence="100"
@@ -270,7 +270,7 @@
 	</trigger>	
 	<trigger
 		group="BotCommandCapture"
-		match="^(\w+)\s\((?:\w+)\)\stells the CLAN\:\s\'(?:.*?)?\s?\!(help|noteremove|listday|listepic|nextepic|nextday|nextleader)\s?(\w+)?\'$"
+		match="^(\w+)\s\((?:\w+)\)\stells the CLAN\:\s\'(?:.*?)?\s?\!(help|noteremove|listday|listepic|nextepic|nextday|nextleader)\s?(.*?)?\'$"
 		name="ClanChannel"
 		script="ClanChannel"
 		sequence="100"
@@ -488,417 +488,6 @@ NextEpicNotification = 0
 ran = false
 approxtime = 0
 
-	EpicLeaders = {
-		[1] = "kers",
-		[2] = "shaelynne",
-		[3] = "hazeknight",
-		[4] = "roume",
-		[5] = "areia"
-	}
-		
-	SystemTimeTable = {
-      month = 0,
-      wday = 0,
-      yday = 0,
-      day = 0,
-      min = 0,
-      isdst = false,
-      sec = 0,
-      hour = 0,
-      year = 0,
-    }
-
-	Helpers = {
-		["Quadrapus"] = "Helped with coming up with the original idea for the plugin",
-		["Hadar"] = "Various code advice",
-		["Fiendish"] = "Various code advice including table sorting",
-		["Areia"] = "Primary beta tester",
-	}
-		
-	EpicMobs = {
-		[1] = "alai",
-		[2] = "orbury",
-		[3] = "gaury",
-	}
-	
-	DaysofWeek = {
-		[1] = "sunday",
-		[2] = "monday",
-		[3] = "tuesday",
-		[4] = "wednesday",
-		[5] = "thursday",
-		[6] = "friday",
-		[7] = "saturday",
-	}
-
-	DaysofWeekShort = {
-		[1] = "sun",
-		[2] = "mon",
-		[3] = "tue",
-		[4] = "wed",
-		[5] = "thu",
-		[6] = "fri",
-		[7] = "sat",
-	}
-
-	MonthMaxDays = {
-		[1] = 31,
-		[2] = 28,
-		[3] = 31,
-		[4] = 30,
-		[5] = 31,
-		[6] = 30,
-		[7] = 31,
-		[8] = 31,
-		[9] = 30,
-		[10] = 31,
-		[11] = 30,
-		[12] = 31,
-	}
-	
-	Months = {
-		[1] = "jan",
-		[2] = "feb",
-		[3] = "mar",
-		[4] = "apr",
-		[5] = "may",
-		[6] = "jun",
-		[7] = "jul",
-		[8] = "aug",
-		[9] = "sep",
-		[10] = "oct",
-		[11] = "nov",
-		[12] = "dec",
-	}
-
-	MonthsYDay = {
-		[1] = 0,
-		[2] = 31,
-		[3] = 59,
-		[4] = 90,
-		[5] = 120,
-		[6] = 151,
-		[7] = 181,
-		[8] = 212,
-		[9] = 242,
-		[10] = 273,
-		[11] = 304,
-		[12] = 334,
-	}
-
-
-	EpicNames = {
-		[1] = "genie",
-		[2] = "icefall1",
-		[3] = "icefall2",
-		[4] = "inferno",
-		[5] = "oc",
-		[6] = "winds",
-		[7] = "terra",
-		[8] = "titan",
-		[9] = "icefall",
-		[10] = "if1",
-		[11] = "if2",
-		[12] = "oldvanir",
-		[13] = "testmaze10",
-		[14] = "transcendence", 
-	}
-
-	SearchNames = {
-		["genie"] = "Genie's Last Wish",
-		["inferno"] = "Journey to the Inferno",
-		["oc"] = "Oradrins Chosen",
-		["winds"] = "Winds of Fate",
-		["terra"] = "Cracks of Terra",
-		["titan"] = "Titans Keep",
-		["oldvanir"] = "oldvanir",
-		["testmaze10"] = "testmaze10",
-		["transcendence"] = "transcendence", 
-	}
-
-	ApprovedChannels = {
-		[1] = "gtell",
-		[2] = "gt",
-		[3] = "ftalk",
-		[4] = "ft",
-		[5] = "clantalk",
-		[6] = "clan",
-		[7] = "cla",
-		[8] = "clant",
-		[9] = "tell",
-	}
-	
-	-- Borrowed for SnD
-	AreaNames = {
-		-- A --
-		["aardington"] = "Aardington Estate",
-		["academy"] = "Academy",
-		["adaldar"] = "Battlefields of Adaldar",
-		["afterglow"] = "Afterglow",
-		["agroth"] = "Marshlands of Agroth",
-		["ahner"] = "Kingdom of Ahner",
-		["alehouse"] = "Wayward Alehouse",
-		["amazon"] = "Amazon Nation",
-		["amusement"] = "Amusement Park",
-		["andarin"] = "Blighted Tundra of Andarin",
-		["annwn"] = "Annwn",
-		["anthrox"] = "Anthrox",
-		["arena"] = "Gladiator's Arena",
-		["arisian"] = "Arisian Realm",
-		["ascent"] = "First Ascent",
-		["astral"] = "Astral Travels",
-		["atlantis"] = "Atlantis",
-		["autumn"] = "Eternal Autumn",
-		["avian"] = "Avian Kingdom",
-		["aylor"] = "Grand City Aylor",
-		-- B --
-		["badtrip"] = "Bad Trip",
-		["bazaar"] = "Onyx Bazaar",
-		["beer"] = "Land of Beer Goblins",
-		["believer"] = "Path of the Believer",
-		["blackrose"] = "Black Rose",
-		["bliss"] = "Wedded Bliss",
-		-- C --
-		["caldera"] = "Icy Caldera Mauldoon",
-		["callhero"] = "Call of Heroes",
-		["camps"] = "Tournament Camps",
-		["canyon"] = "Canyon Memorial Hospital",
-		["caravan"] = "Gypsy Caravan",
-		["cards"] = "House of Cards",
-		["carnivale"] = "Olde Worlde Carnivale",
-		["cataclysm"] = "Cataclysm",
-		["cathedral"] = "Old Cathedral",
-		["cats"] = "Sheila's Cat Sanctuary",
-		["chasm"] = "Chasm and Catacombs",
-		["chessboard"] = "Chessboard",
-		["childsplay"] = "Child's Play",
-		["cineko"] = "Aerial City of Cineko",
-		["citadel"] = "Flying Citadel",
-		["conflict"] = "Thandeld's Conflict",
-		["coral"] = "Coral Kingdom",
-		["cougarian"] = "Cougarian Queendom",
-		["cove"] = "Kiksaadi Cove",
-		["cradle"] = "Cradlebrook",
-		["crynn"] = "Crynn's Church",
-		-- D --
-		["damned"] = "Halls of the Damned",
-		["darklight"] = "Darklight",
-		["darkside"] = "Darkside Fractured Lands",
-		["ddoom"] = "Desert Doom",
-		["deadlights"] = "Deadlights",
-		["deathtrap"] = "Deathtrap Dungeon",
-		["deneria"] = "Realm of Deneria",
-		["desert"] = "Desert Prison",
-		["desolation"] = "Mountains of Desolation",
-		["dhalgora"] = "Dhal'Gora Outlands",
-		["diatz"] = "Three Pillars Diatz",	
-		["diner"] = "Tumari's Diner",
-		["dortmund"] = "Dortmund",
-		["drageran"] = "Drageran Empire",
-		["dread"] = "Dread Tower",
-		["dsr"] = "Diamond Soul Revelation",
-		["dundoom"] = "Dungeon Doom",
-		["dunoir"] = "Mount DuNoir",
-		["duskvalley"] = "Dusk Valley",
-		["dynasty"] = "Eighteenth 18th Dynasty",
-		-- E --
-		["earthlords"] = "Earth Lords",
-		["earthplane"] = "Earth Plane 4",
-		["elemental"] = "Elemental Chaos",
-		["empire"] = "Empire of Aiighialla",
-		["empyrean"] = "Empyrean Streets of Downfall",
-		["entropy"] = "Archipelago Entropy",
-		-- F --
-		["fantasy"] = "Fantasy Fields",
-		["farm"] = "Kimr's Farm",
-		["fayke"] = "All in Fayke Day",
-		["fens"] = "Curse Midnight Fens",
-		["fields"] = "Killing Fields",
-		["firebird"] = "Realm of the Firebird",
-		["firenation"] = "Realm of the Sacred Flame",
-		["fireswamp"] = "Fire Swamp",
-		["fortress"] = "Goblin Fortress",
-		["fractured"] = "Fractured Lands",
-		["ft1"] = "Faerie Tales",
-		["ftii"] = "Faerie Tales II FT2",
-		-- G --
-		["gallows"] = "Gallows Hill",
-		["gathering"] = "Gathering Horde",
-		["gauntlet"] = "Gauntlet",
-		["genie"] = "Genie's Last Wish",
-		["gilda"] = "Gilda and the Dragon",
-		["glamdursil"] = "Glamdursil",
-		["glimmerdim"] = "Brightsea Glimmerdim",
-		["gnomalin"] = "Cloud City of Gnomalin",
-		["goldrush"] = "Gold Rush",
-		["graveyard"] = "Graveyard",
-		["greece"] = "Ancient Greece",
-		["gwillim"] = "Trouble with Gwillimberry",
-		-- H --
-		["hatchling"] = "Hatchling Aerie",
-		["hawklord"] = "Realm of the Hawklords",
-		["hedge"] = "Hedgehog's",
-		["helegear"] = "Helegear Sea",
-		["hell"] = "Descent to Hell",
-		["hoard"] = "Swordbreaker's Hoard",
-		["hodgepodge"] = "Magical Hodgepodge",
-		["horath"] = "Broken Halls of Horath",
-		["horizon"] = "Nebulous Horizon",
-		-- I --
-		["icefall"] = "Icefall",
-		["illoria"] = "Illoria",
-		["imagi"] = "Imagi's Nation",
-		["imperial"] = "Imperial Nation",
-		["infamy"] = "Realm of Infamy",
-		["inferno"] = "Journey to the Inferno",
-		["infest"] = "Infestation",
-		["insan"] = "Insanitaria",
-		-- J --
-		["jenny"] = "Jenny's Tavern",
-		["jotun"] = "Jotunheim",
-		-- K --
-		["kearvek"] = "Keep of Kearvek",
-		["kerofk"] = "Kerofk",
-		["ketu"] = "Ketu Uplands",
-		["kingsholm"] = "Kingsholm",
-		["knossos"] = "Great City of Knossos",
-		["kobaloi"] = "Keep of the Kobaloi",
-		["kultiras"] = "Kul Tiras",
-		-- L --
-		["lab"] = "Chaprenula's Laboratory",
-		["labyrinth"] = "Labyrinth",
-		["lagoon"] = "Black Lagoon",
-		["landofoz"] = "Land of Oz",
-		["laym"] = "Tai'rha Laym",
-		["legend"] = "Land of Legend LoL",
-		["lemdagor"] = "Storm Ships of Lem-Dagor",
-		["lidnesh"] = "Forest of Li'Dnesh",
-		["livingmine"] = "Living Mines of Dak'Tai",
-		["longnight"] = "Into the Long Night",
-		["losttime"] = "Island of Lost Time",
-		["lplanes"] = "Lower Planes",
-		-- M --
-		["maelstrom"] = "Maelstrom",
-		["manor"] = "Death's Manor",
-		["masq"] = "Masquerade Island",
-		["mayhem"] = "Artificer's Mayhem",
-		["melody"] = "Art of Melody",
-		["minos"] = "Shadows of Minos",
-		["mistridge"] = "Covenant of Mistridge",
-		["monastery"] = "Monastery",
-		["mudwog"] = "Mudwog's Swamp",
-		-- N --
-		["nanjiki"] = "Nanjiki Ruins",
-		["necro"] = "Necromancer's Guild",
-		["nenukon"] = "Nenukon and the Far Country",
-		["newthalos"] = "New Thalos",
-		["northstar"] = "Northstar",
-		["nottingham"] = "Nottingham",
-		["nulan"] = "Plains of Nulan'Boar",
-		["nursing"] = "Ascension Bluff Nursing Home",
-		["nynewoods"] = "Nyne Woods",
-		-- O --
-		["oc"] = "Oradrin's Chosen",
-		["oceanpark"] = "Ocean Adventure Park",
-		["omentor"] = "Witches of Omen Tor",
-		["origins"] = "Tribal Origins",
-		["orlando"] = "Hotel Orlando",
-		-- P --
-		["paradise"] = "Paradise Lost",
-		["peninsula"] = "Tairayden Peninsula",
-		["petstore"] = "Giant's Pet Store",
-		["pompeii"] = "Pompeii",
-		["promises"] = "Foolish Promises",
-		["prosper"] = "Prosper's Island",
-		-- Q --
-		["qong"] = "Qong",
-		["quarry"] = "Gnoll's Quarry",
-		-- R --		
-		["radiance"] = "Radiance Woods",
-		["raga"] = "Raganatittu",
-		["raukora"] = "Blood Opal of Rauko'ra",
-		["rebellion"] = "Rebellion Nix",
-		["remcon"] = "Reman Conspiracy",
-		["reme"] = "City of Reme",
-		["rosewood"] = "Rosewood Castle",
-		["ruins"] = "Ruins of Diamond Reach",
-		-- S --
-		["sagewood"] = "Sagewood Grove",
-		["sahuagin"] = "Abyssal Caverns of Sahuagin",
-		["salt"] = "Great Salt Flats",
-		["sanctity"] = "Sanctity of Eternal Damnation",
-		["sanctum"] = "The Blood Sanctum",
-		["sandcastle"] = "Sho'aram Shoaram Castle in the Sand",
-		["sanguine"] = "Sanguine Tavern",
-		["scarred"] = "Scarred Lands",
-		["sendhian"] = "Adventures in Sendhia",
-		["sennarre"] = "Sen'narre Lake",
-		["shouggoth"] = "Temple of Shouggoth",
-		["siege"] = "Kobold Seige Camp KSC",
-		["sirens"] = "Siren's Oasis Resort",
-		["slaughter"] = "Slaughterhouse",
-		["snuckles"] = "Snuckles Village",
-		["soh"] = "School of Horror SOH1",
-		["sohtwo"] = "School of Horror SOH2",
-		["solan"] = "Town of Solan",
-		["songpalace"] = "Palace of Song",
-		["spyreknow"] = "Guardian's Spyre of Knowledge",
-		["stone"] = "Fabled City of Stone",
-		["storm"] = "Storm Mountain",
-		["stormhaven"] = "Ruins of Stormhaven",
-		["stronghold"] = "Dark Elf Stronghold DES",
-		["stuff"] = "Stuff of Shadows",
-		-- T --
-		["takeda"] = "Takeda's Warcamp",
-		["talsa"] = "Empire of Talsa",
-		["temple"] = "Temple of Shal'indrael",
-		["tanra"] = "Tanra'vea",
-		["terra"] = "Cracks of Terra",
-		["terramire"] = "Fort Terramire",
-		["thieves"] = "Den of Thieves",
-		["times"] = "Intrigues of Times Past",
-		["tirna"] = "Tir na Nog",
-		["titan"] = "Titans' Keep",
-		["tol"] = "Tree of Life",
-		["tombs"] = "Relinquished Tombs",
-		-- U --
-		["umari"] = "Umari's Castle",
-		["underdark"] = "Underdark",
-		["uplanes"] = "Upper Planes",
-		["uprising"] = "Uprising",
-		-- V --
-		["vale"] = "Sundered Vale",
-		["verdure"] = "Verdure Estate",
-		["verume"] = "Jungles of Verume",
-		["village"] = "Peaceful Giant Village",
-		["vlad"] = "Vlad Shamir",
-		["volcano"] = "Silver Volcano",
-		-- W --
-		["weather"] = "Weather Observatory",
-		["werewood"] = "Were Wood",
-		["wildwood"] = "Wildwood",
-		["winds"] = "Winds of Fate",
-		["winter"] = "Winterlands",
-		["wizards"] = "War of the Wizards WoW",
-		["wonders"] = "Seven Wonders",
-		["wooble"] = "Wobbly Woes of Woobleville",
-		["woodelves"] = "Wood Elves of Nalondir",
-		["wtc"] = "Warrior Training Camp WTC",
-		["wyrm"] = "Council of the Wyrm",
-		-- X --
-		["xmas"] = "Christmas Vacation",
-		["xylmos"] = "Xyl's Mosaic",
-		-- Y --
-		["yarr"] = "Misty Shores of Yarr",
-		["ygg"] = "Yggdrasil: The World Tree",
-		["yurgach"] = "Yurgach Domain",
-		-- Z --
-		["zangar"] = "Zangar's Demonic Grotto",
-		["zodiac"] = "Realm of the Zodiac",
-		["zoo"] = "Aardwolf Zoological Park",
-		["zyian"] = "Dark Temple of Zyian",
-	}
-
 --------------------------------------------
 --------------- COMMAND MENU ---------------
 --------------------------------------------
@@ -1051,7 +640,15 @@ function CommandMenu(name, line, wc)
 					RunTimeUpdate()
 				end
 			elseif tonumber(gtime) ~= nil then
-				EpicMisc["ApproxRunTimes"]["Grouping Time"]["Time"] = tonumber(gtime)
+				gtime = tonumber(gtime)
+				
+				if gtime < 5 then
+					ColourNote(msg_colour, "", "Grouping time cannot be set to below ", qty_colour, "", "5", msg_colour, "", " minutes.")
+					
+					return
+				end
+				
+				EpicMisc["ApproxRunTimes"]["Grouping Time"]["Time"] = gtime
 				
 				ColourNote(msg_colour, "", "Grouping time allocation has been changed to ", qty_colour, "", EpicMisc["ApproxRunTimes"]["Grouping Time"]["Time"], msg_colour, "", " minutes.")
 				
@@ -1129,7 +726,7 @@ function CommandMenu(name, line, wc)
 					channel = wordtable[4]
 					
 					if EpicMisc["NotificationBot"]["Auto"][channel] == nil then
-						ColourNote(qty_colour, "", channel, msg_colour, "", " has not been be added to the automatic next epic notification list")
+						ColourNote(qty_colour, "", channel, msg_colour, "", " has not been added to the automatic next epic notification list")
 						Note("")
 					else
 						ColourNote(msg_colour, "", "Automatic next epic notifications for ", qty_colour, "", channel, msg_colour, "", " have been ", "green", "", "Enabled.")
@@ -1154,7 +751,7 @@ function CommandMenu(name, line, wc)
 					channel = wordtable[4]
 					
 					if EpicMisc["NotificationBot"]["Auto"][channel] == nil then
-						ColourNote(qty_colour, "", channel, msg_colour, "", " has not been be added to the auto notification list")
+						ColourNote(qty_colour, "", channel, msg_colour, "", " has not been added to the auto notification list")
 						Note("")
 					else
 						EpicMisc["NotificationBot"]["Auto"][channel] = false
@@ -1171,7 +768,7 @@ function CommandMenu(name, line, wc)
 					end
 				end
 			else
-				ColourNote(msg_colour, "", "Invalid command. Please see ", qty_colour, "", "ecal help bot", msg_colour, "", " for more information.")
+					ColourNote(msg_colour, "", "Invalid command. Please see ", qty_colour, "", "ecal help bot", msg_colour, "", " for more information.")
 				Note("")
 			end
 		elseif attrib == "commands" then
@@ -1184,13 +781,10 @@ function CommandMenu(name, line, wc)
 					channel = wordtable[4]
 
 					if EpicMisc["NotificationBot"]["Commands"][channel] == nil then
-						ColourNote(qty_colour, "", channel, msg_colour, "", " has not been be added to the command channel notification list")
+						ColourNote(qty_colour, "", channel, msg_colour, "", " has not been added to the command channel notification list")
 						Note("")
 					else
-						EpicMisc["NotificationBot"]["Commands"][channel] = true
-						
-						ColourNote(msg_colour, "", "Channel commands for ", qty_colour, "", channel, msg_colour, "", " channel have been ", "green", "", "Enabled.")
-						Note("")
+						ChannelCommandEnable(channel)
 					end
 				else
 					if EpicMisc["NotificationBot"]["CommandsEnabled"] == true then
@@ -1210,13 +804,10 @@ function CommandMenu(name, line, wc)
 					channel = wordtable[4]
 				
 					if EpicMisc["NotificationBot"]["Commands"][channel] == nil then
-						ColourNote(qty_colour, "", channel, msg_colour, "", " has not been be added to the command channel notification list")
+						ColourNote(qty_colour, "", channel, msg_colour, "", " has not been added to the command channel notification list")
 						Note("")
 					else
-						EpicMisc["NotificationBot"]["Commands"][channel] = false
-						
-						ColourNote(msg_colour, "", "Channel commands for ", qty_colour, "", channel, msg_colour, "", " have been ", "red", "", "Disabled.")
-						Note("")
+						ChannelCommandDisable(channel)
 					end
 				else
 					if EpicMisc["NotificationBot"]["CommandsEnabled"] == false then
@@ -1515,10 +1106,6 @@ function EpicUpdateEnd()
 	world.EnableGroup ("EpicCalendar", 0)
 	world.EnableGroup ("EpicUpdateEnd", 0)
 
-	if TableFilled == "NO" then
-		TableFilled = "YES"
-	end
-	
 	for i,v in ipairs(EpicTable) do
 		if CheckOver(i) == "YES" then
 			table.remove (EpicTable, i)
@@ -1535,7 +1122,15 @@ function EpicUpdateEnd()
 	
 	SendNoEcho ("board " .. cboard)
 	
-	SaveState()
+		if TableFilled == "NO" then
+		TableFilled = "YES"
+
+		if EpicMisc["NotificationBot"]["AlertEnabled"] == true then
+			AlertCheck()
+		end
+	end
+	
+	SaveState()	
 end -- EpicUpdateEnd
 
 function EpicNote(name, line, wc)
@@ -2059,9 +1654,7 @@ function SearchEpic(epicname)
 	end
 end -- SearchEpic
 
-function ListEpic()		
-	
-	
+function ListEpic()
 	local hour = ""
 
 	if listtype == "nextleader" then
@@ -2073,7 +1666,8 @@ function ListEpic()
 	if listtype == "list" then		
 		title = "Epic Run List"
 	else
-		title = "Epic Run List - Searching: " .. listtype
+		listtypeT = string.gsub (listtype, "^.", string.upper)
+		title = "Epic Run List - Searching: " .. listtypeT
 	end
 	
 	title2 = "+-----------+------------+-----------+-----------+---------------------------------+"
@@ -2258,7 +1852,6 @@ function DisplayRow(ename, eleader, eday, hour, timedef, apindex)
 	elseif EpicMisc["VI"] == "YES" then
 		ColourNote(msg_colour, "", "Epic: ", epic_colour, "", ename .. namespace, msg_colour, "", " Leader: ", leader_colour, "", eleader .. leaderspace, qty_colour, "", " Start Time: ", day_colour, "", eday, msg_colour, "", " ", time_colour, "", hour, epic_colour, "", apxhour, msg_colour, "", " ", remain_colour, "",timedef)
 	end
-	
 end -- DisplayRow
 
 function StartPost()
@@ -2393,7 +1986,7 @@ function PostEpic()
 			PostRow(ename, eleader, eday, hour, timedef, i)
 		end
 	end
-		
+
 	SendNoEcho ("@D" .. title2)
 	SendNoEcho ("@w")
 	SendNoEcho("@R* @D- approximate start times only, actual start times may vary@w")
@@ -2840,7 +2433,19 @@ function DisplayNextFail(nexttype, day, wnext)
 					SendNoEcho (reportchannel .. " @R[EpicCAL] @DThere are no epic runs scheduled for @C" .. sendwhat .. "@D.@w")
 					reportchannel = nil
 				end
-			elseif nexttype == "epic" or nexttype == "search" then
+			elseif nexttype == "epic" or nexttype == "search" then			
+				if wnext == "icefall1" then
+					wnext = "Icefall 1"
+				elseif wnext == "icefall2" then
+					wnext = "Icefall 2"
+				elseif wnext == "oc" then
+					wnext = "OC"
+				else
+					if EpicTable[lowestindex]["Epic Name"] ~= nil then
+						wnext = string.gsub (wnext, "^.", string.upper)
+					end
+				end
+
 				if reportchannel == nil then
 					ColourNote(msg_colour, "", "There are no ", qty_colour, "", wnext, msg_colour, "", " epic runs scheduled.")
 					Note("")
@@ -2923,7 +2528,7 @@ end -- RTUpdateYes
 function RTUpdateNo()
 	RunTimeUpdateEnd()
 	
-	ColourNote(msg_colour, "", "Epic List has not be updated. Please type ", qty_colour, "", "ecal reset", msg_colour, "", " to see changes to run times.")
+	ColourNote(msg_colour, "", "Epic List has not been updated. Please type ", qty_colour, "", "ecal reset", msg_colour, "", " to see changes to run times.")
 	Note("")
 end -- RTUpdateNo
 
@@ -3341,7 +2946,7 @@ function EnableAlertBot()
 	Note("")
 		
 	if TableFilled == "YES" then
-		GetNextEpicSilent()
+		AlertCheck()
 	end
 end -- EnableAlertBot
 
@@ -3419,6 +3024,66 @@ function DisableCommandBot()
 	EnableTrigger ("FriendChannelYou", false)
 end -- DisableCommandBot
 
+function ChannelCommandEnable(channel)
+	EpicMisc["NotificationBot"]["Commands"][channel] = true
+
+	if EpicMisc["NotificationBot"]["Enabled"] == true then
+		if EpicMisc["NotificationBot"]["CommandsEnabled"] == true then
+			if channel == "ft" then
+				EnableTrigger ("FriendChannel", true)
+				EnableTrigger ("FriendChannelYou", true)
+			elseif channel == "clan" then
+				EnableTrigger ("ClanChannel", true)
+				EnableTrigger ("ClanChannelYou", true)
+			elseif channel == "gt" then
+				EnableTrigger ("GroupChannel", true)
+			elseif channel == "tell" then
+				EnableTrigger ("TellChannel", true)
+			end
+			
+			ColourNote(msg_colour, "", "Channel commands for ", qty_colour, "", channel, msg_colour, "", " channel have been ", "green", "", "Enabled.")
+		else
+			ColourNote(msg_colour, "", "Channel commands for ", qty_colour, "", channel, msg_colour, "", " channel have been ", "green", "", "Enabled.", msg_colour, "", " The Channel Commands system is currently ", "red", "", "Disabled", msg_colour, "", ". Please type ", qty_colour, "", "ecal bot commands enable", msg_colour, "", " to use this feature.")
+		end
+	else
+		if EpicMisc["NotificationBot"]["CommandsEnabled"] == true then
+			ColourNote(msg_colour, "", "Channel commands for ", qty_colour, "", channel, msg_colour, "", " channel have been ", "green", "", "Enabled.", msg_colour, "", " The Notification Bot is currently ", "red", "", "Disabled", msg_colour, "", ". Please type ", qty_colour, "", "ecal bot enable", msg_colour, "", " to use this feature.")
+		else
+			ColourNote(msg_colour, "", "Channel commands for ", qty_colour, "", channel, msg_colour, "", " channel have been ", "green", "", "Enabled.", msg_colour, "", " Both Notification Bot and Channel Commands system are currently ", "red", "", "Disabled", msg_colour, "", ". Enable both to use this feature.")
+		end
+	end
+	
+	Note("")
+	
+	SaveState()
+end -- ChannelCommandEnable
+
+function ChannelCommandDisable(channel)
+	EpicMisc["NotificationBot"]["Commands"][channel] = false
+
+	if EpicMisc["NotificationBot"]["Enabled"] == true then
+		if EpicMisc["NotificationBot"]["CommandsEnabled"] == true then
+			if channel == "ft" then
+				EnableTrigger ("FriendChannel", false)
+				EnableTrigger ("FriendChannelYou", false)
+			elseif channel == "clan" then
+				EnableTrigger ("ClanChannel", false)
+				EnableTrigger ("ClanChannelYou", false)
+			elseif channel == "gt" then
+				EnableTrigger ("GroupChannel", false)
+			elseif channel == "tell" then
+				EnableTrigger ("TellChannel", false)
+			end
+
+			ColourNote(msg_colour, "", "Channel commands for ", qty_colour, "", channel, msg_colour, "", " channel have been ", "red", "", "Disabled.")
+		end
+	end
+	
+	Note("")	
+	
+	SaveState()
+end -- ChannelCommandDisable
+	
 function ChannelBot(user, cmd, search, channel)	
 	if search == "if1" or search == "icefall 1" then search = "icefall1" end
 	if search == "if2" or search == "icefall 2" then search = "icefall2" end
@@ -3529,7 +3194,6 @@ function CheckOver(eindex)
 end -- CheckOver
 
 function ChannelListDay(channel, day)
-
 	table.sort(EpicTable, function (a, b) local atime = os.time(a["Time Table"]); local btime = os.time(b["Time Table"]); if atime == btime then return a["Index"] < b["Index"] else return atime < btime end end)
 		
 	if day == nil then		
@@ -3560,9 +3224,9 @@ function ChannelListDay(channel, day)
 		message = "@R[Full Schedule for @C" .. day .. "@R] - "
 		message2 = "@R[Full Schedule for @C" .. day .. "@R] - "	
 	end
-		
+
 	daycheck = "NO"
-		
+
 	for i,v in ipairs(EpicTable) do
 		if CheckOver(i) == "NO" then
 			previndex = i - 1		
@@ -4010,12 +3674,15 @@ function AddBlacklist(user, reason)
 		
 		return
 	end
-		
-	ColourNote(qty_colour, "", user, msg_colour, "", " has been added to the blacklist. Reason: ", qty_colour, "", reason)
 
 	EpicMisc["Blacklist"][user] = {}
 	EpicMisc["Blacklist"][user]["Reason"] = reason
 	EpicMisc["Blacklist"][user]["Since"] = os.time()
+	
+	user = string.gsub (user, "^.", string.upper)
+
+	ColourNote(qty_colour, "", user, msg_colour, "", " has been added to the blacklist. Reason: ", qty_colour, "", reason)
+	
 	SaveState()
 end -- AddBlacklist
 
@@ -4025,9 +3692,12 @@ function RemoveBlacklist(user)
 		return
 	end
 	
-	ColourNote(qty_colour, "", user, msg_colour, "", " has been removed from the blacklist.")
-
 	EpicMisc["Blacklist"][user] = nil
+	
+	user = string.gsub (user, "^.", string.upper)
+	
+	ColourNote(qty_colour, "", user, msg_colour, "", " has been removed from the blacklist.")
+	
 	SaveState()
 end -- RemoveBlacklist
 
@@ -4141,90 +3811,44 @@ end -- NextEpicSilent
 function AlertCheck()
 	if alertremaining == nil then
 		GetNextEpicSilent()
+		return
 	end
-	
-	if alertcheck == nil then
-		if alertremaining["hour"] == 0 then
-			if alertremaining["min"] > 4 then
-				alertcheck = "YES" 
-				NextEpicComingUp()
-				alerttime = os.time()
-			end
-		else
-			alertcheck = "NO"
-			alerttime = os.time()
-		end
-	elseif alertcheck == "YES" then
-	
-		OSSystemTimeTable2 = os.date("*t")
-		OSSystemTime2 = os.time()
 
-		tdef = OSSystemTime2 - OSSystemTime
-		
-		-- timenow = os.time(SystemTimeTable)
-		timenow = sertime2
-		timenow = timenow + tdef
+	alerttime = os.time(SystemTimeTable)
+	
+	if alertcheck == "YES" then
+		Note("alertcheck is YES")
 
-		timenow2 = alerttime
-		
-		timediff2 = {}
-		
-		timeDiff(timenow,timenow2,timediff2)
-		
-		if timediff2["day"] == 0 then
-			if timediff2["hour"] == 0 then
-				if timediff2["min"] <= 30 then
-					alertcheck = "PAUSE"
-					alerttime = os.time()
+		if alertremaining["day"] == 0 then
+			if alertremaining["hour"] == 0 then
+				if alertremaining["min"] <= 30 then			
 					NextEpicComingUp()
-				end
-			end
-		end
-	elseif alertcheck == "NO" then
-		OSSystemTimeTable2 = os.date("*t")
-		OSSystemTime2 = os.time()
-
-		tdef = OSSystemTime2 - OSSystemTime
-
-		-- timenow = os.time(SystemTimeTable)
-		timenow = sertime2
-		timenow = timenow + tdef
-		timenow2 = alerttime
-
-		timediff2 = {}
-
-		timeDiff(timenow,timenow2,timediff2)
-
-		if timediff2["day"] == 0 then
-			if timediff2["hour"] == 0 then
-				if timediff2["min"] > 4 then
-				 	alertcheck = nil
-					GetNextEpicSilent()
+					alertcheck = "PAUSE"
 				end
 			end
 		end
 	elseif alertcheck == "PAUSE" then
-		OSSystemTimeTable2 = os.date("*t")
-		OSSystemTime2 = os.time()
-
-		tdef = OSSystemTime2 - OSSystemTime
-		
-		-- timenow = os.time(SystemTimeTable)
-		timenow = sertime2
-		timenow = timenow + tdef
-
-		timenow2 = alerttime
-				
-		timediff2 = {}
-
-		timeDiff(timenow,timenow2,timediff2)
-
-		if timediff2["day"] == 0 then
-			if timediff2["hour"] == 0 then
-				if timediff2["min"] > 29 then
-					alertcheck = nil
-					GetNextEpicSilent()
+		if alertremaining["day"] == 0 then
+			if alertremaining["hour"] == 0 then
+				if alertremaining["min"] <= 4 then			
+					alertcheck = NIL
 				end
+			end
+		end
+	else
+		if alertremaining["day"] == 0 then
+			if alertremaining["hour"] == 1 then
+				if alertremaining["min"] == 0 then
+					NextEpicComingUp()
+					alertcheck = "YES"
+				end
+			elseif alertremaining["hour"] == 0 then
+				if alertremaining["min"] <= 59 then
+					NextEpicComingUp()
+					alertcheck = "YES"
+				end
+			else
+				alertcheck = "NO"
 			end
 		end
 	end
@@ -4241,7 +3865,9 @@ function NextEpicComingUp()
 	ReturnType = "VI"
 	timeremaining = EpicTimeDifference(lowestindex, ReturnType)
 
-	ColourNote(msg_colour, "", "NEXT EPIC ALERT ", "red", "" , "[" .. EpicTable[lowestindex]["Epic Name"] .. " epic]", msg_colour, "" , " starting in ", qty_colour, "", trim(timeremaining))
+	ename = string.gsub (EpicTable[lowestindex]["Epic Name"], "^.", string.upper)
+
+	ColourNote(msg_colour, "", "NEXT EPIC ALERT ", "red", "" , "[" .. ename .. " Epic]", msg_colour, "" , " starting in ", qty_colour, "", trim(timeremaining))
 	Note("")
 end -- NextEpicComingUp
 
@@ -5287,6 +4913,416 @@ function GetSavedData()
 		EpicPermissionTable = {}
 	end
 
+	EpicLeaders = {
+		[1] = "kers",
+		[2] = "shaelynne",
+		[3] = "hazeknight",
+		[4] = "roume",
+		[5] = "areia"
+	}
+		
+	SystemTimeTable = {
+      month = 0,
+      wday = 0,
+      yday = 0,
+      day = 0,
+      min = 0,
+      isdst = false,
+      sec = 0,
+      hour = 0,
+      year = 0,
+    }
+
+	Helpers = {
+		["Quadrapus"] = "Helped with coming up with the original idea for the plugin",
+		["Hadar"] = "Various code advice",
+		["Fiendish"] = "Various code advice including table sorting",
+		["Areia"] = "Primary beta tester",
+	}
+		
+	EpicMobs = {
+		[1] = "alai",
+		[2] = "orbury",
+	}
+	
+	DaysofWeek = {
+		[1] = "sunday",
+		[2] = "monday",
+		[3] = "tuesday",
+		[4] = "wednesday",
+		[5] = "thursday",
+		[6] = "friday",
+		[7] = "saturday",
+	}
+
+	DaysofWeekShort = {
+		[1] = "sun",
+		[2] = "mon",
+		[3] = "tue",
+		[4] = "wed",
+		[5] = "thu",
+		[6] = "fri",
+		[7] = "sat",
+	}
+
+	MonthMaxDays = {
+		[1] = 31,
+		[2] = 28,
+		[3] = 31,
+		[4] = 30,
+		[5] = 31,
+		[6] = 30,
+		[7] = 31,
+		[8] = 31,
+		[9] = 30,
+		[10] = 31,
+		[11] = 30,
+		[12] = 31,
+	}
+	
+	Months = {
+		[1] = "jan",
+		[2] = "feb",
+		[3] = "mar",
+		[4] = "apr",
+		[5] = "may",
+		[6] = "jun",
+		[7] = "jul",
+		[8] = "aug",
+		[9] = "sep",
+		[10] = "oct",
+		[11] = "nov",
+		[12] = "dec",
+	}
+
+	MonthsYDay = {
+		[1] = 0,
+		[2] = 31,
+		[3] = 59,
+		[4] = 90,
+		[5] = 120,
+		[6] = 151,
+		[7] = 181,
+		[8] = 212,
+		[9] = 242,
+		[10] = 273,
+		[11] = 304,
+		[12] = 334,
+	}
+
+
+	EpicNames = {
+		[1] = "genie",
+		[2] = "icefall1",
+		[3] = "icefall2",
+		[4] = "inferno",
+		[5] = "oc",
+		[6] = "winds",
+		[7] = "terra",
+		[8] = "titan",
+		[9] = "icefall",
+		[10] = "if1",
+		[11] = "if2",
+		[12] = "oldvanir",
+		[13] = "testmaze10",
+		[14] = "transcendence", 
+	}
+
+	SearchNames = {
+		["genie"] = "Genie's Last Wish",
+		["inferno"] = "Journey to the Inferno",
+		["oc"] = "Oradrins Chosen",
+		["winds"] = "Winds of Fate",
+		["terra"] = "Cracks of Terra",
+		["titan"] = "Titans Keep",
+		["oldvanir"] = "oldvanir",
+		["testmaze10"] = "testmaze10",
+		["transcendence"] = "transcendence", 
+	}
+
+	ApprovedChannels = {
+		[1] = "gtell",
+		[2] = "gt",
+		[3] = "ftalk",
+		[4] = "ft",
+		[5] = "clantalk",
+		[6] = "clan",
+		[7] = "cla",
+		[8] = "clant",
+		[9] = "tell",
+	}
+	
+	-- Borrowed for SnD
+	AreaNames = {
+		-- A --
+		["aardington"] = "Aardington Estate",
+		["academy"] = "Academy",
+		["adaldar"] = "Battlefields of Adaldar",
+		["afterglow"] = "Afterglow",
+		["agroth"] = "Marshlands of Agroth",
+		["ahner"] = "Kingdom of Ahner",
+		["alehouse"] = "Wayward Alehouse",
+		["amazon"] = "Amazon Nation",
+		["amusement"] = "Amusement Park",
+		["andarin"] = "Blighted Tundra of Andarin",
+		["annwn"] = "Annwn",
+		["anthrox"] = "Anthrox",
+		["arena"] = "Gladiator's Arena",
+		["arisian"] = "Arisian Realm",
+		["ascent"] = "First Ascent",
+		["astral"] = "Astral Travels",
+		["atlantis"] = "Atlantis",
+		["autumn"] = "Eternal Autumn",
+		["avian"] = "Avian Kingdom",
+		["aylor"] = "Grand City Aylor",
+		-- B --
+		["badtrip"] = "Bad Trip",
+		["bazaar"] = "Onyx Bazaar",
+		["beer"] = "Land of Beer Goblins",
+		["believer"] = "Path of the Believer",
+		["blackrose"] = "Black Rose",
+		["bliss"] = "Wedded Bliss",
+		-- C --
+		["caldera"] = "Icy Caldera Mauldoon",
+		["callhero"] = "Call of Heroes",
+		["camps"] = "Tournament Camps",
+		["canyon"] = "Canyon Memorial Hospital",
+		["caravan"] = "Gypsy Caravan",
+		["cards"] = "House of Cards",
+		["carnivale"] = "Olde Worlde Carnivale",
+		["cataclysm"] = "Cataclysm",
+		["cathedral"] = "Old Cathedral",
+		["cats"] = "Sheila's Cat Sanctuary",
+		["chasm"] = "Chasm and Catacombs",
+		["chessboard"] = "Chessboard",
+		["childsplay"] = "Child's Play",
+		["cineko"] = "Aerial City of Cineko",
+		["citadel"] = "Flying Citadel",
+		["conflict"] = "Thandeld's Conflict",
+		["coral"] = "Coral Kingdom",
+		["cougarian"] = "Cougarian Queendom",
+		["cove"] = "Kiksaadi Cove",
+		["cradle"] = "Cradlebrook",
+		["crynn"] = "Crynn's Church",
+		-- D --
+		["damned"] = "Halls of the Damned",
+		["darklight"] = "Darklight",
+		["darkside"] = "Darkside Fractured Lands",
+		["ddoom"] = "Desert Doom",
+		["deadlights"] = "Deadlights",
+		["deathtrap"] = "Deathtrap Dungeon",
+		["deneria"] = "Realm of Deneria",
+		["desert"] = "Desert Prison",
+		["desolation"] = "Mountains of Desolation",
+		["dhalgora"] = "Dhal'Gora Outlands",
+		["diatz"] = "Three Pillars Diatz",	
+		["diner"] = "Tumari's Diner",
+		["dortmund"] = "Dortmund",
+		["drageran"] = "Drageran Empire",
+		["dread"] = "Dread Tower",
+		["dsr"] = "Diamond Soul Revelation",
+		["dundoom"] = "Dungeon Doom",
+		["dunoir"] = "Mount DuNoir",
+		["duskvalley"] = "Dusk Valley",
+		["dynasty"] = "Eighteenth 18th Dynasty",
+		-- E --
+		["earthlords"] = "Earth Lords",
+		["earthplane"] = "Earth Plane 4",
+		["elemental"] = "Elemental Chaos",
+		["empire"] = "Empire of Aiighialla",
+		["empyrean"] = "Empyrean Streets of Downfall",
+		["entropy"] = "Archipelago Entropy",
+		-- F --
+		["fantasy"] = "Fantasy Fields",
+		["farm"] = "Kimr's Farm",
+		["fayke"] = "All in Fayke Day",
+		["fens"] = "Curse Midnight Fens",
+		["fields"] = "Killing Fields",
+		["firebird"] = "Realm of the Firebird",
+		["firenation"] = "Realm of the Sacred Flame",
+		["fireswamp"] = "Fire Swamp",
+		["fortress"] = "Goblin Fortress",
+		["fractured"] = "Fractured Lands",
+		["ft1"] = "Faerie Tales",
+		["ftii"] = "Faerie Tales II FT2",
+		-- G --
+		["gallows"] = "Gallows Hill",
+		["gathering"] = "Gathering Horde",
+		["gauntlet"] = "Gauntlet",
+		["genie"] = "Genie's Last Wish",
+		["gilda"] = "Gilda and the Dragon",
+		["glamdursil"] = "Glamdursil",
+		["glimmerdim"] = "Brightsea Glimmerdim",
+		["gnomalin"] = "Cloud City of Gnomalin",
+		["goldrush"] = "Gold Rush",
+		["graveyard"] = "Graveyard",
+		["greece"] = "Ancient Greece",
+		["gwillim"] = "Trouble with Gwillimberry",
+		-- H --
+		["hatchling"] = "Hatchling Aerie",
+		["hawklord"] = "Realm of the Hawklords",
+		["hedge"] = "Hedgehog's",
+		["helegear"] = "Helegear Sea",
+		["hell"] = "Descent to Hell",
+		["hoard"] = "Swordbreaker's Hoard",
+		["hodgepodge"] = "Magical Hodgepodge",
+		["horath"] = "Broken Halls of Horath",
+		["horizon"] = "Nebulous Horizon",
+		-- I --
+		["icefall"] = "Icefall",
+		["illoria"] = "Illoria",
+		["imagi"] = "Imagi's Nation",
+		["imperial"] = "Imperial Nation",
+		["infamy"] = "Realm of Infamy",
+		["inferno"] = "Journey to the Inferno",
+		["infest"] = "Infestation",
+		["insan"] = "Insanitaria",
+		-- J --
+		["jenny"] = "Jenny's Tavern",
+		["jotun"] = "Jotunheim",
+		-- K --
+		["kearvek"] = "Keep of Kearvek",
+		["kerofk"] = "Kerofk",
+		["ketu"] = "Ketu Uplands",
+		["kingsholm"] = "Kingsholm",
+		["knossos"] = "Great City of Knossos",
+		["kobaloi"] = "Keep of the Kobaloi",
+		["kultiras"] = "Kul Tiras",
+		-- L --
+		["lab"] = "Chaprenula's Laboratory",
+		["labyrinth"] = "Labyrinth",
+		["lagoon"] = "Black Lagoon",
+		["landofoz"] = "Land of Oz",
+		["laym"] = "Tai'rha Laym",
+		["legend"] = "Land of Legend LoL",
+		["lemdagor"] = "Storm Ships of Lem-Dagor",
+		["lidnesh"] = "Forest of Li'Dnesh",
+		["livingmine"] = "Living Mines of Dak'Tai",
+		["longnight"] = "Into the Long Night",
+		["losttime"] = "Island of Lost Time",
+		["lplanes"] = "Lower Planes",
+		-- M --
+		["maelstrom"] = "Maelstrom",
+		["manor"] = "Death's Manor",
+		["masq"] = "Masquerade Island",
+		["mayhem"] = "Artificer's Mayhem",
+		["melody"] = "Art of Melody",
+		["minos"] = "Shadows of Minos",
+		["mistridge"] = "Covenant of Mistridge",
+		["monastery"] = "Monastery",
+		["mudwog"] = "Mudwog's Swamp",
+		-- N --
+		["nanjiki"] = "Nanjiki Ruins",
+		["necro"] = "Necromancer's Guild",
+		["nenukon"] = "Nenukon and the Far Country",
+		["newthalos"] = "New Thalos",
+		["northstar"] = "Northstar",
+		["nottingham"] = "Nottingham",
+		["nulan"] = "Plains of Nulan'Boar",
+		["nursing"] = "Ascension Bluff Nursing Home",
+		["nynewoods"] = "Nyne Woods",
+		-- O --
+		["oc"] = "Oradrin's Chosen",
+		["oceanpark"] = "Ocean Adventure Park",
+		["omentor"] = "Witches of Omen Tor",
+		["origins"] = "Tribal Origins",
+		["orlando"] = "Hotel Orlando",
+		-- P --
+		["paradise"] = "Paradise Lost",
+		["peninsula"] = "Tairayden Peninsula",
+		["petstore"] = "Giant's Pet Store",
+		["pompeii"] = "Pompeii",
+		["promises"] = "Foolish Promises",
+		["prosper"] = "Prosper's Island",
+		-- Q --
+		["qong"] = "Qong",
+		["quarry"] = "Gnoll's Quarry",
+		-- R --		
+		["radiance"] = "Radiance Woods",
+		["raga"] = "Raganatittu",
+		["raukora"] = "Blood Opal of Rauko'ra",
+		["rebellion"] = "Rebellion Nix",
+		["remcon"] = "Reman Conspiracy",
+		["reme"] = "City of Reme",
+		["rosewood"] = "Rosewood Castle",
+		["ruins"] = "Ruins of Diamond Reach",
+		-- S --
+		["sagewood"] = "Sagewood Grove",
+		["sahuagin"] = "Abyssal Caverns of Sahuagin",
+		["salt"] = "Great Salt Flats",
+		["sanctity"] = "Sanctity of Eternal Damnation",
+		["sanctum"] = "The Blood Sanctum",
+		["sandcastle"] = "Sho'aram Shoaram Castle in the Sand",
+		["sanguine"] = "Sanguine Tavern",
+		["scarred"] = "Scarred Lands",
+		["sendhian"] = "Adventures in Sendhia",
+		["sennarre"] = "Sen'narre Lake",
+		["shouggoth"] = "Temple of Shouggoth",
+		["siege"] = "Kobold Seige Camp KSC",
+		["sirens"] = "Siren's Oasis Resort",
+		["slaughter"] = "Slaughterhouse",
+		["snuckles"] = "Snuckles Village",
+		["soh"] = "School of Horror SOH1",
+		["sohtwo"] = "School of Horror SOH2",
+		["solan"] = "Town of Solan",
+		["songpalace"] = "Palace of Song",
+		["spyreknow"] = "Guardian's Spyre of Knowledge",
+		["stone"] = "Fabled City of Stone",
+		["storm"] = "Storm Mountain",
+		["stormhaven"] = "Ruins of Stormhaven",
+		["stronghold"] = "Dark Elf Stronghold DES",
+		["stuff"] = "Stuff of Shadows",
+		-- T --
+		["takeda"] = "Takeda's Warcamp",
+		["talsa"] = "Empire of Talsa",
+		["temple"] = "Temple of Shal'indrael",
+		["tanra"] = "Tanra'vea",
+		["terra"] = "Cracks of Terra",
+		["terramire"] = "Fort Terramire",
+		["thieves"] = "Den of Thieves",
+		["times"] = "Intrigues of Times Past",
+		["tirna"] = "Tir na Nog",
+		["titan"] = "Titans' Keep",
+		["tol"] = "Tree of Life",
+		["tombs"] = "Relinquished Tombs",
+		-- U --
+		["umari"] = "Umari's Castle",
+		["underdark"] = "Underdark",
+		["uplanes"] = "Upper Planes",
+		["uprising"] = "Uprising",
+		-- V --
+		["vale"] = "Sundered Vale",
+		["verdure"] = "Verdure Estate",
+		["verume"] = "Jungles of Verume",
+		["village"] = "Peaceful Giant Village",
+		["vlad"] = "Vlad Shamir",
+		["volcano"] = "Silver Volcano",
+		-- W --
+		["weather"] = "Weather Observatory",
+		["werewood"] = "Were Wood",
+		["wildwood"] = "Wildwood",
+		["winds"] = "Winds of Fate",
+		["winter"] = "Winterlands",
+		["wizards"] = "War of the Wizards WoW",
+		["wonders"] = "Seven Wonders",
+		["wooble"] = "Wobbly Woes of Woobleville",
+		["woodelves"] = "Wood Elves of Nalondir",
+		["wtc"] = "Warrior Training Camp WTC",
+		["wyrm"] = "Council of the Wyrm",
+		-- X --
+		["xmas"] = "Christmas Vacation",
+		["xylmos"] = "Xyl's Mosaic",
+		-- Y --
+		["yarr"] = "Misty Shores of Yarr",
+		["ygg"] = "Yggdrasil: The World Tree",
+		["yurgach"] = "Yurgach Domain",
+		-- Z --
+		["zangar"] = "Zangar's Demonic Grotto",
+		["zodiac"] = "Realm of the Zodiac",
+		["zoo"] = "Aardwolf Zoological Park",
+		["zyian"] = "Dark Temple of Zyian",
+	}
+	
 	SaveState()
 end -- GetSavedData
 
@@ -5357,7 +5393,26 @@ function OnPluginBroadcast(msg, id, name, text)
 
 			if TableFilled == "YES" then 
 				if EpicMisc["NotificationBot"]["AlertEnabled"] == true then
-					AlertCheck()
+					if alertremaining == nil then
+						AlertCheck()
+					else
+						timenow = sertime2
+		
+						timenow2 = alerttime
+						
+						timediff2 = {}
+
+						timeDiff(timenow,timenow2,timediff2)
+						
+						if timediff2["day"] == 0 then
+							if timediff2["hour"] == 0 then
+								if timediff2["min"] > 4 then
+									-- alertcheck = nil
+									GetNextEpicSilent()
+								end
+							end
+						end
+					end
 				end
 			end
 		end
