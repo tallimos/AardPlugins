@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="1.972"
+   version="1.973"
    >
    
 </plugin>
@@ -2137,11 +2137,13 @@ function GetNextEpicLeader(leader, channel)
 	
 	LeaderSearch = "YES"
 
-	if CheckChannel(channel) == "no" then 
-		if CheckChannelUnapproved(channel) == "yes" then
-			ColourNote(epiccalcolour, "", "[EpicCAL] ", msg_colour, "", "Can not post to that channel.")
-			
-			return
+	if channel ~= nil  then 
+		if CheckChannel(channel) == "no" then 
+			if CheckChannelUnapproved(channel) == "yes" then
+				ColourNote(epiccalcolour, "", "[EpicCAL] ", msg_colour, "", "Can not post to that channel.")
+				
+				return
+			end
 		end
 	end
 	
@@ -2186,14 +2188,16 @@ function GetNextEpicDay(wday, channel)
 		return
 	end
 
-	if CheckChannel(channel) == "no" then
-		if CheckChannelUnapproved(channel) == "yes" then
-			ColourNote(epiccalcolour, "", "[EpicCAL] ", msg_colour, "", "Can not post to that channel.")
-			
-			return
+	if channel ~= nil  then 
+		if CheckChannel(channel) == "no" then
+			if CheckChannelUnapproved(channel) == "yes" then
+				ColourNote(epiccalcolour, "", "[EpicCAL] ", msg_colour, "", "Can not post to that channel.")
+				
+				return
+			end
 		end
 	end
-
+	
 	DaySearch = "YES"
 	wnext = nil
 	
@@ -2263,14 +2267,16 @@ function GetNextEpic(ename, channel)
 		return
 	end
 
-	if CheckChannel(channel) == "no" then
-		if CheckChannelUnapproved(channel) == "yes" then
-			ColourNote(epiccalcolour, "", "[EpicCAL] ", msg_colour, "", "Can not post to that channel.")
-			
-			return
+	if channel ~= nil  then 
+		if CheckChannel(channel) == "no" then
+			if CheckChannelUnapproved(channel) == "yes" then
+				ColourNote(epiccalcolour, "", "[EpicCAL] ", msg_colour, "", "Can not post to that channel.")
+				
+				return
+			end
 		end
 	end
-
+	
 	if channel ~= nil then
 		reportchannel = channel
 	end
@@ -4144,8 +4150,16 @@ function NextEpicComingUp()
 
 	ReturnType = "VI"
 	timeremaining = EpicTimeDifference(lowestindex, ReturnType)
-
-	ename = string.gsub (EpicTable[lowestindex]["Epic Name"], "^.", string.upper)
+	
+	if EpicTable[lowestindex]["Epic Name"] == "icefall1" then
+		ename = "Icefall 1"
+	elseif EpicTable[lowestindex]["Epic Name"] == "icefall2" then
+		ename = "Icefall 2"
+	elseif EpicTable[lowestindex]["Epic Name"] == "oc" then
+		ename = "OC"
+	else 
+		ename = string.gsub (EpicTable[lowestindex]["Epic Name"], "^.", string.upper)
+	end
 
 	ColourNote(epiccalcolour, "", "[EpicCAL] ", msg_colour, "", "NEXT EPIC ALERT ", "red", "" , "[" .. ename .. " Epic]", msg_colour, "" , " starting in ", qty_colour, "", trim(timeremaining))
 	Note("")
@@ -4835,13 +4849,13 @@ function EpicCalendarHelp()
 
 	ColourNote(help_command_colour, "", "ecal vi      ", help_colour, "", " - enables/disables the vi friendly option")
 	
-	ColourNote(help_command_colour, "", "ecal search <epic>      ", help_colour, "", " - searches the epic runs list")
+	ColourNote(help_command_colour, "", "ecal search <epic>   ", help_colour, "", " - searches the epic runs list")
 	
-	ColourNote(help_command_colour, "", "ecal nupdate <note #>   ", help_colour, "", " - used when epic leader posts a subject line to long")
+	ColourNote(help_command_colour, "", "ecal nupdate <note #>", help_colour, "", " - used when epic leader posts a subject line to long")
 	
-	ColourNote(help_command_colour, "", "ecal checkversion       ", help_colour, "", " - checks to see if there is a newer version of the plugin available")
+	ColourNote(help_command_colour, "", "ecal checkversion    ", help_colour, "", " - checks to see if there is a newer version of the plugin available")
 	
-	ColourNote(help_command_colour, "", "ecal changelog          ", help_colour, "", " - displays the changelog for the plugin")
+	ColourNote(help_command_colour, "", "ecal changelog       ", help_colour, "", " - displays the changelog for the plugin")
 	
 	Note("")
 
@@ -4932,7 +4946,7 @@ function EpicCalendarHelpBot()
 	ColourNote(help_command_colour, "", "ecal bot plist                 ", help_colour, "", " - list all players who have access to the channel commands")
 
 	ColourNote(help_command_colour, "", "ecal bot permissions           ", help_colour, "", " - toggles channel command access between ", qty_colour, "", "LIST", help_colour, "", " and ", qty_colour, "", "ALL", help_colour, "", ". default is")
-	ColourNote(help_colour, "", "                                set to ", qty_colour, "", "LIST")
+	ColourNote(help_colour, "", "                                  set to ", qty_colour, "", "LIST")
 
 	ColourNote(help_colour, "", "Blacklist Commands")
 	
