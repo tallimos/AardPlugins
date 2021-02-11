@@ -4132,8 +4132,10 @@ function AlertCheck()
 				end
 			elseif alertremaining["hour"] == 0 then
 				if alertremaining["min"] <= 59 then
-					NextEpicComingUp()
-					alertcheck = "YES"
+					if alertremaining["min"] >= 10 then
+						NextEpicComingUp()
+						alertcheck = "YES"
+					end
 				end
 			else
 				alertcheck = "NO"
