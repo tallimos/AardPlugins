@@ -4879,6 +4879,19 @@ function EpicCalendarHelp()
 	
 	ColourNote(help_command_colour, "", "PLEASE NOTE", help_colour, "", ": the user can also use ", help_command_colour, "", "epiccalendar", help_colour, "", " instead of ", help_command_colour, "", "ecal")
 	
+	Note("")
+	
+	ColourNote(help_colour, "", "User's Guide")
+
+	if EpicMisc["VI"] == "NO" then
+		ColourNote(help_colour, "", "------------")
+	elseif EpicMisc["VI"] == "YES" then
+		Note("")
+	end
+	
+	Hyperlink ("https://docs.google.com/document/d/1Ewa9IlA4ZTMRowXQzK1mX-CHGw3Fjys7PhgpWLRRra4/edit?usp=sharing", "https://docs.google.com/document/d/1Ewa9IlA4ZTMRowXQzK1mX-CHGw3Fjys7PhgpWLRRra4/edit?usp=sharing", "Tallimos' Epic Calendar User's Guide", help_command_colour, "", 1)
+	
+	Note("")
 	if EpicMisc["VI"] == "NO" then
 		ColourNote(help_colour, "", noteline)
 	end
