@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-12-04 09:12:45"
    requires="4.37"
-   version="1.6"
+   version="1.61"
    >
 
 </plugin>
@@ -284,6 +284,7 @@ function CommandMenu(name, line, wc)
 		UnlockGroup()
 	elseif cmd == "autolock" then
 		locknum = tonumber(wordtable[2])
+		
 		if locknum == nil then
 			ColourNote(msg_colour, "", "Auto lock needs a number to set.")
 		else
@@ -530,6 +531,14 @@ function LockGroup()
 	EnableTrigger ("Tells", false)
 	ColourNote(msg_colour, "", "Group has been ", qty_colour, "", "LOCKED", msg_colour, "", " and you will no longer accept invite requests")
 	
+	if next (InviterTable["Pending"]) ~= nil then
+		for i,v in pairs (InviterTable["Pending"]) do
+			SendNoEcho("group cancel " .. i)
+		end
+		
+		InviterTable["Pending"] = {}
+	end
+		
 	if InviterTable["Autolock"] == true then
 		InviterTable["Autolock"] = false
 		
@@ -577,7 +586,7 @@ function RemovePending(user)
 			InviterTable["Pending"][i] = nil
 		end
 	end
-	
+
 	if InviterTable["Autolock"] == true then
 		if GroupCount() >= locknum then LockGroup() end
 	end
