@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="1.973"
+   version="1.974"
    >
    
 </plugin>
@@ -538,7 +538,7 @@ function CommandMenu(name, line, wc)
 				else
 					channel = wordtable[3]
 					if channel == "tell" then channel = channel .. " " .. wordtable[4] end
-					
+
 					GetNextEpic(attrib, channel) 
 				end
 			elseif attrib == "help" then
@@ -564,6 +564,8 @@ function CommandMenu(name, line, wc)
 									attrib = attrib .. " " .. wordtable[x]
 								else
 									ColourNote(epiccalcolour, "", "[EpicCAL] ", msg_colour, "", "Can not post to that channel.")
+									
+									return
 								end
 							else
 								channel = wordtable[x]
@@ -943,15 +945,15 @@ end -- CommandMenu
 ---------------------------------------------
 -------------- CHECK FUNCTIONS --------------
 ---------------------------------------------
+-- return here
 function CheckChannel(word)	
 	rcheck = "no"
 
 	for i, v in ipairs(ApprovedChannels) do
 		SearchItem = v
-		
 		len = string.len(SearchItem)
 
-		if string.find(string.sub(word,1,len),SearchItem) ~= nil then
+		if string.find(string.sub(SearchItem,1,len),word) ~= nil then
 			rcheck = "yes"
 		end
 	end
@@ -966,7 +968,7 @@ function CheckChannelUnapproved(word)
 		SearchItem = v
 		len = string.len(SearchItem)
 
-		if string.find(string.sub(word,1,len),SearchItem) ~= nil then
+		if string.find(string.sub(SearchItem,1,len),word) ~= nil then
 			rcheck = "yes"
 		end
 	end
@@ -2260,7 +2262,7 @@ function GetNextEpic(ename, channel)
 		wnext = string.lower(ename)
 	end
 	
-		if EpicTable[1] == nil then
+	if EpicTable[1] == nil then
 		ColourNote(msg_colour, "", "ERROR no data found in epic table")
 		Note("")
 
@@ -2274,9 +2276,9 @@ function GetNextEpic(ename, channel)
 				
 				return
 			end
-		end
-	end
-	
+		end		
+	end	
+
 	if channel ~= nil then
 		reportchannel = channel
 	end
