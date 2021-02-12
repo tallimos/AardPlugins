@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="1.979"
+   version="1.98"
    >
    
 </plugin>
@@ -1087,10 +1087,6 @@ end -- CurrentBoard
 
 function EndGetCurrentBoard()
 	world.EnableGroup ("GetCurrentBoardTrig", 0)
-
-	world.EnableGroup ("EpicCalendar", 1)
-	SendNoEcho ("board epics")
-	SendNoEcho ("note list")
 end -- EndGetCurrentBoard
 
 function GetBoardEnd()
@@ -1125,7 +1121,11 @@ function ResetEpicTable()
 	TableIndex = 0
 	
 	GetCurrentBoard()
-end -- ResetEpicTable
+	
+	world.EnableGroup ("EpicCalendar", 1)
+	SendNoEcho ("board epics")
+	SendNoEcho ("note list")
+end-- ResetEpicTable
 
 function EpicUpdateEnd()
 	world.EnableGroup ("EpicCalendar", 0)
