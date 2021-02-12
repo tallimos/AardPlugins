@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="1.978"
+   version="1.979"
    >
    
 </plugin>
@@ -517,7 +517,7 @@ function CommandMenu(name, line, wc)
 		dbot.version.update.release(drlDbotUpdateCheck, endTag)
 	elseif cmd == "reset" then
 		ResetEpicTable()
-		rcheck = "YES"
+		resetcheck = "YES"
 	elseif cmd == "nupdate" then
 		nnum = wordtable[2]
 		
@@ -955,47 +955,47 @@ end -- CommandMenu
 -------------- CHECK FUNCTIONS --------------
 ---------------------------------------------
 function CheckChannel(word)	
-	rcheck = "no"
+	ccheck = "no"
 
 	for i, v in ipairs(ApprovedChannels) do
 		SearchItem = v
 		len = string.len(SearchItem)
 
 		if string.find(string.sub(SearchItem,1,len),word) ~= nil then
-			rcheck = "yes"
+			ccheck = "yes"
 		end
 	end
 	
-	return rcheck
+	return ccheck
 end -- CheckChannel
 
 function CheckChannelUnapproved(word)	
-	rcheck = "no"
+	cucheck = "no"
 
 	for i, v in ipairs(UnApprovedChannels) do
 		SearchItem = v
 		len = string.len(SearchItem)
 
 		if string.find(string.sub(SearchItem,1,len),word) ~= nil then
-			rcheck = "yes"
+			cucheck = "yes"
 		end
 	end
 	
-	return rcheck
+	return cucheck
 end -- CheckChannelUnapproved
 
 function CheckRoom()
 	GetRoom()
 	
-	rcheck = "no"
+	roomcheck = "no"
 	
 	for i, v in pairs(EpicMisc["NoteRooms"]) do
 		if i == gmcproomid then
-			rcheck = "yes"
+			roomcheck = "yes"
 		end	
 	end
 
-	return rcheck
+	return roomcheck
 end -- CheckRoom
 
 function CheckPermission(CheckName)
@@ -1137,8 +1137,8 @@ function EpicUpdateEnd()
 		end
 	end
 	
-	if rcheck == "YES" then
-		rcheck = "NO"
+	if resetcheck == "YES" then
+		resetcheck = "NO"
 		ColourNote(epiccalcolour, "", "[EpicCAL] ", msg_colour, "", "Epic list has been updated.")
 		Note("")
 	end
@@ -2717,7 +2717,7 @@ end -- RunTimeUpdate
 function RTUpdateYes()
 	RunTimeUpdateEnd()
 	ResetEpicTable()
-	rcheck = "YES"
+	resetcheck = "YES"
 end -- RTUpdateYes
 
 function RTUpdateNo()
