@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="1.974"
+   version="1.976"
    >
    
 </plugin>
@@ -29,6 +29,16 @@
 
 
 <triggers>
+	<trigger
+		group="NoteUpdate"
+		match="^No such note.$"
+		sequence="100"
+		ignore_case="y"
+		omit_from_output="y"
+		regexp="y"
+		script="NoNoteFound"
+		>
+	</trigger>
 	<trigger
 		group="NoteUpdate"
 		match="(.*?)"
@@ -1593,8 +1603,9 @@ function PopulateTimeTable(TableIndex)
 end -- PopulateTimeTable
 
 function EpicList()
-	if EpicTable[1] == nil then
-		ColourNote(msg_colour, "", "ERROR no data found in epic table")
+	if next (EpicTable) == nil then
+		ColourNote(epiccalcolour, "", "[EpicCAL] ", msg_colour, "", "You have not updated the epic run list. Please see ", qty_colour, "", "ecal help", msg_colour, "", " for more information.")
+
 		Note("")
 
 		return
@@ -1644,13 +1655,13 @@ function CheckType(ltype)
 end -- CheckType
 
 function SearchEpic(epicname)
-	if EpicTable[1] == nil then
+	if next (EpicTable) == nil then
 		ColourNote(epiccalcolour, "", "[EpicCAL] ", msg_colour, "", "You have not updated the epic run list. Please see ", qty_colour, "", "ecal help", msg_colour, "", " for more information.")
 		Note("")
-		
+
 		return
 	end
-	
+
 	if epicname == nil then
 		ColourNote(epiccalcolour, "", "[EpicCAL] ", msg_colour, "", "Please enter an epic name to search for.")
 		Note("")
@@ -1678,13 +1689,13 @@ function SearchEpic(epicname)
 end -- SearchEpic
 
 function ListEpic()
-	if EpicTable[1] == nil then
-		ColourNote(msg_colour, "", "ERROR no data found in epic table")
+	if next (EpicTable) == nil then
+		ColourNote(epiccalcolour, "", "[EpicCAL] ", msg_colour, "", "You have not updated the epic run list. Please see ", qty_colour, "", "ecal help", msg_colour, "", " for more information.")
 		Note("")
 
 		return
 	end
-
+	
 	local hour = ""
 
 	if listtype == "nextleader" then
@@ -1885,13 +1896,13 @@ function DisplayRow(ename, eleader, eday, hour, timedef, apindex)
 end -- DisplayRow
 
 function StartPost()
-	if EpicTable[1] == nil then
-		ColourNote(msg_colour, "", "ERROR no data found in epic table")
+	if next (EpicTable) == nil then
+		ColourNote(epiccalcolour, "", "[EpicCAL] ", msg_colour, "", "You have not updated the epic run list. Please see ", qty_colour, "", "ecal help", msg_colour, "", " for more information.")
 		Note("")
 
 		return
 	end
-	
+		
 	if SystemTimeTable["year"] == 0 then
 		listtype = "post"	
 		GetSystemTime()
@@ -2090,6 +2101,14 @@ function NoteUpdateEnd()
 	end
 end -- NoteUpdateEnd
 
+function NoNoteFound()
+	ColourNote(epiccalcolour, "", "[EpicCAL] ", msg_colour, "", "No note found. Please check the note number and try again.")
+	
+	world.EnableGroup ("NoteUpdate", 0)
+	world.EnableGroup ("NoteUpdateEnd", 0)
+	world.EnableGroup ("NoteUpdateNoteContent", 0)
+end
+
 function NoteUpdateSubject(name, line, wc)
 	world.EnableGroup ("NoteUpdateLine1", 0)
 	world.EnableGroup ("NoteUpdateLine2", 1)
@@ -2153,13 +2172,13 @@ function GetNextEpicLeader(leader, channel)
 		reportchannel = channel
 	end
 	
-	if EpicTable[1] == nil then
-		ColourNote(msg_colour, "", "ERROR no data found in epic table")
+	if next (EpicTable) == nil then
+		ColourNote(epiccalcolour, "", "[EpicCAL] ", msg_colour, "", "You have not updated the epic run list. Please see ", qty_colour, "", "ecal help", msg_colour, "", " for more information.")
 		Note("")
 
 		return
 	end
-
+	
 	if SystemTimeTable["year"] == 0 then
 		listtype = "next"
 		GetSystemTime()
@@ -2183,8 +2202,8 @@ function GetNextEpicDay(wday, channel)
 		return
 	end
 
-	if EpicTable[1] == nil then
-		ColourNote(msg_colour, "", "ERROR no data found in epic table")
+	if next (EpicTable) == nil then
+		ColourNote(epiccalcolour, "", "[EpicCAL] ", msg_colour, "", "You have not updated the epic run list. Please see ", qty_colour, "", "ecal help", msg_colour, "", " for more information.")
 		Note("")
 
 		return
@@ -2262,8 +2281,8 @@ function GetNextEpic(ename, channel)
 		wnext = string.lower(ename)
 	end
 	
-	if EpicTable[1] == nil then
-		ColourNote(msg_colour, "", "ERROR no data found in epic table")
+	if next (EpicTable) == nil then
+		ColourNote(epiccalcolour, "", "[EpicCAL] ", msg_colour, "", "You have not updated the epic run list. Please see ", qty_colour, "", "ecal help", msg_colour, "", " for more information.")
 		Note("")
 
 		return
@@ -2307,8 +2326,8 @@ function GetLowestDay(lowestindex)
 end -- GetLowestDay
 
 function NextEpic()
-	if EpicTable[1] == nil then
-		ColourNote(msg_colour, "", "ERROR no data found in epic table")
+	if next (EpicTable) == nil then
+		ColourNote(epiccalcolour, "", "[EpicCAL] ", msg_colour, "", "You have not updated the epic run list. Please see ", qty_colour, "", "ecal help", msg_colour, "", " for more information.")
 		Note("")
 
 		return
@@ -2553,9 +2572,11 @@ function DisplayNext(nexttype, day, lowestindex)
 end -- DisplayNext
 
 function DisplayNextFail(nexttype, day, wnext)
-	if EpicTable[1] == nil then
-		ColourNote(epiccalcolour, "", "[EpicCAL] ", msg_colour, "", "ERROR no data found in epic table")
+	if next (EpicTable) == nil then
+		ColourNote(epiccalcolour, "", "[EpicCAL] ", msg_colour, "", "You have not updated the epic run list. Please see ", qty_colour, "", "ecal help", msg_colour, "", " for more information.")
 		Note("")
+
+		return
 	else
 		if wnext == "epic" or wnext == nil then
 			if nexttype == "day" then
@@ -3382,8 +3403,8 @@ function CheckOver(eindex)
 end -- CheckOver
 
 function ChannelListDay(channel, day)
-	if EpicTable[1] == nil then
-		ColourNote(msg_colour, "", "ERROR no data found in epic table")
+	if next (EpicTable) == nil then
+		ColourNote(epiccalcolour, "", "[EpicCAL] ", msg_colour, "", "You have not updated the epic run list. Please see ", qty_colour, "", "ecal help", msg_colour, "", " for more information.")
 		Note("")
 
 		return
@@ -3487,8 +3508,8 @@ function ChannelListDay(channel, day)
 end -- ChannelListDay
 
 function ChannelListLeader(channel, leader)
-	if EpicTable[1] == nil then
-		ColourNote(msg_colour, "", "ERROR no data found in epic table")
+	if next (EpicTable) == nil then
+		ColourNote(epiccalcolour, "", "[EpicCAL] ", msg_colour, "", "You have not updated the epic run list. Please see ", qty_colour, "", "ecal help", msg_colour, "", " for more information.")
 		Note("")
 
 		return
@@ -3563,8 +3584,8 @@ function ChannelListLeader(channel, leader)
 end -- ChannelListLeader
 
 function ChannelListEpic(channel, ltype)
-	if EpicTable[1] == nil then
-		ColourNote(msg_colour, "", "ERROR no data found in epic table")
+	if next (EpicTable) == nil then
+		ColourNote(epiccalcolour, "", "[EpicCAL] ", msg_colour, "", "You have not updated the epic run list. Please see ", qty_colour, "", "ecal help", msg_colour, "", " for more information.")
 		Note("")
 
 		return
