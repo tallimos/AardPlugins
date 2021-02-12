@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="1.977"
+   version="1.978"
    >
    
 </plugin>
@@ -954,7 +954,6 @@ end -- CommandMenu
 ---------------------------------------------
 -------------- CHECK FUNCTIONS --------------
 ---------------------------------------------
--- return here
 function CheckChannel(word)	
 	rcheck = "no"
 
@@ -1088,6 +1087,10 @@ end -- CurrentBoard
 
 function EndGetCurrentBoard()
 	world.EnableGroup ("GetCurrentBoardTrig", 0)
+
+	world.EnableGroup ("EpicCalendar", 1)
+	SendNoEcho ("board epics")
+	SendNoEcho ("note list")
 end -- EndGetCurrentBoard
 
 function GetBoardEnd()
@@ -1115,15 +1118,13 @@ function ResetEpicTable()
 		listtype = "none"
 		GetSystemTime()
 	end	
+
+	nucheck = "NO"
 	
 	EpicTable = {}
 	TableIndex = 0
 	
 	GetCurrentBoard()
-	
-	world.EnableGroup ("EpicCalendar", 1)
-	SendNoEcho ("board epics")
-	SendNoEcho ("note list")
 end -- ResetEpicTable
 
 function EpicUpdateEnd()
@@ -1457,8 +1458,11 @@ function AddEpic(notenum, notedate, cname, subjectline)
 				end
 			end
 		end
-		if (GetTriggerOption ("EpicUpdateEnd", "enabled")) == 0 then		
-			world.EnableGroup ("EpicUpdateEnd", 1)
+		
+		if (GetTriggerOption ("EpicUpdateEnd", "enabled")) == 0 then
+			if nucheck == "NO" then
+				world.EnableGroup ("EpicUpdateEnd", 1)
+			end
 		end
 	end
 end -- AddEpic
@@ -2082,6 +2086,8 @@ function NoteUpdate(nnum)
 	
 	ColourNote(epiccalcolour, "", "[EpicCAL] ", msg_colour, "", "Checking subject line for note #", qty_colour, "", nnum)
 	
+	nucheck = "YES"
+	
 	SendNoEcho ("board epics")	
 	SendNoEcho ("note read " .. nnum)
 end -- NoteUpdate
@@ -2093,8 +2099,10 @@ function NoteUpdateEnd()
 	
 	world.EnableGroup ("NoteUpdate", 0)
 	world.EnableGroup ("NoteUpdateEnd", 0)
-	world.EnableGroup ("NoteUpdateNoteContent", 0)
-	
+	world.EnableGroup ("NoteUpdateNoteContent", 0)	
+	world.EnableGroup ("NoteUpdateLine1", 0)
+	world.EnableGroup ("NoteUpdateLine2", 0)
+
 	if (CheckMob(nuleader) == "no") then
 		AddEpic(nunotenum, nunotedate, nuleader, nusubjectline)
 	end
