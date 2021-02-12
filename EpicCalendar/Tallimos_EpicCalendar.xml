@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="1.976"
+   version="1.977"
    >
    
 </plugin>
@@ -26,7 +26,6 @@
 <include name="constants.lua"/>
 
 <!--  Triggers  -->
-
 
 <triggers>
 	<trigger
@@ -2104,9 +2103,12 @@ end -- NoteUpdateEnd
 function NoNoteFound()
 	ColourNote(epiccalcolour, "", "[EpicCAL] ", msg_colour, "", "No note found. Please check the note number and try again.")
 	
+	
 	world.EnableGroup ("NoteUpdate", 0)
 	world.EnableGroup ("NoteUpdateEnd", 0)
 	world.EnableGroup ("NoteUpdateNoteContent", 0)
+	world.EnableGroup ("NoteUpdateLine1", 0)
+	world.EnableGroup ("NoteUpdateLine2", 0)
 end
 
 function NoteUpdateSubject(name, line, wc)
