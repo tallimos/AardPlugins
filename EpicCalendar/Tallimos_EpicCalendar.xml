@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="1.98"
+   version="1.981"
    >
    
 </plugin>
@@ -131,7 +131,7 @@
 		>
 	</trigger>
 	<trigger
-		group="GetCurrentBoardTrig"
+		group="GetCurrentBoardTrig2"
 		match="You can only read posts in this forum."
 		sequence="110"
 		ignore_case="y"
@@ -177,7 +177,7 @@
 		>
 	</trigger>
 	<trigger
-		group="GetCurrentBoardTrig"
+		group="GetCurrentBoardTrig2"
 		match="You can read and write posts in this forum."
 		sequence="110"
 		ignore_case="y"
@@ -185,7 +185,7 @@
 		>
 	</trigger>
 	<trigger
-		group="GetCurrentBoardTrig"
+		group="GetCurrentBoardTrig2"
 		match="Use 'forums all' to see subscribed forums."
 		sequence="110"
 		ignore_case="y"
@@ -193,10 +193,9 @@
 		>
 	</trigger>
 	<trigger
-		group="GetCurrentBoardTrig"
+		group="GetCurrentBoardTrig2"
 		match="Use 'subscribe' to see all forums and which you are subscribed to."
 		sequence="110"
-		script="EndGetCurrentBoard"
 		ignore_case="y"
 		omit_from_output="y"
 		>
@@ -1078,11 +1077,13 @@ end -- CheckEpicName
 ---------------------------------------------
 function GetCurrentBoard()
 	world.EnableGroup ("GetCurrentBoardTrig", 1)
+	world.EnableGroup ("GetCurrentBoardTrig2", 1)
 	SendNoEcho ("board")
 end -- GetCurrentBoard
 
 function CurrentBoard(name, line, wc)
 	cboard = wc[1]
+	world.EnableGroup ("GetCurrentBoardTrig", 0)
 end -- CurrentBoard
 
 function EndGetCurrentBoard()
@@ -1091,6 +1092,7 @@ end -- EndGetCurrentBoard
 
 function GetBoardEnd()
 	world.EnableGroup ("GetBoardEndTrig", 0)
+	world.EnableGroup ("GetCurrentBoardTrig2", 0)
 end -- GetBoardEnd
 
 ---------------------------------------------
