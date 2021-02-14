@@ -1897,7 +1897,7 @@ function ListEpic()
 	Note("")
 	
 	if EpicMisc["TypeTime"] == "USER" then
-		ColourNote(msg_colour, "", " Hour is displayed as the user's time zone. Type ", qty_colour, "", "ecal tdif", msg_colour, "", " to switch hour back to server time.")
+		ColourNote(msg_colour, "", "Hour is displayed as the user's time zone. Type ", qty_colour, "", "ecal tdif", msg_colour, "", " to switch hour back to server time.")
 		Note("")
 	end
 end -- ListEpic
