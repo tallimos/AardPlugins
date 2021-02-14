@@ -1,5 +1,12 @@
 dbot.changelog = {}
 
+dbot.changelog[2.01] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Fixed error with alert system and if someone's timezone is behind server's timezone"
+  },
+}
+
 dbot.changelog[2.00] =
 {
   { change = drlDbotChangeLogTypeNew,

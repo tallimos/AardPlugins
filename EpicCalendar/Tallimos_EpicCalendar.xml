@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="2.00"
+   version="2.01"
    >
    
 </plugin>
@@ -5767,23 +5767,26 @@ function OnPluginBroadcast(msg, id, name, text)
 			OSSystemTime = os.time()
 
 			if TableFilled == "YES" then 
-				if EpicMisc["NotificationBot"]["AlertEnabled"] == true then
-					if alertremaining == nil then
-						AlertCheck()
-					else
-						timenow = sertime2
-		
-						timenow2 = alerttime
-						
-						timediff2 = {}
+			
+				if EpicMisc["NotificationBot"]["Enabled"] == true then
+					if EpicMisc["NotificationBot"]["AlertEnabled"] == true then
+						if alertremaining == nil then
+							AlertCheck()
+						else
+							timenow = os.time(SystemTimeTable)
+							-- timenow = sertime2
+							timenow2 = alerttime
+							
+							timediff2 = {}
 
-						timeDiff(timenow,timenow2,timediff2)
-						
-						if timediff2["day"] == 0 then
-							if timediff2["hour"] == 0 then
-								if timediff2["min"] > 4 then
-									-- alertcheck = nil
-									GetNextEpicSilent()
+							timeDiff(timenow,timenow2,timediff2)
+							
+							if timediff2["day"] == 0 then
+								if timediff2["hour"] == 0 then
+									if timediff2["min"] > 4 then
+										-- alertcheck = nil
+										GetNextEpicSilent()
+									end
 								end
 							end
 						end
