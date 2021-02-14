@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="2.01"
+   version="2.10"
    >
    
 </plugin>
@@ -509,6 +509,20 @@ function CommandMenu(name, line, wc)
 	if cmd == "update" then
 		ecal_update()
 		EpicMisc["Updating"] = "YES"
+	elseif cmd == "tdif" then
+		if EpicMisc["TypeTime"] == "SERVER" then
+			EpicMisc["TypeTime"] = "USER"
+			
+			ColourNote(epiccalcolour, "", "[EpicCAL] ", msg_colour, "", "Hour will now display in the user's timezone.")
+			Note("")
+			
+			ColourNote("red", "", "PLEASE NOTE", msg_colour, "", ": Any epic notifications sent via channels or notes will still show server time.")
+			Note("")
+		elseif EpicMisc["TypeTime"] == "USER" then
+			EpicMisc["TypeTime"] = "SERVER"
+			ColourNote(epiccalcolour, "", "[EpicCAL] ", msg_colour, "", "Hour will now display in the server's timezone.")
+			Note("")
+		end
 	elseif cmd == "changelog" then
 		dbot.print("@DFull changelog:")
 		dbot.version.changelog.get(0, endTag) -- show changelog from version 0 to the latest
@@ -1737,8 +1751,14 @@ function ListEpic()
 
 	if EpicMisc["VI"] == "NO" then
 		ColourNote(msg_colour, "", title2)
-	
-		ColourNote(msg_colour, "", "| Epic      | Leader     | Day       | Time      | Time Until Epic                 |")
+		
+		if EpicMisc["TypeTime"] == "SERVER" then
+			TimeTitle = "Time-Mud "
+		elseif EpicMisc["TypeTime"] == "USER" then
+			TimeTitle = "Time-User"
+		end
+		
+		ColourNote(msg_colour, "", "| Epic      | Leader     | Day       | " .. TimeTitle ..  " | Time Until Epic                 |")
 		
 		ColourNote(msg_colour, "", title2)
 	end
@@ -1789,16 +1809,19 @@ function ListEpic()
 				end
 				
 				timedef = EpicTimeDifference(i, ReturnType)
-
-				if EpicTable[i]["Time Table"]["min"] > 9 then
-					hour = EpicTable[i]["Hour"] .. ":" .. EpicTable[i]["Time Table"]["min"] .. " " ..  string.upper(EpicTable[i]["AMPM"])
-				elseif EpicTable[i]["Time Table"]["min"] ~= 0 then
-					hour = EpicTable[i]["Hour"] .. ":0" .. EpicTable[i]["Time Table"]["min"] .. " " ..  string.upper(EpicTable[i]["AMPM"])
+				
+				if EpicMisc["TypeTime"] == "SERVER" then
+					hour = EpicHour(i)
 				else
-					hour = EpicTable[i]["Hour"] .. ":00 " .. string.upper(EpicTable[i]["AMPM"])
+					hour, tzdayindex = TimeZoneEpicHour(i)
+			
+					if tzdayindex ~= dindex then
+						eday = string.gsub (DaysofWeek[tzdayindex], "^.", string.upper)
+					end
 				end
 			end
-
+			
+			
 			if timedef ~= nil then
 				if EpicMisc["VI"] == "YES" then
 					timedef = trim(timedef)
@@ -1841,14 +1864,17 @@ function ListEpic()
 
 					timedef = EpicTimeDifference(i, ReturnType)
 
-					if EpicTable[i]["Time Table"]["min"] > 9 then
-						hour = EpicTable[i]["Hour"] .. ":" .. EpicTable[i]["Time Table"]["min"] .. " " ..  string.upper(EpicTable[i]["AMPM"])
-					elseif EpicTable[i]["Time Table"]["min"] ~= 0 then
-						hour = EpicTable[i]["Hour"] .. ":0" .. EpicTable[i]["Time Table"]["min"] .. " " ..  string.upper(EpicTable[i]["AMPM"])
+					if EpicMisc["TypeTime"] == "SERVER" then
+						hour = EpicHour(i)
 					else
-						hour = EpicTable[i]["Hour"] .. ":00 " .. string.upper(EpicTable[i]["AMPM"])
+						hour,tzdayindex = TimeZoneEpicHour(i)
+						
+						if tzdayindex ~= dindex then
+							eday = string.gsub (DaysofWeek[tzdayindex], "^.", string.upper)
+						end
 					end
 				end
+
 
 				if timedef ~= nil then
 					if EpicMisc["VI"] == "YES" then
@@ -1869,6 +1895,11 @@ function ListEpic()
 	
 	ColourNote(epic_colour, "", "*", msg_colour, "", " - approximate start times only, actual start times may vary")
 	Note("")
+	
+	if EpicMisc["TypeTime"] == "USER" then
+		ColourNote(msg_colour, "", " Hour is displayed as the user's time zone. Type ", qty_colour, "", "ecal tdif", msg_colour, "", " to switch hour back to server time.")
+		Note("")
+	end
 end -- ListEpic
 
 function DisplayRow(ename, eleader, eday, hour, timedef, apindex)
@@ -2026,13 +2057,7 @@ function PostEpic()
 			ReturnType = "VI"
 			timedef = EpicTimeDifference(i, ReturnType)
 
-			if EpicTable[i]["Time Table"]["min"] > 9 then
-				hour = EpicTable[i]["Hour"] .. ":" .. EpicTable[i]["Time Table"]["min"] .. " " ..  string.upper(EpicTable[i]["AMPM"])
-			elseif EpicTable[i]["Time Table"]["min"] ~= 0 then
-				hour = EpicTable[i]["Hour"] .. ":0" .. EpicTable[i]["Time Table"]["min"] .. " " ..  string.upper(EpicTable[i]["AMPM"])
-			else
-				hour = EpicTable[i]["Hour"] .. ":00 " .. string.upper(EpicTable[i]["AMPM"])
-			end
+			hour = EpicHour(i)
 		end
 		
 		if timedef ~= nil then
@@ -2112,8 +2137,7 @@ end -- NoteUpdateEnd
 
 function NoNoteFound()
 	ColourNote(epiccalcolour, "", "[EpicCAL] ", msg_colour, "", "No note found. Please check the note number and try again.")
-	
-	
+
 	world.EnableGroup ("NoteUpdate", 0)
 	world.EnableGroup ("NoteUpdateEnd", 0)
 	world.EnableGroup ("NoteUpdateNoteContent", 0)
@@ -2332,7 +2356,7 @@ function GetLowestDay(lowestindex)
 		dayindex = EpicTable[lowestindex]["Time Table"]["wday"]
 		day = DaysofWeek[dayindex]
 	end
-	
+
 	day = string.gsub (day, "^.", string.upper)
 	return day
 end -- GetLowestDay
@@ -2453,6 +2477,18 @@ function DisplayNext(nexttype, day, lowestindex)
 
 	eleader = EpicTable[lowestindex]["Epic Leader"]
 	eleader = string.gsub (eleader, "^.", string.upper)
+
+	if EpicMisc["TypeTime"] == "USER" then
+		if reportchannel == nil then
+			hour, tzdayindex = TimeZoneEpicHour(lowestindex)
+			day = DaysofWeek[tzdayindex]
+			day = string.gsub (day, "^.", string.upper)
+		else
+			hour = EpicHour(lowestindex)
+		end
+	elseif EpicMisc["TypeTime"] == "SERVER" then
+		hour = EpicHour(lowestindex)
+	end
 	
 	if nexttype == "day" then
 		if EpicMisc["VI"] == "NO" then
@@ -2517,16 +2553,8 @@ function DisplayNext(nexttype, day, lowestindex)
 	else
 		apxhour = " "
 	end
-
-	if EpicTable[lowestindex]["Time Table"]["min"] > 9 then
-		hour = EpicTable[lowestindex]["Hour"] .. ":" .. EpicTable[lowestindex]["Time Table"]["min"] .. " " ..  string.upper(EpicTable[lowestindex]["AMPM"])
-	elseif EpicTable[lowestindex]["Time Table"]["min"] ~= 0 then
-		hour = EpicTable[lowestindex]["Hour"] .. ":0" .. EpicTable[lowestindex]["Time Table"]["min"] .. " " ..  string.upper(EpicTable[lowestindex]["AMPM"])
-	else
-		hour = EpicTable[lowestindex]["Hour"] .. ":00 " .. string.upper(EpicTable[lowestindex]["AMPM"])
-	end
-
-	if reportchannel == nil then
+	
+	if reportchannel == nil then		
 			table.insert(note, msg_colour)
 			table.insert(note, "")
 		if EpicMisc["VI"] == "NO" then
@@ -3479,14 +3507,8 @@ function ChannelListDay(channel, day)
 				apxhour = ""
 			end
 
-			if EpicTable[i]["Time Table"]["min"] > 9 then
-				hour = EpicTable[i]["Hour"] .. ":" .. EpicTable[i]["Time Table"]["min"] .. " " ..  string.upper(EpicTable[i]["AMPM"])
-			elseif EpicTable[i]["Time Table"]["min"] ~= 0 then
-				hour = EpicTable[i]["Hour"] .. ":0" .. EpicTable[i]["Time Table"]["min"] .. " " ..  string.upper(EpicTable[i]["AMPM"])
-			else
-				hour = EpicTable[i]["Hour"] .. ":00 " .. string.upper(EpicTable[i]["AMPM"])
-			end
-		
+			hour = EpicHour(i)
+			
 			mindex = EpicTable[i]["Time Table"]["month"]
 			month = string.gsub (Months[mindex], "^.", string.upper)
 			
@@ -3562,13 +3584,7 @@ function ChannelListLeader(channel, leader)
 					apxhour = ""
 				end
 
-				if EpicTable[i]["Time Table"]["min"] > 9 then
-					hour = EpicTable[i]["Hour"] .. ":" .. EpicTable[i]["Time Table"]["min"] .. " " ..  string.upper(EpicTable[i]["AMPM"])
-				elseif EpicTable[i]["Time Table"]["min"] ~= 0 then
-					hour = EpicTable[i]["Hour"] .. ":0" .. EpicTable[i]["Time Table"]["min"] .. " " ..  string.upper(EpicTable[i]["AMPM"])
-				else
-					hour = EpicTable[i]["Hour"] .. ":00 " .. string.upper(EpicTable[i]["AMPM"])
-				end
+				hour = EpicHour(i)
 			
 				mindex = EpicTable[i]["Time Table"]["month"]
 				month = string.gsub (Months[mindex], "^.", string.upper)
@@ -3676,13 +3692,7 @@ function ChannelListEpic(channel, ltype)
 				apxhour = ""
 			end
 
-			if EpicTable[i]["Time Table"]["min"] > 9 then
-				hour = EpicTable[i]["Hour"] .. ":" .. EpicTable[i]["Time Table"]["min"] .. " " ..  string.upper(EpicTable[i]["AMPM"])			
-			elseif EpicTable[i]["Time Table"]["min"] ~= 0 then
-				hour = EpicTable[i]["Hour"] .. ":0" .. EpicTable[i]["Time Table"]["min"] .. " " ..  string.upper(EpicTable[i]["AMPM"])
-			else
-				hour = EpicTable[i]["Hour"] .. ":00 " .. string.upper(EpicTable[i]["AMPM"])
-			end
+			hour = EpicHour(i)
 		
 			mindex = EpicTable[i]["Time Table"]["month"]
 			month = string.gsub (Months[mindex], "^.", string.upper)
@@ -4318,6 +4328,28 @@ function GetSystemTimeTrig(name, line, wc)
 	OSSystemTimeTable = os.date("*t")
 	OSSystemTime = os.time()
 
+	if behindcheck == nil then 
+		behindcheck = "NO"
+
+		timenow2 = os.time(SystemTimeTable)
+		timenow = OSSystemTime
+
+		timediff2 = {}
+
+		if timenow < timenow2 then 
+			timeDiff(timenow2,timenow,timediff2)
+			behindcheck = "YES"
+		elseif timenow >= timenow2 then
+			timeDiff(timenow,timenow2,timediff2)
+		end
+
+		timezonedifference = {}
+		
+		for i,v in pairs(timediff2) do
+			timezonedifference[i] = v
+		end
+	end
+
 	world.EnableGroup("SystemTime", 0)
 	
 	if listtype == "next" then  
@@ -4843,6 +4875,87 @@ function GetCharName()
 	charname = string.lower(gmcpbase.name)
 end -- GetCharName
 
+function EpicHour(ehindex)
+	if EpicTable[ehindex]["Time Table"]["min"] > 9 then
+		hour = EpicTable[ehindex]["Hour"] .. ":" .. EpicTable[ehindex]["Time Table"]["min"] .. " " ..  string.upper(EpicTable[ehindex]["AMPM"])			
+	elseif EpicTable[ehindex]["Time Table"]["min"] ~= 0 then
+		hour = EpicTable[ehindex]["Hour"] .. ":0" .. EpicTable[ehindex]["Time Table"]["min"] .. " " ..  string.upper(EpicTable[ehindex]["AMPM"])
+	else
+		hour = EpicTable[ehindex]["Hour"] .. ":00 " .. string.upper(EpicTable[ehindex]["AMPM"])
+	end
+
+	return hour
+end -- EpicHour
+
+function TimeZoneEpicHour(tzindex)
+	ampm = string.upper(EpicTable[tzindex]["AMPM"])
+	hour1 = EpicTable[tzindex]["Hour"]
+	min1 = EpicTable[tzindex]["Time Table"]["min"]
+	hour2 = timezonedifference["hour"]
+	min2 = timezonedifference["min"]
+
+	if min2 == 29 or min2 == 31 then
+		min2 = 30
+	end
+	
+	hour3 = 0
+	min3 = 0
+	tzdayindex = EpicTable[tzindex]["Time Table"]["wday"]
+	
+	if behindcheck == "NO" then
+		hour3 = hour1 + hour2
+		min3 = min1 + min2
+		
+		if min3 >= 60 then 
+			hour3 = hour3 + 1
+			min3 = min3 - 60		
+		end
+		
+		if hour3 > 24 then
+			hour3 = hour3 - 24
+			tzdayindex = tzdayindex + 1
+			
+			if tzdayindex > 7 then
+				tzdayindex = 1
+			end
+		elseif hour3 > 12 then
+			hour3 = hour3 - 12
+			ampm = "PM"
+		elseif hour3 == 12 then
+			if hour1 < 12 then
+				ampm = "PM"
+			end
+		end
+	elseif behindcheck == "YES" then
+		hour3 = hour1 - hour2
+		min3 = min1 - min2
+		
+		if min3 < 0 then 
+			hour3 = hour3 - 1
+			min3 = min3 + 60		
+		end
+		
+		if hour3 <= 0 then
+			hour3 = hour3 + 12
+			ampm = "AM"
+		elseif hour3 < 12 then
+			if hour1 == 12 then
+				ampm = "AM"
+			end
+		end
+	end
+
+	if min3 > 9 then
+		hour = hour3 .. ":" .. min3 .. " " ..  ampm
+	elseif min3 ~= 0 then
+		hour = hour3 .. ":0" .. min3 .. " " ..  ampm
+	else
+		hour = hour3 .. ":00 " .. ampm
+	end
+	
+	return hour, tzdayindex
+end -- TimeZoneEpicHour
+
 ---------------------------------------------
 --------------- HELP FUNCTION ---------------
 ---------------------------------------------
@@ -4886,6 +4999,9 @@ function EpicCalendarHelp()
 
 	ColourNote(help_command_colour, "", "ecal vi      ", help_colour, "", " - enables/disables the vi friendly option")
 	
+	ColourNote(help_command_colour, "", "ecal tdif    ", help_colour, "", " - toggles hour display between mudtime and user's timezone")
+	ColourNote(help_colour, "", "                this only affects displays sent to USER ONLY anything sent via channel or note will")
+	ColourNote(help_colour, "", "                show mud time as the hour")
 	ColourNote(help_command_colour, "", "ecal search <epic>   ", help_colour, "", " - searches the epic runs list")
 	
 	ColourNote(help_command_colour, "", "ecal nupdate <note #>", help_colour, "", " - used when epic leader posts a subject line to long")
@@ -5220,11 +5336,16 @@ function GetSavedData()
 			EpicMisc["NotificationBot"]["Commands"]["spouse"] = false
 			EpicMisc["NotificationBot"]["Auto"]["spouse"] = false
 		end
+		
+		if EpicMisc["TypeTime"] == nil then
+			EpicMisc["TypeTime"] = "SERVER"
+		end
 	else
 		TableIndex = 0
 		EpicTable = {}
 		EpicMisc = {}
 		EpicMisc["VI"] = "NO"
+		EpicMisc["TypeTime"] = "SERVER"
 		EpicMisc["Updating"] = "NO"
 		EpicMisc["BlacklistEnabled"] = false
 		EpicMisc["Blacklist"] = {}
@@ -5766,6 +5887,28 @@ function OnPluginBroadcast(msg, id, name, text)
 			OSSystemTimeTable = os.date("*t")
 			OSSystemTime = os.time()
 
+			if behindcheck == nil then 
+				behindcheck = "NO"
+
+				timenow2 = os.time(SystemTimeTable)
+				timenow = OSSystemTime
+
+				timediff2 = {}
+
+				if timenow < timenow2 then 
+					timeDiff(timenow2,timenow,timediff2)
+					behindcheck = "YES"
+				elseif timenow >= timenow2 then
+					timeDiff(timenow,timenow2,timediff2)
+				end
+
+				timezonedifference = {}
+				
+				for i,v in pairs(timediff2) do
+					timezonedifference[i] = v
+				end
+			end
+			
 			if TableFilled == "YES" then 
 			
 				if EpicMisc["NotificationBot"]["Enabled"] == true then

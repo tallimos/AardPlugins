@@ -1,5 +1,12 @@
 dbot.changelog = {}
 
+dbot.changelog[2.10] =
+{
+  { change = drlDbotChangeLogTypeNew,
+    desc   = "Added toggleable display for hour, switches between mudtime and user's timezone"
+  },
+}
+
 dbot.changelog[2.01] =
 {
   { change = drlDbotChangeLogTypeFix,
