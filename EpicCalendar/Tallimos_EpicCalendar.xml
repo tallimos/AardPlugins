@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="2.10"
+   version="2.11"
    >
    
 </plugin>
@@ -4898,8 +4898,14 @@ function TimeZoneEpicHour(tzindex)
 		min2 = 30
 	end
 	
+	if min2 == 59 then
+		min2 = 0
+		hour2 = hour2 + 1
+	end
+	
 	hour3 = 0
 	min3 = 0
+	
 	tzdayindex = EpicTable[tzindex]["Time Table"]["wday"]
 	
 	if behindcheck == "NO" then
@@ -4911,19 +4917,31 @@ function TimeZoneEpicHour(tzindex)
 			min3 = min3 - 60		
 		end
 		
-		if hour3 > 24 then
-			hour3 = hour3 - 24
-			tzdayindex = tzdayindex + 1
-			
-			if tzdayindex > 7 then
-				tzdayindex = 1
-			end
-		elseif hour3 > 12 then
-			hour3 = hour3 - 12
-			ampm = "PM"
-		elseif hour3 == 12 then
-			if hour1 < 12 then
+		if ampm == "AM" then
+			if hour1 == 12 then
+				ampm = "AM"
+			elseif hour3 > 24 then
+				hour3 = hour3 - 24
+				tzdayindex = tzdayindex + 1
+			elseif hour3 > 12 then
+				hour3 = hour3 - 12
 				ampm = "PM"
+			elseif hour3 == 12 then
+				ampm = "PM"
+			end
+		elseif ampm == "PM" then
+			if hour1 == 12 then
+				ampm = "PM"
+			elseif hour3 > 24 then
+				hour3 = hour3 - 24
+				tzdayindex = tzdayindex + 1
+			elseif hour3 > 12 then
+				hour3 = hour3 - 12
+				ampm = "AM"
+				tzdayindex = tzdayindex + 1
+			elseif hour3 == 12 then
+				ampm = "AM"
+				tzdayindex = tzdayindex + 1
 			end
 		end
 	elseif behindcheck == "YES" then
@@ -4935,12 +4953,27 @@ function TimeZoneEpicHour(tzindex)
 			min3 = min3 + 60		
 		end
 		
-		if hour3 <= 0 then
-			hour3 = hour3 + 12
-			ampm = "AM"
-		elseif hour3 < 12 then
+		if ampm == "AM" then
+			if hour1 == 12 then
+				ampm = "PM"
+				tzdayindex = tzdayindex - 1
+			elseif hour3 < 0 then
+				hour3 = hour3 + 12
+				ampm = "PM"
+				tzdayindex = tzdayindex - 1
+			elseif hour3 == 0 then
+				hour3 = 12
+				ampm = "AM"
+			end
+		elseif ampm == "PM" then
 			if hour1 == 12 then
 				ampm = "AM"
+			elseif hour3 < 0 then
+				hour3 = hour3 + 12
+				ampm = "AM"
+			elseif hour3 == 0 then
+				hour3 = 12
+				ampm = "PM"
 			end
 		end
 	end

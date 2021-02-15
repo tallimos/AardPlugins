@@ -1,5 +1,12 @@
 dbot.changelog = {}
 
+dbot.changelog[2.11] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Fixed error within timezone calculations"
+  },
+}
+
 dbot.changelog[2.10] =
 {
   { change = drlDbotChangeLogTypeNew,
