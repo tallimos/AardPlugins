@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="2.11"
+   version="2.12"
    >
    
 </plugin>
@@ -1585,8 +1585,16 @@ function PopulateTimeTable(TableIndex)
 			EpicTable[TableIndex]["Time Table"]["hour"] = EpicTable[TableIndex]["Time Table"]["hour"] + 12
 		end
 		
-		EpicTable[TableIndex]["Time Table"]["hour"] = EpicTable[TableIndex]["Time Table"]["hour"] + tonumber(EpicTable[TableIndex]["Hour"])
-
+		if tonumber(EpicTable[TableIndex]["Hour"]) ~= 12 then
+			EpicTable[TableIndex]["Time Table"]["hour"] = EpicTable[TableIndex]["Time Table"]["hour"] + tonumber(EpicTable[TableIndex]["Hour"])
+		end
+		
+		if EpicTable[TableIndex]["AMPM"] == "am" then 
+			if tonumber(EpicTable[TableIndex]["Hour"]) == 12 then
+				EpicTable[TableIndex]["Time Table"]["hour"] = 23
+			end
+		end
+		
 		EpicTable[TableIndex]["Time Table"]["year"] = SystemTimeTable["year"]
 
 		for i,v in ipairs(DaysofWeekShort) do
