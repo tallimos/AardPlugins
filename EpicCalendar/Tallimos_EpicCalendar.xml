@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="2.12"
+   version="2.13"
    >
    
 </plugin>
@@ -1441,7 +1441,6 @@ function AddEpic(notenum, notedate, cname, subjectline)
 									acfail = "NO"
 
 									if EpicTable[TableIndex]["Approx"] == "YES" then
-										
 										FixApproxTime(TableIndex, aftercheck)
 									end
 									
@@ -1508,18 +1507,13 @@ function FixApproxTime(atindex, aftercheck)
 		hours = hours + 1
 	end
 	
+	orighour = EpicTable[atindex]["Hour"]
 	EpicTable[atindex]["Hour"] = EpicTable[atindex]["Hour"] + hours
 	EpicTable[atindex]["Time Table"]["hour"] = EpicTable[atindex]["Time Table"]["hour"] + hours
 	
 	if EpicTable[atindex]["Hour"] > 12 then
-		EpicTable[atindex]["Time Table"]["hour"] = EpicTable[atindex]["Time Table"]["hour"] - 12
 		EpicTable[atindex]["Hour"] = EpicTable[atindex]["Hour"] - 12
-		
-		if EpicTable[atindex]["AMPM"] == "pm" then
-			EpicTable[atindex]["AMPM"] = "am"
-		elseif EpicTable[atindex]["AMPM"] == "am" then
-			EpicTable[atindex]["AMPM"] = "pm"
-		end
+		EpicTable[atindex]["AMPM"] = "pm"
 	end		
 
 	if aftercheck ~= nil then 
@@ -4926,9 +4920,7 @@ function TimeZoneEpicHour(tzindex)
 		end
 		
 		if ampm == "AM" then
-			if hour1 == 12 then
-				ampm = "AM"
-			elseif hour3 > 24 then
+			if hour3 > 24 then
 				hour3 = hour3 - 24
 				tzdayindex = tzdayindex + 1
 			elseif hour3 > 12 then
@@ -4938,18 +4930,21 @@ function TimeZoneEpicHour(tzindex)
 				ampm = "PM"
 			end
 		elseif ampm == "PM" then
-			if hour1 == 12 then
-				ampm = "PM"
-			elseif hour3 > 24 then
+			if hour3 > 24 then
 				hour3 = hour3 - 24
 				tzdayindex = tzdayindex + 1
+				ampm = "AM"
 			elseif hour3 > 12 then
-				hour3 = hour3 - 12
-				ampm = "AM"
-				tzdayindex = tzdayindex + 1
+				if hour1 == 12 then
+					hour3 = hour3 - 12
+					ampm = "PM"
+				else
+					hour3 = hour3 - 12
+					ampm = "AM"
+					tzdayindex = tzdayindex + 1
+				end
 			elseif hour3 == 12 then
-				ampm = "AM"
-				tzdayindex = tzdayindex + 1
+				ampm = "PM"
 			end
 		end
 	elseif behindcheck == "YES" then
@@ -4962,10 +4957,7 @@ function TimeZoneEpicHour(tzindex)
 		end
 		
 		if ampm == "AM" then
-			if hour1 == 12 then
-				ampm = "PM"
-				tzdayindex = tzdayindex - 1
-			elseif hour3 < 0 then
+			if hour3 < 0 then
 				hour3 = hour3 + 12
 				ampm = "PM"
 				tzdayindex = tzdayindex - 1
@@ -4974,14 +4966,16 @@ function TimeZoneEpicHour(tzindex)
 				ampm = "AM"
 			end
 		elseif ampm == "PM" then
-			if hour1 == 12 then
-				ampm = "AM"
-			elseif hour3 < 0 then
+			if hour3 < 0 then
 				hour3 = hour3 + 12
 				ampm = "AM"
 			elseif hour3 == 0 then
 				hour3 = 12
 				ampm = "PM"
+			elseif hour1 == 12 then
+				if hour3 < 12 then 
+					ampm = "AM"
+				end
 			end
 		end
 	end
@@ -5560,6 +5554,7 @@ function GetSavedData()
 		[2] = "ftalk",
 		[3] = "clantalk",
 		[4] = "tell",
+		[5] = "ctalk",
 	}
 	
 	UnApprovedChannels = {

@@ -1,5 +1,12 @@
 dbot.changelog = {}
 
+dbot.changelog[2.13] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Added the ability to use ct for clan when trying to post to channels. Fixed another bug with 12pm and 12 am scheduled epics"
+  },
+}
+
 dbot.changelog[2.12] =
 {
   { change = drlDbotChangeLogTypeFix,
