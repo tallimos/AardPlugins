@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="2.13"
+   version="2.14"
    >
    
 </plugin>
@@ -1207,7 +1207,8 @@ function AddEpic(notenum, notedate, cname, subjectline)
 	addtime1 = 0
 	addtime2 = 0
 	time1add = "NO"
-	
+	tdaycheck = "NO"
+
 	rsub = subjectline
 	rwords = utils.split (rsub, " ")
 	
@@ -1217,6 +1218,7 @@ function AddEpic(notenum, notedate, cname, subjectline)
 	invalid_characters_pattern = "["..string.gsub(invalid_characters, ".", "%%%1").."]"
 
 	subjectline2 = subjectline
+	subjectline = string.lower(subjectline)
 	subjectline = string.gsub(subjectline, invalid_characters_pattern, "")
 	
 	subjectline = subjectline:gsub("  ", " ")
@@ -1233,7 +1235,7 @@ function AddEpic(notenum, notedate, cname, subjectline)
 	end
 	
 	epname = ""
-	
+
 	for wordindex,b in ipairs(wordtable) do
 		epiccheck = "NO"
 		
@@ -1283,9 +1285,9 @@ function AddEpic(notenum, notedate, cname, subjectline)
 		end
 		
 		if aftercheck == "NO" and beforecheck == "NO" then
-		
-			if timecheck == "NO" then return end
-
+			if timecheck == "NO" then
+				return
+			end
 		end
 
 		echeckname = ""
@@ -1390,7 +1392,10 @@ function AddEpic(notenum, notedate, cname, subjectline)
 					end
 
 					if DayCheck == "NO" then
-						EpicTable[TableIndex]["Day of Week"] = "UNKNOWN"
+						table.remove (EpicTable, TableIndex)
+						TableIndex = TableIndex - 1
+
+						return
 					end
 				end
 				

@@ -1,5 +1,12 @@
 dbot.changelog = {}
 
+dbot.changelog[2.14] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Fixed error if epic leader makes a typo with day in their notes (i.e. mwed instead of wed)"
+  },
+}
+
 dbot.changelog[2.13] =
 {
   { change = drlDbotChangeLogTypeFix,
