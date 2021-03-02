@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="2.14"
+   version="2.15"
    >
    
 </plugin>
@@ -228,7 +228,7 @@
 	</trigger>
 	<trigger
 		group="BotCommandCapture"
-		match="^(\w+)\stells\syou\s\'\!(help|noteremove|listleader|listday|listepic|nextepic|nextday|nextleader)\s?(.*?)?\'$"
+		match="^(\w+)\stells\syou\s\'\!(help|noteremove|listleader|listday|epiclist|listepic|listepics|nextepic|nextday|nextleader)\s?(.*?)?\'$"
 		name="TellChannel"
 		script="TellChannel"
 		sequence="100"
@@ -238,7 +238,7 @@
 	</trigger>
 	<trigger
 		group="BotCommandCapture"
-		match="^You tell the CLAN\:\s\'(?:.*?)?\s?\!(help|noteremove|listleader|listday|listepic|nextepic|nextday|nextleader)\s?(.*?)?\'$"
+		match="^You tell the CLAN\:\s\'\!(help|noteremove|listleader|listday|epiclist|listepic|listepics|nextepic|nextday|nextleader)\s?(.*?)?\'$"
 		name="ClanChannelYou"
 		script="ClanChannelYou"
 		sequence="100"
@@ -248,7 +248,7 @@
 	</trigger>
 	<trigger
 		group="BotCommandCapture"
-		match="^\(Group\)\s(\w+)\:\s\'\!(help|noteremove|listleader|listday|listepic|nextepic|nextday|nextleader)\s?(.*?)?\'$"
+		match="^\(Group\)\s(\w+)\:\s\'\!(help|noteremove|listleader|listday|epiclist|listepic|listepics|nextepic|nextday|nextleader)\s?(.*?)?\'$"
 		name="GroupChannel"
 		script="GroupChannel"
 		sequence="100"
@@ -258,7 +258,7 @@
 	</trigger>
 	<trigger
 		group="BotCommandCapture"
-		match="^\(Friend\)\s(\w+)\:\s\'\!(help|noteremove|listleader|listday|listepic|nextepic|nextday|nextleader)\s?(.*?)?\'$"
+		match="^\(Friend\)\s(\w+)\:\s\'\!(help|noteremove|listleader|listday|epiclist|listepic|listepics|nextepic|nextday|nextleader)\s?(.*?)?\'$"
 		name="FriendChannel"
 		script="FriendChannel"
 		sequence="100"
@@ -268,7 +268,7 @@
 	</trigger>
 	<trigger
 		group="BotCommandCapture"
-		match="^You tell your friends\:\s\'(?:.*?)?\s?\!(help|noteremove|listleader|listday|listepic|nextepic|nextday|nextleader)\s?(.*?)?\'$"
+		match="^You tell your friends\:\s\'!(help|noteremove|listleader|listday|epiclist|listepic|listepics|nextepic|nextday|nextleader)\s?(.*?)?\'$"
 		name="FriendChannelYou"
 		script="FriendChannelYou"
 		sequence="100"
@@ -278,7 +278,7 @@
 	</trigger>	
 	<trigger
 		group="BotCommandCapture"
-		match="^(\w+)\s\((?:\w+)\)\stells the CLAN\:\s\'(?:.*?)?\s?\!(help|noteremove|listleader|listday|listepic|nextepic|nextday|nextleader)\s?(.*?)?\'$"
+		match="^(\w+)\s\((?:\w+)\)\stells the CLAN\:\s\'\!(help|noteremove|listleader|listday|epiclist|listepic|listepics|nextepic|nextday|nextleader)\s?(.*?)?\'$"
 		name="ClanChannel"
 		script="ClanChannel"
 		sequence="100"
@@ -3348,7 +3348,7 @@ function ChannelBot(user, cmd, search, channel)
 			ChannelListDay(channel, search)
 		elseif cmd == "listleader" then
 			ChannelListLeader(channel, search)
-		elseif cmd == "listepic" then
+		elseif cmd == "listepic" or cmd == "listepics" or cmd == "epiclist" then
 			if search == "note" then
 				if user ~= nil then
 					if user == charname then
@@ -3378,13 +3378,15 @@ function ChannelBot(user, cmd, search, channel)
 			BotHelp(channel, user, search)
 		else
 			Execute("ecal " .. cmd .. " " .. search .. " " .. channel)
+			Note("fired")
+			Note(search)
 		end
 	else
 		if cmd == "nextepic" then
 			Execute("ecal next epic " .. channel)
 		elseif cmd == "nextleader" then
 			user = string.gsub (user, "^.", string.upper)
-			SendNoEcho (channel .. " @R[EpicCAL] @DSorry @C" .. user .. "@D command usage is @C!nextleader <leader name>@w")			
+			SendNoEcho (channel .. " @R[EpicCAL] @DSorry @C" .. user .. "@D command usage is @C!nextleader <leader name>@w")
 		elseif cmd == "nextday" then
 			user = string.gsub (user, "^.", string.upper)
 			SendNoEcho (channel .. " @R[EpicCAL] @DSorry @C" .. user .. "@D command usage is @C!nextday <day>@w")			
@@ -3394,7 +3396,7 @@ function ChannelBot(user, cmd, search, channel)
 		elseif cmd == "listleader" then
 			user = string.gsub (user, "^.", string.upper)
 			SendNoEcho (channel .. " @R[EpicCAL] @DSorry @C" .. user .. "@D command usage is @C!listleader <leader>@w")
-		elseif cmd == "listepic" then
+		elseif cmd == "listepic" or cmd == "listepics" or cmd == "epiclist" then
 			search = nil
 			ChannelListEpic(channel, search)
 		elseif cmd == "noteremove" then

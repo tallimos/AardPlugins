@@ -1,5 +1,12 @@
 dbot.changelog = {}
 
+dbot.changelog[2.15] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Fixed error with clan help command"
+  },
+}
+
 dbot.changelog[2.14] =
 {
   { change = drlDbotChangeLogTypeFix,
