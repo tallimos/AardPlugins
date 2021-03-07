@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-12-04 09:12:45"
    requires="4.37"
-   version="1.61"
+   version="1.62"
    >
 
 </plugin>
@@ -316,6 +316,14 @@ function CommandMenu(name, line, wc)
 			InviterTable["VI"] = "YES"
 			ColourNote(msg_colour, "", "VI friendy option enabled.")			
 		end
+	elseif cmd == "bonk" then		
+		if InviterTable["Bonk"] == "YES" then
+			InviterTable["Bonk"] = "NO"
+			ColourNote(msg_colour, "", "Bonking has been disabled.")
+		elseif InviterTable["Bonk"] == "NO" then
+			InviterTable["Bonk"] = "YES"
+			ColourNote(msg_colour, "", "Bonking has been enabled.")			
+		end
 	elseif cmd == "update" then
 		-- dbot.version.update.release(drlDbotUpdateInstall, endTag)
 		tai_update()
@@ -492,7 +500,10 @@ end -- Invite
 function AnotherGroup(name, line, wc)
 	user = string.lower(wc[1])
 	
-	SendNoEcho("bonk " .. user)
+	if InviterTable["Bonk"] == "YES" then
+		SendNoEcho("bonk " .. user)
+	end
+	
 	SendNoEcho("tell " .. user .. " @DLeave your current group and try again!@w")
 		
 	if CheckPending(user) == "yes" then
@@ -1225,6 +1236,9 @@ function AutoInviterHelp()
 	
 	ColourNote(help_command_colour, "", "tai vi                      ", help_colour, "", " - enables/disables the vi friendly option")
 	
+	ColourNote(help_command_colour, "", "tai bonk                    ", help_colour, "", " - enables/disables the bonk sent when someone is already in a")
+	ColourNote(help_colour, "", "                               group")
+
 	ColourNote(help_command_colour, "", "tai check <player>          ", help_colour, "", " - checks to see if player is in group or not (i.e. Talia check)")
 
 	ColourNote(help_command_colour, "", "tai pending                 ", help_colour, "", " - shows the pending invites")
@@ -1313,8 +1327,13 @@ function GetSavedData()
 		if InviterTable["VI"] == nil then 
 			InviterTable["VI"] = "NO"
 		end
+		
+		if InviterTable["Bonk"] == nil then
+			InviterTable["Bonk"] = "NO"
+		end
 	else
 		InviterTable = {}
+		InviterTable["Bonk"] = "NO"
 		InviterTable["VI"] = "NO"
 		InviterTable["Updating"] = "NO"
 		InviterTable["BlacklistEnabled"] = false
