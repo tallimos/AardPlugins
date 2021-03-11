@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="2.15"
+   version="2.16"
    >
    
 </plugin>
@@ -285,7 +285,27 @@
 		regexp="y"
 		ignore_case="y"
 		>
-	</trigger>	
+	</trigger>
+	<trigger
+		group="BotCommandCapture"
+		match="^\(Spouse\)\:(\w+)\s\!(help|noteremove|listleader|listday|epiclist|listepic|listepics|nextepic|nextday|nextleader)\s?(.*?)?$"
+		name="SpouseChannel"
+		script="SpouseChannel"
+		sequence="100"
+		regexp="y"
+		ignore_case="y"
+		>
+	</trigger>
+	<trigger
+		group="BotCommandCapture"
+		match="^\(Spouse\)\:\s\!(help|noteremove|listleader|listday|epiclist|listepic|listepics|nextepic|nextday|nextleader)\s?(.*?)?$"
+		name="SpouseChannelYou"
+		script="SpouseChannelYou"
+		sequence="100"
+		regexp="y"
+		ignore_case="y"
+		>
+	</trigger>
 	<trigger
 		group="SystemTime"
 		match="^\s+\*\sAardwolf last restarted on\s\:\s+(\d+)\:(\d+)\:(\d+)\s\-\s(.*?)"
@@ -386,6 +406,13 @@
 		second="5" 
 		enabled="n"
 		script="LastCmdTell"
+		>
+	</timer>
+	<timer
+		name="lastcmdspouse" 
+		second="5" 
+		enabled="n"
+		script="LastCmdSpouse"
 		>
 	</timer>
 	<timer
@@ -1519,7 +1546,11 @@ function FixApproxTime(atindex, aftercheck)
 	if EpicTable[atindex]["Hour"] > 12 then
 		EpicTable[atindex]["Hour"] = EpicTable[atindex]["Hour"] - 12
 		EpicTable[atindex]["AMPM"] = "pm"
-	end		
+	elseif EpicTable[atindex]["Hour"] == 12 then
+		if EpicTable[atindex]["AMPM"] == "am" then
+			EpicTable[atindex]["AMPM"] = "pm"
+		end
+	end
 
 	if aftercheck ~= nil then 
 		apname = EpicTable[atindex]["Epic Name"]
@@ -3232,6 +3263,14 @@ function EnableCommandBot()
 		EnableTrigger ("GroupChannel", false)
 	end
 	
+	if EpicMisc["NotificationBot"]["Commands"]["spouse"] == true then
+		EnableTrigger ("SpouseChannel", true)
+		EnableTrigger ("SpouseChannelYou", true)
+	elseif EpicMisc["NotificationBot"]["Commands"]["spouse"] == false then
+		EnableTrigger ("SpouseChannel", false)
+		EnableTrigger ("SpouseChannelYou", false)
+	end
+	
 	if EpicMisc["NotificationBot"]["Commands"]["tell"] == true then
 		EnableTrigger ("TellChannel", true)
 	elseif EpicMisc["NotificationBot"]["Commands"]["tell"] == false then
@@ -3260,6 +3299,8 @@ function DisableCommandBot()
 	Note("")
 	
 	EnableTrigger ("GroupChannel", false)
+	EnableTrigger ("SpouseChannel", false)
+	EnableTrigger ("SpouseChannelYou", false)
 	EnableTrigger ("TellChannel", false)
 	EnableTrigger ("FriendChannel", false)
 	EnableTrigger ("ClanChannel", false)
@@ -3282,6 +3323,9 @@ function ChannelCommandEnable(channel)
 				EnableTrigger ("GroupChannel", true)
 			elseif channel == "tell" then
 				EnableTrigger ("TellChannel", true)
+			elseif channel == "spouse" then
+				EnableTrigger ("SpouseChannel", true)
+				EnableTrigger ("SpouseChannelYou", true)
 			end
 			
 			ColourNote(epiccalcolour, "", "[EpicCAL] ", msg_colour, "", "Channel commands for ", qty_colour, "", channel, msg_colour, "", " channel have been ", "green", "", "Enabled.")
@@ -3316,6 +3360,9 @@ function ChannelCommandDisable(channel)
 				EnableTrigger ("GroupChannel", false)
 			elseif channel == "tell" then
 				EnableTrigger ("TellChannel", false)
+			elseif channel == "spouse" then
+				EnableTrigger ("SpouseChannel", false)
+				EnableTrigger ("SpouseChannelYou", false)
 			end
 
 			ColourNote(epiccalcolour, "", "[EpicCAL] ", msg_colour, "", "Channel commands for ", qty_colour, "", channel, msg_colour, "", " channel have been ", "red", "", "Disabled.")
@@ -3977,6 +4024,101 @@ function FriendChannelYou(name, line, wc)
 	ChannelBot(user, cmd, search, channel)
 end -- FriendChannelYou
 
+function SpouseChannel(name, line, wc)
+	user = string.lower(wc[1])
+	cmd = string.lower(wc[2])
+	if wc[3] == nil then 
+		search = nil
+	else
+		search = string.lower(wc[3])
+	end
+	
+	channel = "spouse"
+
+	GetCharName()
+
+	if EpicMisc["BlacklistEnabled"] == true then
+		if CheckBlackList(user) == "yes" then
+			reason = EpicMisc["Blacklist"][user]["Reason"]
+			ColourNote(epiccalcolour, "", "[EpicCAL] ", qty_colour, "", user, msg_colour, "", " has been blacklisted. Reason: ", qty_colour, "", reason)
+
+			return
+		end
+	end
+
+	if EpicMisc["NotificationBot"]["Permissions"] == "list" then
+		if (CheckPermission(user)) == "no" then
+			ColourNote(epiccalcolour, "", "[EpicCAL] ", qty_colour, "", user, msg_colour, "", " has not been added to the permission's list")
+
+			return
+		end
+	end
+	
+	if search ~= nil then 
+		gcmd = cmd .. " " .. search
+	else
+		gcmd = cmd
+	end
+	
+	if spouselastcommand == gcmd then
+		return
+	else 
+		spouselastcommand = gcmd
+		check (EnableTimer ("lastcmdspouse", 1))
+		check (ResetTimer ("lastcmdspouse"))
+	end
+	
+	ChannelBot(user, cmd, search, channel)
+end -- SpouseChannel
+
+function SpouseChannelYou(name, line, wc)
+	GetCharName()
+	user = charname
+	cmd = string.lower(wc[1])
+	if wc[2] == nil then 
+		search = nil
+	else
+		search = string.lower(wc[2])
+	end
+	
+	channel = "spouse"
+
+	GetCharName()
+
+	if EpicMisc["BlacklistEnabled"] == true then
+		if CheckBlackList(user) == "yes" then
+			reason = EpicMisc["Blacklist"][user]["Reason"]
+			ColourNote(epiccalcolour, "", "[EpicCAL] ", qty_colour, "", user, msg_colour, "", " has been blacklisted. Reason: ", qty_colour, "", reason)
+
+			return
+		end
+	end
+
+	if EpicMisc["NotificationBot"]["Permissions"] == "list" then
+		if (CheckPermission(user)) == "no" then
+			ColourNote(epiccalcolour, "", "[EpicCAL] ", qty_colour, "", user, msg_colour, "", " has not been added to the permission's list")
+
+			return
+		end
+	end
+	
+	if search ~= nil then 
+		gcmd = cmd .. " " .. search
+	else
+		gcmd = cmd
+	end
+	
+	if spouselastcommand == gcmd then
+		return
+	else 
+		spouselastcommand = gcmd
+		check (EnableTimer ("lastcmdspouse", 1))
+		check (ResetTimer ("lastcmdspouse"))
+	end
+	
+	ChannelBot(user, cmd, search, channel)
+end -- SpouseChannelYou
+
 -- Channel Command Delay Functions
 
 function LastCmdTell()
@@ -3998,6 +4140,11 @@ function LastCmdClan()
 	check (EnableTimer ("lastcmdclan", 0))
 	clanlastcommand = nil
 end -- LastCmdClan
+
+function LastCmdSpouse()
+	check (EnableTimer ("lastcmdspouse", 0))
+	spouselastcommand = nil
+end -- LastCmdSpouse
 
 function HourlyNextEpicNotification()
 	for i,v in pairs(EpicMisc["NotificationBot"]["Auto"]) do
@@ -5562,6 +5709,7 @@ function GetSavedData()
 		[3] = "clantalk",
 		[4] = "tell",
 		[5] = "ctalk",
+		[6] = "spouse",
 	}
 	
 	UnApprovedChannels = {

@@ -1,5 +1,12 @@
 dbot.changelog = {}
 
+dbot.changelog[2.16] =
+{
+  { change = drlDbotChangeLogTypeNew,
+    desc   = "Add spouse to commands list"
+  },
+}
+
 dbot.changelog[2.15] =
 {
   { change = drlDbotChangeLogTypeFix,
