@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="2.16"
+   version="2.17"
    >
    
 </plugin>
@@ -278,7 +278,7 @@
 	</trigger>	
 	<trigger
 		group="BotCommandCapture"
-		match="^(\w+)\s\((?:\w+)\)\stells the CLAN\:\s\'\!(help|noteremove|listleader|listday|epiclist|listepic|listepics|nextepic|nextday|nextleader)\s?(.*?)?\'$"
+		match="^(\w+)\s\((?:.*?)\)\stells the CLAN\:\s\'\!(help|noteremove|listleader|listday|epiclist|listepic|listepics|nextepic|nextday|nextleader)\s?(.*?)?\'$"
 		name="ClanChannel"
 		script="ClanChannel"
 		sequence="100"

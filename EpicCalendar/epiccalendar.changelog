@@ -1,5 +1,12 @@
 dbot.changelog = {}
 
+dbot.changelog[2.17] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Fixed issue with multi worded clan ranks and the clan bot"
+  },
+}
+
 dbot.changelog[2.16] =
 {
   { change = drlDbotChangeLogTypeNew,
