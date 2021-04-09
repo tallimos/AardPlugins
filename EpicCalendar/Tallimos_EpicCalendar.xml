@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="2.17"
+   version="2.18"
    >
    
 </plugin>
@@ -29,6 +29,7 @@
 
 <triggers>
 	<trigger
+		enabled="n"
 		group="NoteUpdate"
 		match="^No such note.$"
 		sequence="100"
@@ -39,6 +40,7 @@
 		>
 	</trigger>
 	<trigger
+		enabled="n"
 		group="NoteUpdate"
 		match="(.*?)"
 		sequence="300"
@@ -48,6 +50,7 @@
 		>
 	</trigger>
 	<trigger
+		enabled="n"
 		group="NoteUpdate"
 		match="^Current forum changed to Epics\. You can read and write in this forum\."
 		sequence="100"
@@ -57,6 +60,7 @@
 		>
 	</trigger>
 	<trigger
+		enabled="n"
 		group="NoteUpdate"
 		match="^To\s+\:\s(\w+)"
 		sequence="100"
@@ -66,6 +70,7 @@
 		>
 	</trigger>
 	<trigger
+		enabled="n"
 		group="NoteUpdateLine1"
 		match="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 		sequence="100"
@@ -74,6 +79,7 @@
 		>
 	</trigger>
 	<trigger
+		enabled="n"
 		group="NoteUpdateLine2"
 		script="NoteUpdateEnableEnd"
 		match="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -83,6 +89,7 @@
 		>
 	</trigger>
 	<trigger
+		enabled="n"
 		group="NoteUpdateNoteContent"
 		match="(.*?)"
 		sequence="200"
@@ -92,6 +99,7 @@
 		>
 	</trigger>
 	<trigger
+		enabled="n"
 		group="NoteUpdateEnd"
 		match="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 		script="NoteUpdateEnd"
@@ -101,6 +109,7 @@
 		>
 	</trigger>
 	<trigger
+		enabled="n"
 		group="NoteUpdate"
 		script="NoteUpdateSubject"
 		match="^From\s+\:\s(\w+)\:\s(.*)"
@@ -111,6 +120,7 @@
 		>
 	</trigger>
 	<trigger
+		enabled="n"
 		group="NoteUpdate"
 		script="NoteUpdateNoteNum"
 		match="^Forum\s+\:\s(\w+)\s\-\s\#(\d+)"
@@ -121,6 +131,7 @@
 		>
 	</trigger>
 	<trigger
+		enabled="n"
 		group="NoteUpdate"
 		script="NoteUpdateNoteDate"
 		match="^Date\s+\:\s(\w+)\s(\w+)\s+(\d+)\s+(\d+)\:(\d+)\:(\d+)\s(\d+)"
@@ -131,6 +142,7 @@
 		>
 	</trigger>
 	<trigger
+		enabled="n"
 		group="GetCurrentBoardTrig2"
 		match="You can only read posts in this forum."
 		sequence="110"
@@ -139,6 +151,7 @@
 		>
 	</trigger>
 	<trigger
+		enabled="n"
 		group="GetBoardEndTrig"
 		script="GetBoardEnd"
 		match="^Current forum changed to (\w+)\. You can read and write in this forum\."
@@ -149,6 +162,7 @@
 		>
 	</trigger>
 	<trigger
+		enabled="n"
 		group="GetBoardEndTrig"
 		script="GetBoardEnd"
 		match="^Current forum changed to (\w+)\. You can only read in this forum\."
@@ -159,6 +173,7 @@
 		>
 	</trigger>
 	<trigger
+		enabled="n"
 		group="GetCurrentBoardTrig"
 		script="CurrentBoard"
 		match="^Your current forum is (\w+)\."
@@ -169,6 +184,7 @@
 		>
 	</trigger>
 	<trigger
+		enabled="n"
 		group="GetCurrentBoardTrig"
 		match="You have no unread notes in any subscribed forum."
 		sequence="110"
@@ -177,6 +193,7 @@
 		>
 	</trigger>
 	<trigger
+		enabled="n"
 		group="GetCurrentBoardTrig2"
 		match="You can read and write posts in this forum."
 		sequence="110"
@@ -185,6 +202,7 @@
 		>
 	</trigger>
 	<trigger
+		enabled="n"
 		group="GetCurrentBoardTrig2"
 		match="Use 'forums all' to see subscribed forums."
 		sequence="110"
@@ -193,6 +211,7 @@
 		>
 	</trigger>
 	<trigger
+		enabled="n"
 		group="GetCurrentBoardTrig2"
 		match="Use 'subscribe' to see all forums and which you are subscribed to."
 		sequence="110"
@@ -201,6 +220,7 @@
 		>
 	</trigger>
 	<trigger
+		enabled="n"
 		group="GetCurrentBoardTrig"
 		match="+-------+------------+-----------+---------------------------------+"
 		sequence="110"
@@ -209,6 +229,7 @@
 		>
 	</trigger>
 	<trigger
+		enabled="n"
 		group="GetCurrentBoardTrig"
 		match="\|\sForum\s\|\sName\s+\|\sNew Posts\s\|\sDescription\s+\|"
 		sequence="110"
@@ -218,6 +239,7 @@
 		>
 	</trigger>
 	<trigger
+		enabled="n"
 		group="GetCurrentBoardTrig"
 		match="\|\s+(\d+)\s\|\s+(\w+)\s\|\s+(\d+)\s\|\s(.*?)\s+\|"
 		sequence="110"
@@ -227,6 +249,7 @@
 		>
 	</trigger>
 	<trigger
+		enabled="n"
 		group="BotCommandCapture"
 		match="^(\w+)\stells\syou\s\'\!(help|noteremove|listleader|listday|epiclist|listepic|listepics|nextepic|nextday|nextleader)\s?(.*?)?\'$"
 		name="TellChannel"
@@ -237,6 +260,7 @@
 		>
 	</trigger>
 	<trigger
+		enabled="n"
 		group="BotCommandCapture"
 		match="^You tell the CLAN\:\s\'\!(help|noteremove|listleader|listday|epiclist|listepic|listepics|nextepic|nextday|nextleader)\s?(.*?)?\'$"
 		name="ClanChannelYou"
@@ -247,6 +271,7 @@
 		>
 	</trigger>
 	<trigger
+		enabled="n"
 		group="BotCommandCapture"
 		match="^\(Group\)\s(\w+)\:\s\'\!(help|noteremove|listleader|listday|epiclist|listepic|listepics|nextepic|nextday|nextleader)\s?(.*?)?\'$"
 		name="GroupChannel"
@@ -257,6 +282,7 @@
 		>
 	</trigger>
 	<trigger
+		enabled="n"
 		group="BotCommandCapture"
 		match="^\(Friend\)\s(\w+)\:\s\'\!(help|noteremove|listleader|listday|epiclist|listepic|listepics|nextepic|nextday|nextleader)\s?(.*?)?\'$"
 		name="FriendChannel"
@@ -267,6 +293,7 @@
 		>
 	</trigger>
 	<trigger
+		enabled="n"
 		group="BotCommandCapture"
 		match="^You tell your friends\:\s\'!(help|noteremove|listleader|listday|epiclist|listepic|listepics|nextepic|nextday|nextleader)\s?(.*?)?\'$"
 		name="FriendChannelYou"
@@ -277,6 +304,7 @@
 		>
 	</trigger>	
 	<trigger
+		enabled="n"
 		group="BotCommandCapture"
 		match="^(\w+)\s\((?:.*?)\)\stells the CLAN\:\s\'\!(help|noteremove|listleader|listday|epiclist|listepic|listepics|nextepic|nextday|nextleader)\s?(.*?)?\'$"
 		name="ClanChannel"
@@ -287,6 +315,7 @@
 		>
 	</trigger>
 	<trigger
+		enabled="n"
 		group="BotCommandCapture"
 		match="^\(Spouse\)\:(\w+)\s\!(help|noteremove|listleader|listday|epiclist|listepic|listepics|nextepic|nextday|nextleader)\s?(.*?)?$"
 		name="SpouseChannel"
@@ -297,6 +326,7 @@
 		>
 	</trigger>
 	<trigger
+		enabled="n"
 		group="BotCommandCapture"
 		match="^\(Spouse\)\:\s\!(help|noteremove|listleader|listday|epiclist|listepic|listepics|nextepic|nextday|nextleader)\s?(.*?)?$"
 		name="SpouseChannelYou"
@@ -307,6 +337,7 @@
 		>
 	</trigger>
 	<trigger
+		enabled="n"
 		group="SystemTime"
 		match="^\s+\*\sAardwolf last restarted on\s\:\s+(\d+)\:(\d+)\:(\d+)\s\-\s(.*?)"
 		sequence="100"
@@ -316,6 +347,7 @@
 		>
 	</trigger>
 	<trigger
+		enabled="n"
 		group="SystemTime"
 		script="GetSystemTimeTrig"
 		match="^\s+\*\sThe system time is\s+\:\s+(\d+)\:(\d+)\:(\d+)\s\-\s(sunday|monday|tuesday|wednesday|thursday|friday|saturday)\s(\d+)\s(\w+)\,\s(\d+)"
@@ -326,6 +358,7 @@
 		>
 	</trigger>
 	<trigger
+		enabled="n"
 		group="EpicCalendar"
 		match="(.*?)"
 		sequence="300"
@@ -335,6 +368,7 @@
 		>
 	</trigger>
 	<trigger
+		enabled="n"
 		group="EpicUpdateEnd"
 		match="+------+------------+-------------+-------------------------------------+----+"
 		script="EpicUpdateEnd"
@@ -345,6 +379,7 @@
 		>
 	</trigger>
 	<trigger
+		enabled="n"
 		group="EpicCalendar"
 		match="+------+------------+-------------+-------------------------------------+----+"
 		sequence="110"
@@ -353,6 +388,7 @@
 		>
 	</trigger>
 	<trigger
+		enabled="n"
 		group="EpicCalendar"
 		match="Posts in the Epics forum :"
 		sequence="100"
@@ -361,6 +397,7 @@
 		>
 	</trigger>
 	<trigger
+		enabled="n"
 		group="EpicCalendar"
 		match="Current forum changed to Epics. You can read and write in this forum."
 		sequence="100"
@@ -369,6 +406,7 @@
 		>
 	</trigger>
 	<trigger
+		enabled="n"
 		group="EpicCalendar"
 		match="^\|\sPost\#\|\sDate/Time\s+\|\sAuthor\s+\|\sSubject\s+\|\Size\|$"
 		sequence="100"
@@ -387,6 +425,7 @@
 		>
 	</trigger>
 	<trigger
+		enabled="n"
 		group="EpicCalendar"
 		match="^\|?\s+(\d+)\|(.*?)\|(?:\*|\s)(\w+)\s+\|\s(.*)(?:\s+)?\|\s+(\d+)\|$"
 		regexp="y"
