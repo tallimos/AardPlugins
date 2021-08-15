@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="2.18"
+   version="2.19"
    >
    
 </plugin>
@@ -1851,7 +1851,7 @@ function ListEpic()
 	if errorcheck ~= "yes" then
 		table.sort(EpicTable, function (a, b) local atime = os.time(a["Time Table"]); local btime = os.time(b["Time Table"]); if atime == btime then return a["Index"] < b["Index"] else return atime < btime end end)
 	end
-	
+ 
 	if listtype == "list" then
 		for i,v in ipairs(EpicTable) do
 			if EpicTable[i]["Epic Name"] == "icefall1" then
@@ -1886,14 +1886,19 @@ function ListEpic()
 				end
 				
 				timedef = EpicTimeDifference(i, ReturnType)
-				
+				-- return here
 				if EpicMisc["TypeTime"] == "SERVER" then
 					hour = EpicHour(i)
 				else
 					hour, tzdayindex = TimeZoneEpicHour(i)
 			
 					if tzdayindex ~= dindex then
-						eday = string.gsub (DaysofWeek[tzdayindex], "^.", string.upper)
+						if tzdayindex ~= nil then
+							if tzdayindex == 0 then tzdayindex = 7 end
+							if tzdayindex == 8 then tzdayindex = 1 end
+							
+							eday = string.gsub (DaysofWeek[tzdayindex], "^.", string.upper)
+						end
 					end
 				end
 			end
@@ -3464,8 +3469,6 @@ function ChannelBot(user, cmd, search, channel)
 			BotHelp(channel, user, search)
 		else
 			Execute("ecal " .. cmd .. " " .. search .. " " .. channel)
-			Note("fired")
-			Note(search)
 		end
 	else
 		if cmd == "nextepic" then

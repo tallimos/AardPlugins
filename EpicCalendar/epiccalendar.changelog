@@ -1,5 +1,12 @@
 dbot.changelog = {}
 
+dbot.changelog[2.19] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Hopefully addressed the issue with gsub when tdif is enabled"
+  },
+}
+
 dbot.changelog[2.18] =
 {
   { change = drlDbotChangeLogTypeFix,
