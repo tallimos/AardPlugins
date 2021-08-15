@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="2.19"
+   version="2.20"
    >
    
 </plugin>
@@ -6052,6 +6052,8 @@ function GetSavedData()
 		["zyian"] = "Dark Temple of Zyian",
 	}
 	
+	sametimezone = "NO"
+	
 	SaveState()
 end -- GetSavedData
 
@@ -6131,8 +6133,10 @@ function OnPluginBroadcast(msg, id, name, text)
 				if timenow < timenow2 then 
 					timeDiff(timenow2,timenow,timediff2)
 					behindcheck = "YES"
-				elseif timenow >= timenow2 then
+				elseif timenow > timenow2 then
 					timeDiff(timenow,timenow2,timediff2)
+				elseif timenow == timenow2 then
+					sametimezone = "YES"
 				end
 
 				timezonedifference = {}

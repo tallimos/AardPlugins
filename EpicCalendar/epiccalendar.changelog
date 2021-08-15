@@ -1,5 +1,12 @@
 dbot.changelog = {}
 
+dbot.changelog[2.20] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Fixed bug with hour being displayed 1 hour behind for users who have ecal tdif enabled and are in the same time zone as the server"
+  },
+}
+
 dbot.changelog[2.19] =
 {
   { change = drlDbotChangeLogTypeFix,
