@@ -1,5 +1,12 @@
 dbot.changelog = {}
 
+dbot.changelog[1.81] =
+{
+  { change = drlDbotChangeLogTypeNew,
+    desc   = "Xterm Colours should now be supported"
+  },
+}
+
 dbot.changelog[1.8] =
 {
   { change = drlDbotChangeLogTypeNew,

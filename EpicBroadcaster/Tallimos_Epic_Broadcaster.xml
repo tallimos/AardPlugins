@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-12-11 21:36:19"
    requires="4.36"
-   version="1.8"
+   version="1.81"
    >
 
 </plugin>
@@ -304,6 +304,26 @@ function SetColour(name, line, wc)
 		ename = string.lower(wordtable[1])
 	
 		if CheckEpic(ename) ~= nil then
+			for xcolour in wordtable[2]:gmatch("%@x%d+") do	
+				for xct in xcolour:gmatch("%d+") do	
+					if tonumber(xct) < 0 or tonumber(xct) > 255 then
+						ColourNote(msg_colour, "", "Valid xterm colors are ", qty_colour, "", "000", msg_colour, "", "-", qty_colour, "", "255")
+						
+						return
+					end
+				end
+				
+				bcolour = xcolour
+				BroadcastTable["Epics"][ename]["Colour"] = bcolour
+				ColourNote(msg_colour, "", "Colour for ", qty_colour, "", ename, msg_colour, "", " has been set to ", qty_colour, "", bcolour)
+				
+				SaveState()
+				
+				return
+				
+				
+			end
+			
 			for colour in wordtable[2]:gmatch("%@%a") do	
 				bcolour = colour
 				BroadcastTable["Epics"][ename]["Colour"] = bcolour
@@ -369,11 +389,7 @@ function Broadcaster()
 		
 		for i,v in pairs(BroadcastTable["Channels"]) do
 			if v == true then
-				if i == "tt" then
-					rchan = "tiertalk"
-				else
-					rchan = i
-				end
+				rchan = i
 				
 				SendNoEcho(rchan .. " " .. message .. "@w")
 			end
