@@ -1,5 +1,19 @@
 dbot.changelog = {}
 
+dbot.changelog[2.22] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Small tweak to epic list updating"
+  },
+}
+
+dbot.changelog[2.21] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Added code for transcendence"
+  },
+}
+
 dbot.changelog[2.20] =
 {
   { change = drlDbotChangeLogTypeFix,

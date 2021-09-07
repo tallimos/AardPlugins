@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="2.20"
+   version="2.22"
    >
    
 </plugin>
@@ -42,7 +42,7 @@
 	<trigger
 		enabled="n"
 		group="NoteUpdate"
-		match="(.*?)"
+		match="^$"
 		sequence="300"
 		ignore_case="y"
 		omit_from_output="y"
@@ -91,7 +91,7 @@
 	<trigger
 		enabled="n"
 		group="NoteUpdateNoteContent"
-		match="(.*?)"
+		match="^$"
 		sequence="200"
 		ignore_case="y"
 		omit_from_output="y"
@@ -360,7 +360,7 @@
 	<trigger
 		enabled="n"
 		group="EpicCalendar"
-		match="(.*?)"
+		match="^$"
 		sequence="300"
 		ignore_case="y"
 		omit_from_output="y"
@@ -1145,6 +1145,8 @@ function CheckEpicName(CheckEpicName)
 		repic = "icefall1"
 	elseif CheckEpicName == "if" then
 		repic = "icefall1"
+	elseif CheckEpicName == "transcend" then -- trans add
+		repic = "transcendence"
 	else
 		repic = CheckEpicName
 	end	
@@ -1723,6 +1725,9 @@ function CheckType(ltype)
 	elseif ltype == "if2" or ltype == "icefall 2" then
 		ltype = "icefall2"
 		return ltype
+	elseif ltype == "transcend" then -- trans add
+		ltype = "transcendence"
+		return ltype
 	elseif ltype == "if" then
 		ltype = "icefall"
 		return ltype
@@ -1886,7 +1891,7 @@ function ListEpic()
 				end
 				
 				timedef = EpicTimeDifference(i, ReturnType)
-				-- return here
+
 				if EpicMisc["TypeTime"] == "SERVER" then
 					hour = EpicHour(i)
 				else
@@ -1950,9 +1955,14 @@ function ListEpic()
 						hour = EpicHour(i)
 					else
 						hour,tzdayindex = TimeZoneEpicHour(i)
-						
+						-- return here
 						if tzdayindex ~= dindex then
-							eday = string.gsub (DaysofWeek[tzdayindex], "^.", string.upper)
+							-- if tzdayindex ~= nil then
+							-- 	if tzdayindex == 0 then tzdayindex = 7 end
+							--	if tzdayindex == 8 then tzdayindex = 1 end
+								
+								eday = string.gsub (DaysofWeek[tzdayindex], "^.", string.upper)
+							-- end
 						end
 					end
 				end
@@ -2798,6 +2808,7 @@ function AddRemoveEditRunTime(rcmd, rtname, rttime)
 	elseif rcmd == "edit" then
 		if rtname == "if1" then rtname = "icefall1" end
 		if rtname == "if2" then rtname = "icefall2" end
+		if rtname == "transcend" then rtname = "transcendence" end
 		
 		if EpicMisc["ApproxRunTimes"][rtname] == nil then
 			ColourNote(epiccalcolour, "", "[EpicCAL] ", qty_colour, "", rtname, msg_colour, "", " has not been added to the approximate run time list. For a complete list please use ", qty_colour, "", "ecal rt list", msg_colour, "", ".")
@@ -3421,6 +3432,7 @@ end -- ChannelCommandDisable
 function ChannelBot(user, cmd, search, channel)	
 	if search == "if1" or search == "icefall 1" then search = "icefall1" end
 	if search == "if2" or search == "icefall 2" then search = "icefall2" end
+	if search == "transcend" then search = "transcendence" end
 	
 	if CheckChannel(channel) == "no" then
 		if CheckChannelUnapproved(channel) == "yes" then
@@ -4521,6 +4533,7 @@ function GetSystemTimeTrig(name, line, wc)
       sec = tonumber(wc[3]),
       hour = tonumber(wc[1]),
       year = year,
+	  isdst = false,
       }
 	
 	OSSystemTimeTable = os.date("*t")
@@ -5584,6 +5597,7 @@ function GetSavedData()
 		EpicMisc["ApproxRunTimes"]["Grouping Time"] = {}
 		EpicMisc["ApproxRunTimes"]["Grouping Time"]["Time"] = 5
 		EpicMisc["ApproxRunTimes"]["Grouping Time"]["Enabled"] = false
+		EpicMisc["ApproxRunTimes"]["transcendence"] = 120
 		EpicMisc["ApproxRunTimes"]["genie"] = 25
 		EpicMisc["ApproxRunTimes"]["icefall1"] = 45
 		EpicMisc["ApproxRunTimes"]["icefall2"] = 60
@@ -5648,6 +5662,7 @@ function GetSavedData()
 	EpicMobs = {
 		[1] = "alai",
 		[2] = "orbury",
+		[3] = "kasiln",
 	}
 	
 	DaysofWeek = {
@@ -5731,6 +5746,7 @@ function GetSavedData()
 		[12] = "oldvanir",
 		[13] = "testmaze10",
 		[14] = "transcendence", 
+		[15] = "transcend", 
 	}
 
 	SearchNames = {
