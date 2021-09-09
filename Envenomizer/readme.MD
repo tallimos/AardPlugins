@@ -1,1 +1,1 @@
-
+My envenomizer script for aardwolf mud. Please use env help for a list of commands. This script uses a true seeing helm so that if you have true sight casted and it drops then you will still see hidden/invis players. You will need the id number for your true seeing helm as well as the id number for the container it is stored in. I do not mind answering questions about this script but I will not be providing support for this script. If you do have an idea for the script and I think it is great and I can code it I will add it to the script if/when I have time. Thank you.
