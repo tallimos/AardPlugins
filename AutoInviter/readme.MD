@@ -5,6 +5,7 @@ This plugin gives the user an easy to use auto inviter with blacklist and power 
 Main Commands
 -------------
 tai update                   - checks for the latest version of plugin and installs it
+
 tai checkversion             - checks to see if there is a newer version of the plugin available
 
 tai changelog                - displays the changelog for the plugin
