@@ -4,7 +4,7 @@ This plugin gives the user an easy to use broadcaster for announcing epic run gr
 
 Main Commands
 -------------
-<b>teb update</b>                     - checks for the latest version of plugin and installs it<br />
+<b>teb update</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- checks for the latest version of plugin and installs it<br />
 <b>teb checkversion</b>               - checks to see if there is a newer version of the plugin available<br />
 <b>teb changelog</b>                  - displays the changelog for the plugin<br />
 <b>teb <enable|disable> <channel></b> - enables/disables broadcasting for that particular channel<br />
@@ -25,7 +25,7 @@ if optional epic name is inputted it will show what the epic display name will a
 
 <b>teb broadcast <epic name> (minutes til epic) (optional message)</b> - starts the broadcasting system.<br />
 If the user does not input the number of minutes until the epic starts, then the grouping announcement will only broadcast once.<br />
-If included the system will figure out the number of broadcasts and will start and finish broadcasting automatically including a last call.<br />
+If included the system will figure out the number of broadcasts and will start and finish broadcasting automatically including a last call.<br /><br />
 <i>Any optional message will get added to the end of the broadcast message</i><br />
 <br />
 Valid epic names are: genie, if1, if2, inferno, oc, winds, titan, terra, oldvanir, testmaze10 and trans
