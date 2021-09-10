@@ -4,37 +4,32 @@ This script will allow any venomist to envenom and return weapons to their owner
 
 Main Commands
 -------------
-env on <minutes> - turns the envenom system on and broadcasts at regular intervals for the set amount of time
-  
-env on  - turns the envenom system on without an automatic broadcast
-  
-env off - turns the envenom system off
-  
-env ons - turns the envenom system on in silent mode
-  
-env all - envenom all weapons given to user
-  
-checkweapons - used at the end to returned any owned weapons to their owners that got missed
-  
-env weapons - envenoms all weapons in owner's inventory
+<pre>
+<b>env on (minutes)</b> - turns the envenom system on and broadcasts at regular intervals for the set amount of time
+<b>env on</b>           - turns the envenom system on without an automatic broadcast
+<b>env off</b>          - turns the envenom system off
+<b>env ons</b>          - turns the envenom system on in silent mode
+<b>env all</b>          - envenom all weapons given to user
+<b>checkweapons</b>     - used at the end to returned any owned weapons to their owners that got missed
+<b>env weapons</b>      - envenoms all weapons in owner's inventory
+</pre>
 
 Broadcast Commands
 ------------------
-env bc <channel> - sets the broadcast channel
-  
-env bc  - shows what channel the user has set for broadcasting, default is gt
-  
-env nc  - repeats report channel messages for new comers can also use env new and env newcomers
-  
-env lc  - sends a last call for envenoms message to report channel can also use env lastcall
+<pre>
+<b>env bc (channel)</b> - sets the broadcast channel
+<b>env bc</b>           - shows what channel the user has set for broadcasting, default is gt
+<b>env nc</b>           - repeats report channel messages for new comers can also use env new and env newcomers
+<b>env lc</b>           - sends a last call for envenoms message to report channel can also use env lastcall
+</pre>
 
 Other Commands
 --------------
-env settimer <minutes> - sets the interval for each automatic broacast
-  
-env helm <idnum> - used to set the id number of your true seeing helm command can be shorten to env h
-  
-env bag <idnum>  - used to set the id number of the container which holds your true seeing helm command can be shorten to env b
+<pre>
+<b>env settimer (minutes)</b> - sets the interval for each automatic broadcast
+<b>env helm (idnum)</b>       - used to set the id number of your true seeing helm command can be shorten to env h
+<b>env bag (idnum)</b>        - used to set the id number of the container which holds your true seeing helm command can be shorten to env b
+</pre>
 
 Please Note: I do not mind answering questions about this script but I will not be providing support for it. However, if you do have an idea for the script and I think it is great and I can code it I will add it if/when I have time.
 
