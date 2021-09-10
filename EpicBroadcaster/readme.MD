@@ -8,10 +8,10 @@ Main Commands
 <b>teb update</b>                     - checks for the latest version of plugin and installs it
 <b>teb checkversion</b>               - checks to see if there is a newer version of the plugin available
 <b>teb changelog</b>                  - displays the changelog for the plugin
-<b>teb <enable|disable> <channel></b> - enables/disables broadcasting for that particular channel
+<b>teb (enable|disable) (channel)</b> - enables/disables broadcasting for that particular channel
 <b>teb list</b>                       - lists the channels and their broadcasting status
 <b>teb cancel</b>                     - cancels the automatic broadcasting
-<b>teb settimer <minutes></b>         - sets the time for each automatic broacast
+<b>teb settimer (minutes)</b>         - sets the time for each automatic broacast
 <b>teb namedisplay</b>                       - toggles between Full and Short for epic name
 <b>teb vi</b>                                - enables/disables the vi friendly option
 <b>teb setdisplay <num></b>                  - sets the display type.
