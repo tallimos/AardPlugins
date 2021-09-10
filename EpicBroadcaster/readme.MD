@@ -14,7 +14,7 @@ Main Commands
 <b>teb settimer (minutes)</b>         - sets the time for each automatic broacast
 <b>teb namedisplay</b>                - toggles between Full and Short for epic name
 <b>teb vi</b>                         - enables/disables the vi friendly option
-<b>teb setdisplay <num></b>           - sets the display type.
+<b>teb setdisplay (num)</b>           - sets the display type.
                                       - Displays 1-20 are the normal displays, Displays 21-40 are similar but displays
                                         epic with (Mentor) flag
 <b>teb sample (display number|epic name)</b> - displays an example of the broadcast message using current settings.
