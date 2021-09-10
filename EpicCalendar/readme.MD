@@ -79,7 +79,9 @@ The next commands are basically just that, it will show the next epic coming up 
 <b>ecal nextleader (leader)</b>  - displays the next epic run coming up for a particular leader
 </pre>
 
-If the user specifies a channel in the above commands then the message will get displayed to that channel. For example 'ecal nextepic inferno ft' will display the next schedule inferno epic run to friend talk. Take Note - to display the next upcoming epic to a channel the user must use ecal nextepic epic (channel)
+If the user specifies a channel in the above commands then the message will get displayed to that channel. For example 'ecal nextepic inferno ft' will display the next schedule inferno epic run to friend talk.
+
+<b>Take Note<b> - to display the next upcoming epic to a channel the user must use ecal nextepic epic (channel)
 
 Channel Command System
 ----------------------
@@ -100,7 +102,23 @@ If the channel command system has been activated the users who have access can u
 <b>!listepic note</b>        - will request the bot to send them the schedule via a note
 <b>!noteremove (notenum)</b> - will request the bot to remove the schedule note
 </pre>
-  
+ 
+Approximate Run Time
+--------------------
+The epic calendar comes with a customizable Approximate Run Time calculator. When epic leaders post multiple epics in one note earlier versions of the calendar would set them with the same start time. Since v1.9 approximate start times will now be given instead.
+
+Customizable Commands
+---------------------
+<pre>
+<b>ecal rt list</b>                  - lists current stored approximate run times
+<b>ecal rt gt</b>                    - displays time allocated for grouping time
+<b>ecal rt gt (enable|disable)</b>   - adds/removes grouping time from approximate start time equation
+<b>ecal rt gt (minutes)</b>          - changes time allocated for grouping time
+<b>ecal rt edit (epic) (minutes)</b> - changes the approximate run time for (epic)
+
+PLEASE NOTE the user may also use ecal runtime as well
+</pre>
+
 User's Guide
 ------------
 https://docs.google.com/document/d/1Ewa9IlA4ZTMRowXQzK1mX-CHGw3Fjys7PhgpWLRRra4/edit?usp=sharing
