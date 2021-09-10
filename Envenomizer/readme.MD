@@ -1,12 +1,9 @@
 Tallimos' Envenomizer v1.4 for Aardwolf MUD
 -------------------------------------------                                
-
-
 This script will allow any venomist to envenom and return weapons to their owners. You will need a true seeing helm so that if you have true sight casted and it drops then you will still see hidden/invis players. You will need the id number for your true seeing helm as well as the id number for the container it is stored in.
 
 Main Commands
 -------------
-
 env on <minutes> - turns the envenom system on and broadcasts at regular intervals for the set amount of time
   
 env on  - turns the envenom system on without an automatic broadcast
