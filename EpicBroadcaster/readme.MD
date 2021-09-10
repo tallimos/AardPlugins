@@ -4,11 +4,12 @@ This plugin gives the user an easy to use broadcaster for announcing epic run gr
 
 Main Commands
 -------------
-<b>teb update</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- checks for the latest version of plugin and installs it<br />
-<b>teb checkversion</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- checks to see if there is a newer version of the plugin available<br />
-<b>teb changelog</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- displays the changelog for the plugin<br />
+<pre>
+<b>teb update</b>                     - checks for the latest version of plugin and installs it<br />
+<b>teb checkversion</b>               - checks to see if there is a newer version of the plugin available<br />
+<b>teb changelog</b>                  - displays the changelog for the plugin<br />
 <b>teb <enable|disable> <channel></b> - enables/disables broadcasting for that particular channel<br />
-<b>teb list</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- lists the channels and their broadcasting status<br />
+<b>teb list</b>                       - lists the channels and their broadcasting status<br />
 <b>teb cancel</b>                     - cancels the automatic broadcasting<br />
 <b>teb settimer <minutes></b>         - sets the time for each automatic broacast<br />
 <b>teb namedisplay</b>                       - toggles between Full and Short for epic name<br />
@@ -29,3 +30,4 @@ If included the system will figure out the number of broadcasts and will start a
 <i>Any optional message will get added to the end of the broadcast message</i><br />
 <br />
 Valid epic names are: genie, if1, if2, inferno, oc, winds, titan, terra, oldvanir, testmaze10 and trans
+</pre>
