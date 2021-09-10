@@ -29,6 +29,46 @@ Other Features
 
 <b>PLEASE NOTE</b>: the user can also use epiccalendar instead of ecal
 
+Tallimos' Epic Calendar Help - Notification Bot
+-----------------------------------------------
+
+The notification bot allows the user to alert themselves of upcoming epic runs. If an epic is going to start within 1 hour or less the system will remind the user about the upcoming epic run.
+
+Also with this system the user can grant whoever they want access to next commands without having to install the plugin themselves. See ecal help next for more information on those commands.
+
+Finally this system will also allow users to post hourly reminders to channels of their choosing of the next up coming epic run.
+
+Main Commands
+-------------
+<pre>
+<b>ecal bot (enable|disable)</b>                           - enables/disables the main bot system
+<b>ecal bot (auto|commands) list</b>                       - lists the channels and their settings for the specified system
+<b>ecal bot (auto|commands|alert) (enable|disable)</b>     - enables/disables the specified system
+<b>ecal bot (auto|commands) (enable|disable) (channel)</b> - enables/disables the channel notification in the specified system
+<b>ecal bot (add|remove) room</b>                          - adds/removes the current room to the approved note sending room list
+<b>ecal bot list room</b>                                  - displays the list of approved note sending rooms
+<b>ecal bot status</b>                                     - displays the status of the notification bot and its features
+</pre>
+
+Power User Commands
+-------------------
+<pre>
+<b>ecal bot (add|remove) (player)</b>  - add/removes players to the channel command permission system
+<b>ecal bot plist</b>                  - list all players who have access to the channel commands
+<b>ecal bot permissions</b>            - toggles channel command access between LIST and ALL. default is set to LIST
+</pre>
+
+Blacklist Commands
+------------------
+<pre>
+<b>ecal bot bl (enable|disable)</b>      - enables/disables blacklist for channel command access
+<b>ecal bot bl</b>                       - displays who is on the blacklist
+<b>ecal bot bl add (player) (reason)</b> - adds a player to the blacklist with the option to add the reason why
+<b>ecal bot bl remove (player)</b>       - remove a player from the blacklist
+
+<b>PLEASE NOTE</b>: only ft, gt, clan and tells have been added to the channel command system
+</pre>
+
 User's Guide
 ------------
 https://docs.google.com/document/d/1Ewa9IlA4ZTMRowXQzK1mX-CHGw3Fjys7PhgpWLRRra4/edit?usp=sharing
