@@ -11,7 +11,7 @@ Main Commands
 <b>ecal list</b>             - lists all upcoming epic runs
 <b>ecal vi</b>               - enables/disables the vi friendly option
 <b>ecal tdif</b>             - toggles hour display between mudtime and user's timezone
-                this only affects displays sent to USER ONLY anything sent via channel or note will show mud time as the hour
+                       this only affects displays sent to USER ONLY anything sent via channel or note will show mud time as the hour
 <b>ecal search (epic)</b>    - searches the epic runs list
 <b>ecal nupdate (note #)</b> - used when epic leader posts a subject line to long
 <b>ecal checkversion</b>     - checks to see if there is a newer version of the plugin available
