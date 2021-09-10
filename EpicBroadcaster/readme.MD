@@ -21,13 +21,13 @@ Main Commands
 <b>teb sample (display number|epic name)</b>  - displays an example of the broadcast message using current settings.
                                        - if optional display number is inputted the sample message will be of that display type.
                                        - if optional epic name is inputted it will show what the epic display name will appear as
-<b>teb broadcast (epic name) (minutes til epic) (optional message)</b> - starts the broadcasting system.
+<b>teb broadcast (epic name) (minutes til epic) (optional message)</b>
+                                       - starts the broadcasting system.
                                        - If the user does not input the number of minutes until the epic starts, then the grouping
                                          announcement will only broadcast once.
                                        - If included the system will figure out the number of broadcasts and will start and finish
                                          broadcasting automatically including a last call.
-
-                                      <i>Any optional message will get added to the end of the broadcast message</i>
+                                       - Any optional message will get added to the end of the broadcast message
 
 Valid epic names are: genie, if1, if2, inferno, oc, winds, titan, terra, oldvanir, testmaze10 and trans
 </pre>
