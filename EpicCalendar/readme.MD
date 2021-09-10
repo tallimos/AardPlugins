@@ -32,4 +32,3 @@ Other Features
 User's Guide
 ------------
 https://docs.google.com/document/d/1Ewa9IlA4ZTMRowXQzK1mX-CHGw3Fjys7PhgpWLRRra4/edit?usp=sharing
-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
