@@ -22,8 +22,8 @@ Main Commands
                                                display type.
                                              - if optional epic name is inputted it will show what the epic display name
                                                will appear as
-<b>teb setcolour <epic name> <colourcode></b> - sets colour code for that particular epic
-<b>teb broadcast <epic name> (minutes til epic) (optional message)</b> - starts the broadcasting system.
+<b>teb setcolour (epic name) (colourcode)</b> - sets colour code for that particular epic
+<b>teb broadcast (epic name) (minutes til epic) (optional message)</b> - starts the broadcasting system.
                                              - If the user does not input the number of minutes until the epic starts, then
                                                the grouping announcement will only broadcast once.
                                              - If included the system will figure out the number of broadcasts and will start
