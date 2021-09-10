@@ -27,8 +27,8 @@ Other Commands
 --------------
 <pre>
 <b>env settimer (minutes)</b> - sets the interval for each automatic broadcast
-<b>env helm (idnum)</b>       - used to set the id number of your true seeing helm command can be shorten to env h
-<b>env bag (idnum)</b>        - used to set the id number of the container which holds your true seeing helm command can be shorten to env b
+<b>env helm (idnum)</b>       - used to set the id number of your true seeing helm
+<b>env bag (idnum)</b>        - used to set the id number of the container which holds your true seeing helm
 </pre>
 
 Please Note: I do not mind answering questions about this script but I will not be providing support for it. However, if you do have an idea for the script and I think it is great and I can code it I will add it if/when I have time.
