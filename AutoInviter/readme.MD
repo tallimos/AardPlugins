@@ -31,7 +31,6 @@ tai autounlock <num>         - autolocks the group after group count reachs a ce
  
 Keyword Commands
 ----------------
-
 tai keywords                - lists your autoinvite keywords
  
 tai keyword add <keyword>    - adds keyword to the keyword list. can be made up of multiple words
@@ -41,7 +40,6 @@ tai keyword remove <keyword> - remove keyword from the keyword list
 
  Blacklist Commands
 ------------------
-
 tai bl enable                - enables the blacklist
  
 tai bl disable               - disables the blacklist
@@ -55,7 +53,6 @@ tai bl remove <player>       - remove a player from the blacklist
 
 Power User Commands
 -------------------
-
 tai pusers                   - lists your approved power users
 
 tai puser enable             - enables the power user commands
