@@ -29,5 +29,5 @@ Main Commands
                                          broadcasting automatically including a last call.
                                        - Any optional message will get added to the end of the broadcast message
 
-Valid epic names are: genie, if1, if2, inferno, oc, winds, titan, terra, oldvanir, testmaze10 and trans
+Valid epic names are: <b>genie</b>, <b>if1</b>, <b>if2</b>, <b>inferno</b>, <b>oc</b>, <b>winds</b>, <b>titan</b>, <b>terra</b>, <b>oldvanir</b>, <b>testmaze10</b> and <b>trans</b>
 </pre>
