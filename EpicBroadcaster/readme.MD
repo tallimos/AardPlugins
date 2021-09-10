@@ -4,7 +4,7 @@ This plugin gives the user an easy to use broadcaster for announcing epic run gr
 
 Main Commands
 -------------
-teb update                     - checks for the latest version of plugin and installs it<br >
+teb update                     - checks for the latest version of plugin and installs it<br />
 teb checkversion               - checks to see if there is a newer version of the plugin available
 
 teb changelog                  - displays the changelog for the plugin
