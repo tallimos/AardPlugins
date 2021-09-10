@@ -79,7 +79,7 @@ The next commands are basically just that, it will show the next epic coming up 
 <b>ecal nextleader (leader)</b>  - displays the next epic run coming up for a particular leader
 </pre>
 
-If the user specifies a channel in the above commands then the message will get displayed to that channel. For example 'ecal nextepic inferno ft' will display the next schedule inferno epic run to friend talk. Take Note - to display the next upcoming epic to a channel the user must use ecal nextepic epic <channel>
+If the user specifies a channel in the above commands then the message will get displayed to that channel. For example 'ecal nextepic inferno ft' will display the next schedule inferno epic run to friend talk. Take Note - to display the next upcoming epic to a channel the user must use ecal nextepic epic (channel)
 
 Channel Command System
 ----------------------
