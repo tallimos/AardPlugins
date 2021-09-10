@@ -12,19 +12,22 @@ Main Commands
 <b>teb list</b>                       - lists the channels and their broadcasting status
 <b>teb cancel</b>                     - cancels the automatic broadcasting
 <b>teb settimer (minutes)</b>         - sets the time for each automatic broacast
-<b>teb namedisplay</b>                       - toggles between Full and Short for epic name
-<b>teb vi</b>                                - enables/disables the vi friendly option
-<b>teb setdisplay <num></b>                  - sets the display type.
-                                             - Displays 1-20 are the normal displays, Displays 21-40 are similar but displays epic with (Mentor) flag
+<b>teb namedisplay</b>                - toggles between Full and Short for epic name
+<b>teb vi</b>                         - enables/disables the vi friendly option
+<b>teb setdisplay <num></b>           - sets the display type.
+                                      - Displays 1-20 are the normal displays, Displays 21-40 are similar but displays
+                                        epic with (Mentor) flag
 <b>teb sample (display number|epic name)</b> - displays an example of the broadcast message using current settings.
-                                             - if optional display number is inputted the sample message will be of that display type.
-                                             - if optional epic name is inputted it will show what the epic display name will appear as
+                                             - if optional display number is inputted the sample message will be of that
+                                               display type.
+                                             - if optional epic name is inputted it will show what the epic display name
+                                               will appear as
 <b>teb setcolour <epic name> <colourcode></b> - sets colour code for that particular epic
 <b>teb broadcast <epic name> (minutes til epic) (optional message)</b> - starts the broadcasting system.
-                                             - If the user does not input the number of minutes until the epic starts, then the grouping announcement will
-                                               only broadcast once.
-                                             - If included the system will figure out the number of broadcasts and will start and finish broadcasting automatically
-                                               including a last call.
+                                             - If the user does not input the number of minutes until the epic starts, then
+                                               the grouping announcement will only broadcast once.
+                                             - If included the system will figure out the number of broadcasts and will start
+                                               and finish broadcasting automatically including a last call.
 
 <i>Any optional message will get added to the end of the broadcast message</i>
 
