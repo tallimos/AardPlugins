@@ -29,9 +29,8 @@ Other Features
 
 <b>PLEASE NOTE</b>: the user can also use epiccalendar instead of ecal
 
-Tallimos' Epic Calendar Help - Notification Bot
------------------------------------------------
-
+Notification Bot
+----------------
 The notification bot allows the user to alert themselves of upcoming epic runs. If an epic is going to start within 1 hour or less the system will remind the user about the upcoming epic run.
 
 Also with this system the user can grant whoever they want access to next commands without having to install the plugin themselves. See ecal help next for more information on those commands.
@@ -69,6 +68,39 @@ Blacklist Commands
 <b>PLEASE NOTE</b>: only ft, gt, clan and tells have been added to the channel command system
 </pre>
 
+Next Commands
+-------------
+The next commands are basically just that, it will show the next epic coming up in various categories.
+
+<pre>
+<b>ecal nextepic</b>             - displays to the user which epic run is coming up next
+<b>ecal nextepic (epic)</b>      - displays when the next specified epic run is coming up
+<b>ecal nextday (day)</b>        - displays the first epic run on a particular day
+<b>ecal nextleader (leader)</b>  - displays the next epic run coming up for a particular leader
+</pre>
+
+If the user specifies a channel in the above commands then the message will get displayed to that channel. For example 'ecal nextepic inferno ft' will display the next schedule inferno epic run to friend talk. Take Note - to display the next upcoming epic to a channel the user must use ecal nextepic epic <channel>
+
+Channel Command System
+----------------------
+If the channel command system has been activated the users who have access can using the commands below to see upcoming epic runs
+
+<pre>
+<b>!nextepic</b>             - displays the next upcoming epic
+<b>!nextepic (epic)</b>      - displays when the next specified epic is scheduled
+<b>!nextleader (leader)</b>  - displays the first epic scheduled for that particular leader
+<b>!nextday (day)</b>        - displays the first epic of the day on that particular day
+<b>!listday</b>              - displays the epic schedule for the current day on one line
+<b>!listday (day)</b>        - displays the epic schedule for a particular day on one line
+<b>!listepic</b>             - displays the entire epic schedule on one line, sorted by day
+<b>!listepic leader</b>      - displays the entire epic schedule on one line, grouped by leader
+<b>!listepic epic</b>        - displays the entire epic schedule on one line, sorted by epic name
+<b>!listepic (epic name)</b> - displays the full schedule of the epic the user searched for
+<b>!listleader (leader)</b>  - displays the full schedule for a particular leader
+<b>!listepic note</b>        - will request the bot to send them the schedule via a note
+<b>!noteremove (notenum)</b> - will request the bot to remove the schedule note
+</pre>
+  
 User's Guide
 ------------
 https://docs.google.com/document/d/1Ewa9IlA4ZTMRowXQzK1mX-CHGw3Fjys7PhgpWLRRra4/edit?usp=sharing
