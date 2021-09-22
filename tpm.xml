@@ -17,13 +17,31 @@
     <download>https://raw.githubusercontent.com/Tallimos/AardPlugins/main/EpicBroadcaster/Tallimos_Epic_Broadcaster.zip</download>
     <installpath>0</installpath>
   </plugin>
-
+  
+  <plugin>
+    <name>Envemonizer</name>
+    <author>Tallimos</author>
+    <id>b445cca7f6737a991a3f55ac</id>
+    <description>Envenomizer Script</description>
+    <download>https://raw.githubusercontent.com/Tallimos/AardPlugins/main/Envenomizer/Tallimos_Envenomizer.zip</download>
+    <installpath>0</installpath>
+  </plugin>
+  
   <plugin>
     <name>EpicCalendar</name>
     <author>Tallimos</author>
     <id>1d1e01d90f0e2983c358b32e</id>
     <description>Allows the user to easily keep track of epic runs</description>
     <download>https://raw.githubusercontent.com/Tallimos/AardPlugins/main/EpicCalendar/Tallimos_EpicCalendar.zip</download>
+    <installpath>0</installpath>
+  </plugin>
+  
+  <plugin>
+    <name>Icefall 2 Fragment Counter</name>
+    <author>Tallimos</author>
+    <id>e7b8380eaba4b9b8b45a4ea5</id>
+    <description>Allows blockers an automatic way to count and report fragments in their current location</description>
+    <download>https://raw.githubusercontent.com/Tallimos/AardPlugins/main/FragCounter/Tallimos_IF_Frag_Counter.zip</download>
     <installpath>0</installpath>
   </plugin>
  </pluginsListing>
