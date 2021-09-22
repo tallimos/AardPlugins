@@ -1,5 +1,8 @@
 Tallimos' Plugins for Aardwolf MUD
 ----------------------------------
+"Aardwolf RPG is a unique and free text based roleplaying game. Aardwolf is based in the fantasy world of Andolor where magic is common and there are hundreds of exotic realms to explore, puzzles to solve and quests to complete. Aardwolf features a realistic game world with multiple continents and real geography. Each area includes a real time line-of-sight overhead map to see other characters and points of interest around you." -- https://www.aardwolf.com/
+
+These plugins work with Aardwolf Client created by fiendish and can be found https://fiendish.github.io/aardwolfclientpackage/
 
 AutoInviter
 -----------
