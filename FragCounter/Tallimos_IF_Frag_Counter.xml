@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2021-06-24 13:05:27"
    requires="4.73"
-   version="1.0"
+   version="1.1"
    >
 
 </plugin>
@@ -26,6 +26,16 @@
 <include name="constants.lua"/>
 
 <triggers>
+	  <trigger
+		enabled="y"
+		group="IceFall_Epic"
+		match="^An energized ruby fragment flies (\w+)\."
+		regexp="y"
+		script="IcefallFragMovement"
+		sequence="100"
+		omit_from_output="y"
+		>
+	</trigger>
 	<trigger
 		enabled="n"
 		script="IFFragConsiderOff"
@@ -300,22 +310,106 @@ function DisplayIFFragConsider()
 	
 	local location = ""
 	
-	if tonumber(gmcproomid) == 38774 then
+	-- 7 x 6 Grid 
+	-- 38806 (5n3w) 38807 (5n2w) 38808 (5n1w) 38809 (5n) 38810 (5n1e) 38811 (5n2e) 38812 (5n3e)
+	-- 38799 (4n3w) 38800 (4n2w) 38801 (4n1w) 38802 (4n) 38803 (4n1e) 38804 (4n2e) 38805 (4n3e)
+	-- 38792 (3n3w) 38793 (3n2w) 38794 (3n1w) 38795 (3n) 38796 (3n1e) 38797 (3n2e) 38798 (3n3e)
+	-- 38785 (2n3w) 38786 (2n2w) 38787 (2n1w) 38788 (2n) 38789 (2n1e) 38790 (2n2e) 38791 (2n3e)
+	-- 38778 (1n3w) 38779 (1n2w) 38780 (1n1w) 38781 (1n) 38782 (1n1e) 38783 (1n2e) 38784 (1n3e)
+	-- 38771 (0n3w) 38772 (0n2w) 38773 (0n1w) 38774 (0n) 38775 (0n1e) 38776 (0n2e) 38777 (0n3e)
+		
+	-- 0n - 38771 - 38777
+	if tonumber(gmcproomid) == 38771 then
+		location = "0n3w"
+	elseif tonumber(gmcproomid) == 38772 then
+		location = "0n2w"
+	elseif tonumber(gmcproomid) == 38773 then
+		location = "0n1w"
+	elseif tonumber(gmcproomid) == 38774 then
 		location = "0n"
+	elseif tonumber(gmcproomid) == 38775 then
+		location = "0n1e"
+	elseif tonumber(gmcproomid) == 38776 then
+		location = "0n2e"
+	elseif tonumber(gmcproomid) == 38777 then
+		location = "0n3e"
+	-- 1n - 38778 - 38784
+	elseif tonumber(gmcproomid) == 38778 then
+		location = "1n3w"
+	elseif tonumber(gmcproomid) == 38779 then
+		location = "1n2w"
+	elseif tonumber(gmcproomid) == 38780 then
+		location = "1n1w"
 	elseif tonumber(gmcproomid) == 38781 then
 		location = "1n"
+	elseif tonumber(gmcproomid) == 38782 then
+		location = "1n1e"
+	elseif tonumber(gmcproomid) == 38783 then
+		location = "1n2e"
+	elseif tonumber(gmcproomid) == 38784 then
+		location = "1n3e"
+	-- 2n - 38785 - 38791
+	elseif tonumber(gmcproomid) == 38785 then
+		location = "2n3w"
+	elseif tonumber(gmcproomid) == 38786 then
+		location = "2n2w"
+	elseif tonumber(gmcproomid) == 38787 then
+		location = "2n1w"
 	elseif tonumber(gmcproomid) == 38788 then
 		location = "2n"
+	elseif tonumber(gmcproomid) == 38789 then
+		location = "2n1e"
+	elseif tonumber(gmcproomid) == 38790 then
+		location = "2n2e"
+	elseif tonumber(gmcproomid) == 38791 then
+		location = "2n3e"
+	-- 3n - 38792 - 38798
+	elseif tonumber(gmcproomid) == 38792 then
+		location = "3n3w"
+	elseif tonumber(gmcproomid) == 38793 then
+		location = "3n2w"
+	elseif tonumber(gmcproomid) == 38794 then
+		location = "3n1w"
 	elseif tonumber(gmcproomid) == 38795 then
 		location = "3n"
+	elseif tonumber(gmcproomid) == 38796 then
+		location = "3n1e"
+	elseif tonumber(gmcproomid) == 38797 then
+		location = "3n2e"
+	elseif tonumber(gmcproomid) == 38798 then
+		location = "3n3e"
+	-- 4n - 38799 - 38805
+	elseif tonumber(gmcproomid) == 38799 then
+		location = "4n3w"
+	elseif tonumber(gmcproomid) == 38800 then
+		location = "4n2w"
+	elseif tonumber(gmcproomid) == 38801 then
+		location = "4n1w"
 	elseif tonumber(gmcproomid) == 38802 then
 		location = "4n"	
-	elseif tonumber(gmcproomid) == 38773 then
-		location = "1w"
-	elseif tonumber(gmcproomid) == 38775 then
-		location = "1e"
+	elseif tonumber(gmcproomid) == 38803 then
+		location = "4n1e"
+	elseif tonumber(gmcproomid) == 38804 then
+		location = "4n2e"
+	elseif tonumber(gmcproomid) == 38805 then
+		location = "4n3e"	
+	-- 5n - 38806 - 38812
+	elseif tonumber(gmcproomid) == 38806 then
+		location = "5n3w"
+	elseif tonumber(gmcproomid) == 38807 then
+		location = "5n2w"
+	elseif tonumber(gmcproomid) == 38808 then
+		location = "5n1w"
+	elseif tonumber(gmcproomid) == 38809 then
+		location = "5n"	
+	elseif tonumber(gmcproomid) == 38810 then
+		location = "5n1e"
+	elseif tonumber(gmcproomid) == 38811 then
+		location = "5n2e"
+	elseif tonumber(gmcproomid) == 38812 then
+		location = "5n3e"
 	end
-	
+
 	if location == "" or location == nil then
 		ColourNote(err_colour, "", "You are not in one of the seven blocking locations, please move and try again.")
 	else
@@ -344,6 +438,11 @@ function Epic_Consider(name, line, wc)
 	if Trim(mobname) == "an energized ruby fragment" then 			
 		IFFragCount = IFFragCount + 1
 	end
+end
+
+function IcefallFragMovement(name, line, wc)
+	fragdir = string.upper(wc[1])
+	ColourNote(msg_colour, "", "an energized ruby fragment moved ", help_command_colour, "", fragdir)
 end
 
 -------------------------------------------
