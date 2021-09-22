@@ -1,4 +1,3 @@
-
 Tallimos' Epic Calendar v2.21 for Aardwolf MUD
 ----------------------------------------------
 This plugin gives the user an easy way of keeping track of upcoming epic runs as well as some nice few extras. Once installed the user can use the commands below to update the list. Also if a note is posted while the user is online the list will automatically get updated.
