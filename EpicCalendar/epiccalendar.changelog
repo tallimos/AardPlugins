@@ -1,5 +1,13 @@
 dbot.changelog = {}
 
+dbot.changelog[2.23] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Fixed error with spouse channel not working correctly with bot commands"
+  },
+}
+
+
 dbot.changelog[2.22] =
 {
   { change = drlDbotChangeLogTypeFix,

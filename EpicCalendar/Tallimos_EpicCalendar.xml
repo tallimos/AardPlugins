@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="2.22"
+   version="2.23"
    >
    
 </plugin>
@@ -317,7 +317,7 @@
 	<trigger
 		enabled="n"
 		group="BotCommandCapture"
-		match="^\(Spouse\)\:(\w+)\s\!(help|noteremove|listleader|listday|epiclist|listepic|listepics|nextepic|nextday|nextleader)\s?(.*?)?$"
+		match="^\(Spouse\)\:\s(\w+)\s\!(help|noteremove|listleader|listday|epiclist|listepic|listepics|nextepic|nextday|nextleader)\s?(.*?)?$"
 		name="SpouseChannel"
 		script="SpouseChannel"
 		sequence="100"
@@ -1429,7 +1429,7 @@ function AddEpic(notenum, notedate, cname, subjectline)
 					end
 				end
 			end
-		
+
 			if oktoadd ~= "NO" then
 				EpicTable[TableIndex]["Epic Leader"] = cname
 				EpicTable[TableIndex]["Note Number"] = notenum
