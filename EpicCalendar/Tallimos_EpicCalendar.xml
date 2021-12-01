@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="2.23"
+   version="2.24"
    >
    
 </plugin>
@@ -1812,7 +1812,7 @@ function ListEpic()
 		title = "Epic Run List - Searching: " .. listtypeT
 	end
 	
-	title2 = "+-----------+------------+-----------+-----------+---------------------------------+"
+	title2 = "+-----------+-------------+-----------+-----------+---------------------------------+"
 	
 	local leng = tonumber(string.len(title))
 	local leng2 = tonumber(string.len(title2))
@@ -1840,7 +1840,7 @@ function ListEpic()
 			TimeTitle = "Time-User"
 		end
 		
-		ColourNote(msg_colour, "", "| Epic      | Leader     | Day       | " .. TimeTitle ..  " | Time Until Epic                 |")
+		ColourNote(msg_colour, "", "| Epic      | Leader      | Day       | " .. TimeTitle ..  " | Time Until Epic                 |")
 		
 		ColourNote(msg_colour, "", title2)
 	end
@@ -2008,7 +2008,7 @@ function DisplayRow(ename, eleader, eday, hour, timedef, apindex)
 
 	if ename == nil then namespace = 9 else namespace = MakeSpace(ename, 9) end
 
-	if eleader == nil then leaderspace = 10 else leaderspace = MakeSpace(eleader, 10) end
+	if eleader == nil then leaderspace = 11 else leaderspace = MakeSpace(eleader, 11) end
 
 	if eday == nil then dayspace = 9 else dayspace = MakeSpace(eday, 9) end
 	
@@ -2102,7 +2102,7 @@ function PostEpic()
 	local hour = ""
 
 	local title = "Epic Run List"
-	local title2 = "+---------+----------+---------+---------+-------------------------------+"
+	local title2 = "+---------+-----------+---------+---------+-------------------------------+"
 	
 	local leng = tonumber(string.len(title))
 	local leng2 = tonumber(string.len(title2))
@@ -2121,7 +2121,7 @@ function PostEpic()
 	SendNoEcho (spacing .. "@R" .. title .. "@w")
 	SendNoEcho ("@w")
 	SendNoEcho ("@D" .. title2)
-	SendNoEcho ("@D| Epic    | Leader   | Day     | Time    | Time Until Epic               |@w")
+	SendNoEcho ("@D| Epic    | Leader    | Day     | Time    | Time Until Epic               |@w")
 	SendNoEcho ("@D" .. title2)
 	
 	table.sort(EpicTable, function (a, b) local atime = os.time(a["Time Table"]); local btime = os.time(b["Time Table"]); if atime == btime then return a["Index"] < b["Index"] else return atime < btime end end)
@@ -2185,7 +2185,7 @@ function PostRow(ename, eleader, eday, hour, timedef, apindex)
 
 	if ename == nil then namespace = 9 else namespace = MakeSpace(ename, 9) end
 
-	if eleader == nil then leaderspace = 10 else leaderspace = MakeSpace(eleader, 10) end
+	if eleader == nil then leaderspace = 11 else leaderspace = MakeSpace(eleader, 11) end
 
 	if eday == nil then dayspace = 9 else dayspace = MakeSpace(eday, 9) end
 	

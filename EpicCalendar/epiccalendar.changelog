@@ -1,12 +1,18 @@
 dbot.changelog = {}
 
+dbot.changelog[2.24] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Fixed spacing issue with leader display in epic list"
+  },
+}
+
 dbot.changelog[2.23] =
 {
   { change = drlDbotChangeLogTypeFix,
     desc   = "Fixed error with spouse channel not working correctly with bot commands"
   },
 }
-
 
 dbot.changelog[2.22] =
 {
