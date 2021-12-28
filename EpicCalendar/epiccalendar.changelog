@@ -1,5 +1,12 @@
 dbot.changelog = {}
 
+dbot.changelog[2.25] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Fixed issue with epic runs posted for the following year"
+  },
+}
+
 dbot.changelog[2.24] =
 {
   { change = drlDbotChangeLogTypeFix,

@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="2.24"
+   version="2.25"
    >
    
 </plugin>
@@ -251,7 +251,7 @@
 	<trigger
 		enabled="n"
 		group="BotCommandCapture"
-		match="^(\w+)\stells\syou\s\'\!(help|noteremove|listleader|listday|epiclist|listepic|listepics|nextepic|nextday|nextleader)\s?(.*?)?\'$"
+		match="^(\w+)\stells\syou\s\'\!(help|noteremove|listleader|listday|epiclist|listepic|listepics|nextepic|nextday|nextleader|update)\s?(.*?)?\'$"
 		name="TellChannel"
 		script="TellChannel"
 		sequence="100"
@@ -262,7 +262,7 @@
 	<trigger
 		enabled="n"
 		group="BotCommandCapture"
-		match="^You tell the CLAN\:\s\'\!(help|noteremove|listleader|listday|epiclist|listepic|listepics|nextepic|nextday|nextleader)\s?(.*?)?\'$"
+		match="^You tell the CLAN\:\s\'\!(help|noteremove|listleader|listday|epiclist|listepic|listepics|nextepic|nextday|nextleader|update)\s?(.*?)?\'$"
 		name="ClanChannelYou"
 		script="ClanChannelYou"
 		sequence="100"
@@ -273,7 +273,7 @@
 	<trigger
 		enabled="n"
 		group="BotCommandCapture"
-		match="^\(Group\)\s(\w+)\:\s\'\!(help|noteremove|listleader|listday|epiclist|listepic|listepics|nextepic|nextday|nextleader)\s?(.*?)?\'$"
+		match="^\(Group\)\s(\w+)\:\s\'\!(help|noteremove|listleader|listday|epiclist|listepic|listepics|nextepic|nextday|nextleader|update)\s?(.*?)?\'$"
 		name="GroupChannel"
 		script="GroupChannel"
 		sequence="100"
@@ -284,7 +284,7 @@
 	<trigger
 		enabled="n"
 		group="BotCommandCapture"
-		match="^\(Friend\)\s(\w+)\:\s\'\!(help|noteremove|listleader|listday|epiclist|listepic|listepics|nextepic|nextday|nextleader)\s?(.*?)?\'$"
+		match="^\(Friend\)\s(\w+)\:\s\'\!(help|noteremove|listleader|listday|epiclist|listepic|listepics|nextepic|nextday|nextleader|update)\s?(.*?)?\'$"
 		name="FriendChannel"
 		script="FriendChannel"
 		sequence="100"
@@ -295,7 +295,7 @@
 	<trigger
 		enabled="n"
 		group="BotCommandCapture"
-		match="^You tell your friends\:\s\'!(help|noteremove|listleader|listday|epiclist|listepic|listepics|nextepic|nextday|nextleader)\s?(.*?)?\'$"
+		match="^You tell your friends\:\s\'!(help|noteremove|listleader|listday|epiclist|listepic|listepics|nextepic|nextday|nextleader|update)\s?(.*?)?\'$"
 		name="FriendChannelYou"
 		script="FriendChannelYou"
 		sequence="100"
@@ -306,7 +306,7 @@
 	<trigger
 		enabled="n"
 		group="BotCommandCapture"
-		match="^(\w+)\s\((?:.*?)\)\stells the CLAN\:\s\'\!(help|noteremove|listleader|listday|epiclist|listepic|listepics|nextepic|nextday|nextleader)\s?(.*?)?\'$"
+		match="^(\w+)\s\((?:.*?)\)\stells the CLAN\:\s\'\!(help|noteremove|listleader|listday|epiclist|listepic|listepics|nextepic|nextday|nextleader|update)\s?(.*?)?\'$"
 		name="ClanChannel"
 		script="ClanChannel"
 		sequence="100"
@@ -317,7 +317,7 @@
 	<trigger
 		enabled="n"
 		group="BotCommandCapture"
-		match="^\(Spouse\)\:\s(\w+)\s\!(help|noteremove|listleader|listday|epiclist|listepic|listepics|nextepic|nextday|nextleader)\s?(.*?)?$"
+		match="^\(Spouse\)\:\s(\w+)\s\!(help|noteremove|listleader|listday|epiclist|listepic|listepics|nextepic|nextday|nextleader|update)\s?(.*?)?$"
 		name="SpouseChannel"
 		script="SpouseChannel"
 		sequence="100"
@@ -328,7 +328,7 @@
 	<trigger
 		enabled="n"
 		group="BotCommandCapture"
-		match="^\(Spouse\)\:\s\!(help|noteremove|listleader|listday|epiclist|listepic|listepics|nextepic|nextday|nextleader)\s?(.*?)?$"
+		match="^\(Spouse\)\:\s\!(help|noteremove|listleader|listday|epiclist|listepic|listepics|nextepic|nextday|nextleader|update)\s?(.*?)?$"
 		name="SpouseChannelYou"
 		script="SpouseChannelYou"
 		sequence="100"
@@ -398,11 +398,12 @@
 	</trigger>
 	<trigger
 		enabled="n"
-		group="EpicCalendar"
+		group="EpicCalendarStart"
 		match="Current forum changed to Epics. You can read and write in this forum."
 		sequence="100"
 		ignore_case="y"
 		omit_from_output="y"
+		script="EpicUpdateStart"
 		>
 	</trigger>
 	<trigger
@@ -1206,12 +1207,17 @@ function ResetEpicTable()
 	
 	GetCurrentBoard()
 	
-	world.EnableGroup ("EpicCalendar", 1)
+	world.EnableGroup ("EpicCalendarStart", 1)
 	SendNoEcho ("board epics")
-	SendNoEcho ("note list")
 end-- ResetEpicTable
 
+function EpicUpdateStart()
+	world.EnableGroup ("EpicCalendar", 1)
+	SendNoEcho ("note list")
+end
+
 function EpicUpdateEnd()
+	world.EnableGroup ("EpicCalendarStart", 0)
 	world.EnableGroup ("EpicCalendar", 0)
 	world.EnableGroup ("EpicUpdateEnd", 0)
 
@@ -1225,6 +1231,11 @@ function EpicUpdateEnd()
 		resetcheck = "NO"
 		ColourNote(epiccalcolour, "", "[EpicCAL] ", msg_colour, "", "Epic list has been updated.")
 		Note("")
+	end
+	
+	if resetchannel ~= nil then
+		SendNoEcho (resetchannel .. " @R[EpicCAL] @DList has been updated.@w")
+		resetchannel = nil
 	end
 	
 	world.EnableGroup ("GetBoardEndTrig", 1)
@@ -1524,7 +1535,6 @@ function AddEpic(notenum, notedate, cname, subjectline)
 						end
 					end
 					
-					
 					if acfail == "YES" then
 						table.remove (EpicTable, TableIndex)
 						TableIndex = TableIndex - 1
@@ -1610,7 +1620,8 @@ end -- FixApproxTime
 function NoDateFound()
 	EpicTable[TableIndex]["Time Table"] = {}
     EpicTable[TableIndex]["Time Table"]["month"] = SystemTimeTable["month"]
-
+	EpicTable[TableIndex]["Time Table"]["year"] = SystemTimeTable["year"]
+	
 	dayindexstart = SystemTimeTable["wday"] -- start with the system's today, i.e. saturday would be 7
 	day = EpicTable[TableIndex]["Day of Week"] -- we need the day of week from epic post
 	ydaydif = 0
@@ -1666,7 +1677,7 @@ function PopulateTimeTable(TableIndex)
 			end
 		end
 		
-		EpicTable[TableIndex]["Time Table"]["year"] = SystemTimeTable["year"]
+		-- EpicTable[TableIndex]["Time Table"]["year"] = SystemTimeTable["year"]
 
 		for i,v in ipairs(DaysofWeekShort) do
 			search = EpicTable[TableIndex]["Day of Week"]
@@ -1685,7 +1696,8 @@ function PopulateTimeTable(TableIndex)
 		MonthIndex = EpicTable[TableIndex]["Time Table"]["month"]
 		yday = MonthsYDay[MonthIndex] + EpicTable[TableIndex]["Time Table"]["day"]
 		
-		if (SystemTimeTable["year"]%4) == 0 then yday = yday + 1 end
+		-- if (SystemTimeTable["year"]%4) == 0 then yday = yday + 1 end
+		if (EpicTable[TableIndex]["Time Table"]["year"]%4) == 0 then yday = yday + 1 end
 		
 		EpicTable[TableIndex]["Time Table"]["yday"] = yday
 		
@@ -1695,7 +1707,11 @@ function PopulateTimeTable(TableIndex)
 		local tindex = TableIndex - 1
 		pttname = EpicTable[tindex]["Epic Name"]
 		pttaddtime = EpicMisc["ApproxRunTimes"][pttname]
-		approxtime = approxtime + pttaddtime
+		
+		if pttaddtime ~= nil then
+			approxtime = approxtime + pttaddtime
+		end
+		
 		FixApproxTime(TableIndex)
 	end
 end -- PopulateTimeTable
@@ -2195,7 +2211,7 @@ function PostRow(ename, eleader, eday, hour, timedef, apindex)
 	
 	SendNoEcho ("@D|@R" .. ename .. namespace .. "@D|@Y" .. eleader .. leaderspace .. "@D|@w" .. eday .. dayspace .. "@D|@w" .. timespace .. hour .. apxhour .. "@D|@G" .. remainspace .. trim(timedef) .. "@D|@w")
 end -- PostRow
-
+ 
 -----------------------------------------------
 ------------ NOTE UPDATE FUNCTIONS ------------
 -----------------------------------------------
@@ -3477,6 +3493,9 @@ function ChannelBot(user, cmd, search, channel)
 				SendNoEcho ("board personal")
 				SendNoEcho ("note remove " .. nnum)
 			end
+		elseif cmd == "update" then
+			ResetEpicTable()
+			resetchannel = channel
 		elseif cmd == "help" then
 			BotHelp(channel, user, search)
 		else
@@ -3503,6 +3522,9 @@ function ChannelBot(user, cmd, search, channel)
 		elseif cmd == "noteremove" then
 			user = string.gsub (user, "^.", string.upper)
 			SendNoEcho (channel .. " @R[EpicCAL] @DSorry @C" .. user .. "@D, Which note did you want me to remove?")
+		elseif cmd == "update" then
+			ResetEpicTable()
+			resetchannel = channel
 		elseif cmd == "help" then
 			user = string.gsub (user, "^.", string.upper)
 			SendNoEcho (channel .. " @R[EpicCAL] @DHello @C" .. user .. "@D, available commands: @C!nextepic@D, @C!nextday@D, @C!nextleader@D, @C!listepic@D, @C!listday, !listleader @Dand @C!noteremove@D. Please see @C!help <cmd> @Dfor more information, i.e. @C!help nextepic@D.@w")
@@ -3511,6 +3533,11 @@ function ChannelBot(user, cmd, search, channel)
 end -- ChannelBot
 
 function CheckOver(eindex)
+	if EpicTable[eindex]["Time Table"]["year"] > SystemTimeTable["year"] then
+		ocheck = "NO"
+		return ocheck
+	end
+	
 	if EpicTable[eindex]["Time Table"] == nil then 
 		ocheck = "YES"
 		return ocheck
@@ -4415,11 +4442,15 @@ function NextEpicComingUp()
 	elseif EpicTable[lowestindex]["Epic Name"] == "oc" then
 		ename = "OC"
 	else 
-		ename = string.gsub (EpicTable[lowestindex]["Epic Name"], "^.", string.upper)
+		if EpicTable[lowestindex]["Epic Name"] ~= nil then
+			ename = string.gsub (EpicTable[lowestindex]["Epic Name"], "^.", string.upper)
+		end
 	end
-
-	ColourNote(epiccalcolour, "", "[EpicCAL] ", msg_colour, "", "NEXT EPIC ALERT ", "red", "" , "[" .. ename .. " Epic]", msg_colour, "" , " starting in ", qty_colour, "", trim(timeremaining))
-	Note("")
+	
+	if ename ~= nil then
+		ColourNote(epiccalcolour, "", "[EpicCAL] ", msg_colour, "", "NEXT EPIC ALERT ", "red", "" , "[" .. ename .. " Epic]", msg_colour, "" , " starting in ", qty_colour, "", trim(timeremaining))
+		Note("")
+	end
 end -- NextEpicComingUp
 
 -----------------------------------------------
