@@ -15,10 +15,14 @@
    save_state="y"
    date_written="2018-08-15 11:40:15"
    requires="4.36"
-   version="1.4"
+   version="1.41"
    >
    
 </plugin>
+
+<!-- Credit goes to Crowley for his version of the Envenomizer which this script -->
+<!-- is based on. Most of the script is written from scratch with some functions -->
+<!-- taken modified from Crowley's Envenomizer -->
 
 <!--  Triggers  -->
 <triggers>
@@ -1031,7 +1035,8 @@ function env_help()
 	
 	ColourNote(help_colour, "", spacing, help_command_colour, "", title)
 	ColourNote(help_colour, "", noteline)
-	ColourNote(help_colour, "", "This script will allow any venomist to envenom and return weapons to their owners")
+	ColourNote(help_colour, "", "This script will allow any venomist to envenom and return weapons to their owners.")
+	ColourNote(help_colour, "", "Based from ", help_command_colour, "", "Crowley's", help_colour, "", " version of the Envenomizer.")
 	ColourNote(help_colour, "", noteline)
 	
 	Note("")
