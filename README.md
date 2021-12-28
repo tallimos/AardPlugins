@@ -10,7 +10,7 @@ This plugin gives the user an easy to use auto inviter with blacklist and power 
 
 Envenomizer
 -----------
-This script will allow any venomist to envenom and return weapons to their owners. You will need a true seeing helm so that if you have true sight casted and it drops then you will still see hidden/invis players. You will need the id number for your true seeing helm as well as the id number for the container it is stored in.
+This script will allow any venomist to envenom and return weapons to their owners. You will need a true seeing helm so that if you have true sight casted and it drops then you will still see hidden/invis players. You will need the id number for your true seeing helm as well as the id number for the container it is stored in. Credit goes to Crowley for his version of the Envenomizer.
 
 EpicBroadcaster
 ---------------
