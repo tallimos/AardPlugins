@@ -1,5 +1,12 @@
 dbot.changelog = {}
 
+dbot.changelog[2.26] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Added the ability to search for ts instead of transcedence"
+  },
+}
+
 dbot.changelog[2.25] =
 {
   { change = drlDbotChangeLogTypeFix,

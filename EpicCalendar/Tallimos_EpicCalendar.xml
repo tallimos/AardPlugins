@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="2.25"
+   version="2.26"
    >
    
 </plugin>
@@ -1146,7 +1146,7 @@ function CheckEpicName(CheckEpicName)
 		repic = "icefall1"
 	elseif CheckEpicName == "if" then
 		repic = "icefall1"
-	elseif CheckEpicName == "transcend" then -- trans add
+	elseif CheckEpicName == "transcend" or CheckEpicName == "ts" then -- trans add
 		repic = "transcendence"
 	else
 		repic = CheckEpicName
@@ -1741,7 +1741,7 @@ function CheckType(ltype)
 	elseif ltype == "if2" or ltype == "icefall 2" then
 		ltype = "icefall2"
 		return ltype
-	elseif ltype == "transcend" then -- trans add
+	elseif ltype == "transcend" or ltype == "ts" then -- trans add
 		ltype = "transcendence"
 		return ltype
 	elseif ltype == "if" then
@@ -2824,7 +2824,7 @@ function AddRemoveEditRunTime(rcmd, rtname, rttime)
 	elseif rcmd == "edit" then
 		if rtname == "if1" then rtname = "icefall1" end
 		if rtname == "if2" then rtname = "icefall2" end
-		if rtname == "transcend" then rtname = "transcendence" end
+		if rtname == "transcend" or rtname == "ts" then rtname = "transcendence" end
 		
 		if EpicMisc["ApproxRunTimes"][rtname] == nil then
 			ColourNote(epiccalcolour, "", "[EpicCAL] ", qty_colour, "", rtname, msg_colour, "", " has not been added to the approximate run time list. For a complete list please use ", qty_colour, "", "ecal rt list", msg_colour, "", ".")
@@ -3448,7 +3448,7 @@ end -- ChannelCommandDisable
 function ChannelBot(user, cmd, search, channel)	
 	if search == "if1" or search == "icefall 1" then search = "icefall1" end
 	if search == "if2" or search == "icefall 2" then search = "icefall2" end
-	if search == "transcend" then search = "transcendence" end
+	if search == "transcend" or search == "ts" then search = "transcendence" end
 	
 	if CheckChannel(channel) == "no" then
 		if CheckChannelUnapproved(channel) == "yes" then
@@ -5778,6 +5778,7 @@ function GetSavedData()
 		[13] = "testmaze10",
 		[14] = "transcendence", 
 		[15] = "transcend", 
+		[16] = "ts", 
 	}
 
 	SearchNames = {
