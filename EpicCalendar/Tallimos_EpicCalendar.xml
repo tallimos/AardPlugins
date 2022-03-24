@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="2.26"
+   version="2.27"
    >
    
 </plugin>
@@ -3484,6 +3484,14 @@ function ChannelBot(user, cmd, search, channel)
 					noteuser = user
 					StartPost()
 				end
+			elseif search == "today" then
+				search = listdayvar
+				
+				ChannelListDay(channel, search)
+			elseif search == "tomorrow" then
+				search = listdayvartomorrow
+				
+				ChannelListDay(channel, search)
 			else
 				ChannelListEpic(channel, search)
 			end
@@ -4531,11 +4539,16 @@ function GetSystemTimeTrig(name, line, wc)
 	year = tonumber(wc[7])
 
 	day = string.lower(wc[4])
+	
+	listdayvar = day
+	
 	month = string.lower(wc[6])
 	
 	for i,v in ipairs(DaysofWeek) do
 		if DaysofWeek[i] == day then
 			wday = i
+			wdaytom = i + 1
+			listdayvartomorrow = DaysofWeek[wdaytom]
 		end
 	end
 

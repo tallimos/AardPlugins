@@ -1,8 +1,15 @@
 dbot.changelog = {}
 
+dbot.changelog[2.27] =
+{
+  { change = drlDbotChangeLogTypeNew,
+    desc   = "Added the ability to search for today and tomorrow when you use listepic channel command"
+  },
+}
+
 dbot.changelog[2.26] =
 {
-  { change = drlDbotChangeLogTypeFix,
+  { change = drlDbotChangeLogTypeNew,
     desc   = "Added the ability to search for ts instead of transcedence"
   },
 }
