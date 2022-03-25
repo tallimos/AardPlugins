@@ -1,5 +1,12 @@
 dbot.changelog = {}
 
+dbot.changelog[2.28] =
+{
+  { change = drlDbotChangeLogTypeFix,
+    desc   = "Fixed error with today and tomorrow commands"
+  },
+}
+
 dbot.changelog[2.27] =
 {
   { change = drlDbotChangeLogTypeNew,
