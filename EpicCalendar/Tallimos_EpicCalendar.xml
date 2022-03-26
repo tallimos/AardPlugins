@@ -3464,6 +3464,12 @@ function ChannelBot(user, cmd, search, channel)
 		if cmd == "nextepic" then
 			Execute("ecal next " .. search .. " " .. channel)
 		elseif cmd == "listday" then
+			if search == "today" then
+				search = listdayvar
+			elseif search == "tomorrow" then
+				search = listdayvartomorrow
+			end
+			
 			ChannelListDay(channel, search)
 		elseif cmd == "listleader" then
 			ChannelListLeader(channel, search)
