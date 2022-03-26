@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="2.29"
+   version="2.30"
    >
    
 </plugin>
@@ -4532,6 +4532,8 @@ function SetServerTime(sertime)
 
 	numdaytomrrow = SystemTimeTable["wday"] + 1
 
+	if numdaytomrrow == 8 then numdaytomrrow = 1 end
+	
 	listdayvartomorrow = DaysofWeek[numdaytomrrow]
 end -- SetServerTime
 
@@ -4554,6 +4556,9 @@ function GetSystemTimeTrig(name, line, wc)
 		if DaysofWeek[i] == day then
 			wday = i
 			wdaytom = i + 1
+			
+			if wdaytom == 8 then wdaytom = 1 end
+			
 			listdayvartomorrow = DaysofWeek[wdaytom]
 		end
 	end
