@@ -1,5 +1,12 @@
 dbot.changelog = {}
 
+dbot.changelog[2.31] =
+{
+  { change = drlDbotChangeLogTypeNew,
+    desc   = "Added Fractals Epic to the epic list"
+  },
+}
+
 dbot.changelog[2.30] =
 {
   { change = drlDbotChangeLogTypeFix,

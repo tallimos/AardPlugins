@@ -15,7 +15,7 @@
    save_state="y"
    date_written="2020-11-23 12:39:41"
    requires="4.36"
-   version="2.30"
+   version="2.31"
    >
    
 </plugin>
@@ -5809,6 +5809,7 @@ function GetSavedData()
 		[14] = "transcendence", 
 		[15] = "transcend", 
 		[16] = "ts", 
+		[17] = "fractals",
 	}
 
 	SearchNames = {
@@ -5821,6 +5822,7 @@ function GetSavedData()
 		["oldvanir"] = "oldvanir",
 		["testmaze10"] = "testmaze10",
 		["transcendence"] = "transcendence", 
+		["fractals"] = "fractals",
 	}
 
 	ApprovedChannels = {
